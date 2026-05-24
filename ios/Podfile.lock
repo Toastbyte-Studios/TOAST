@@ -1657,7 +1657,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-slider (4.5.7):
+  - react-native-slider (5.2.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1669,7 +1669,7 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-slider/common (= 4.5.7)
+    - react-native-slider/common (= 5.2.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -1680,7 +1680,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-slider/common (4.5.7):
+  - react-native-slider/common (5.2.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2183,7 +2183,7 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
-  - RNLocalize (3.6.1):
+  - RNLocalize (3.7.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -2698,7 +2698,7 @@ SPEC CHECKSUMS:
   react-native-maps: b6686e329c41ce2ae1c6a7ba8dc37254f06399e7
   react-native-netinfo: cec9c4e86083cb5b6aba0e0711f563e2fbbff187
   react-native-safe-area-context: 37e680fc4cace3c0030ee46e8987d24f5d3bdab2
-  react-native-slider: fb7c37c8d834cbf4cdf39157abb67d0dc7a51c3a
+  react-native-slider: d535cb9791fe29bd2cd70c0c3556545aba3c1f55
   react-native-sqlite-storage: 0c84826214baaa498796c7e46a5ccc9a82e114ed
   react-native-torch: 8eb9ce45de54b565b470f4bfd8ccf57e5bcef8ff
   react-native-webview: 3e303e80cadb5f17118c8c1502aa398e9287e415
@@ -2741,7 +2741,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 88d7eeb555d1183915f0885bdbc5c97eb6f7f3ba
   RNDeviceInfo: 36d7f232bfe7c9b5c494cb7793230424ed32c388
   RNFS: 89de7d7f4c0f6bafa05343c578f61118c8282ed8
-  RNLocalize: 44b09911588826d01c5b949e8e3f9ed5fae16b32
+  RNLocalize: 1e6eb4290e89502c3d2193d82dfb7de14a9e672b
   RNScreens: a00979e0d17609f1c9b0f97881c34550fc4565bf
   RNSensors: 111159597ac51505df10413c61b28bcd28e88983
   RNSound: 25cfdc38a1353362053c01ca827d7ddf80860de1
