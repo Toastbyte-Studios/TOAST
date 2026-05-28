@@ -37,7 +37,20 @@ describe('BarometerStore', () => {
 
       expect(store.available).toBe(false);
       expect(store.loading).toBe(false);
-      expect(store.error).toMatch(/sensor unavailable/i);
+      expect(store.error).toBe('Barometer not available on this device.');
+    });
+
+    test('sets available=false and friendly error when subscribe throws', async () => {
+      (barometer.subscribe as jest.Mock).mockImplementationOnce(() => {
+        throw new Error('No sensor');
+      });
+
+      const store = new BarometerStore();
+      await store.start(makeDb() as any);
+
+      expect(store.available).toBe(false);
+      expect(store.loading).toBe(false);
+      expect(store.error).toBe('Barometer not available on this device.');
     });
 
     test('loads persisted history from the database on start', async () => {

@@ -146,7 +146,7 @@ function BarometricPressureScreen() {
       {!available && !loading && (
         <View style={styles.centerContainer}>
           <Text style={[styles.errorText, { color: COLORS.PRIMARY_DARK }]}>
-            {error ?? 'Barometric sensor not available on this device.'}
+            {error ?? 'Barometer not available on this device.'}
           </Text>
         </View>
       )}
