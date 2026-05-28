@@ -105,15 +105,31 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            def releaseProps = ['TOAST_RELEASE_STORE_FILE', 'TOAST_RELEASE_STORE_PASSWORD',
+                                'TOAST_RELEASE_KEY_ALIAS', 'TOAST_RELEASE_KEY_PASSWORD']
+            def allDefined = releaseProps.every { project.hasProperty(it) }
+            def someDefined = releaseProps.any { project.hasProperty(it) }
+            if (someDefined && !allDefined) {
+                def missing = releaseProps.findAll { !project.hasProperty(it) }
+                throw new GradleException(
+                    "Release signing: some required properties are missing from " +
+                    "~/.gradle/gradle.properties: ${missing.join(', ')}")
+            }
+            if (allDefined) {
+                storeFile file(TOAST_RELEASE_STORE_FILE)
+                storePassword TOAST_RELEASE_STORE_PASSWORD
+                keyAlias TOAST_RELEASE_KEY_ALIAS
+                keyPassword TOAST_RELEASE_KEY_PASSWORD
+            }
+        }
     }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
