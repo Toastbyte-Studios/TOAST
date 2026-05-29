@@ -16,6 +16,7 @@ const MAX_SAMPLES = 1440; // 1 per minute × 60 min × 24 h
 const BAROMETER_READ_INTERVAL_MS = 60_000; // 1 reading per minute
 /** Prune stale DB rows every N writes to reduce I/O overhead. */
 const DB_PRUNE_INTERVAL = 10;
+const BAROMETER_UNAVAILABLE_MESSAGE = 'Barometer not available on this device.';
 
 /**
  * Manages the device barometer sensor, persisting readings to SQLite so that
@@ -112,12 +113,11 @@ export class BarometerStore {
           // independent of sensor clock format or timezone variations.
           this.handleReading({ pressure: p, timestamp: Date.now() });
         },
-        (err: Error) => {
+        (_err: Error) => {
           runInAction(() => {
             this.available = false;
             this.loading = false;
-            this.error =
-              err?.message ?? 'Barometer not available on this device.';
+            this.error = BAROMETER_UNAVAILABLE_MESSAGE;
           });
         },
       );
@@ -125,7 +125,7 @@ export class BarometerStore {
       runInAction(() => {
         this.available = false;
         this.loading = false;
-        this.error = 'Barometer not available on this device.';
+        this.error = BAROMETER_UNAVAILABLE_MESSAGE;
       });
     }
   }
