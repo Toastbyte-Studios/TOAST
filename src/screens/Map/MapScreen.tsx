@@ -47,6 +47,7 @@ import MapPanel, {
 } from './components/MapPanel';
 import WaypointBottomSheet from './components/WaypointBottomSheet';
 import { haversineMeters } from './components/WaypointBottomSheet/waypointGeometry';
+import { requestForegroundNotificationPermission } from './requestForegroundNotificationPermission';
 
 // US state name → 2-letter abbreviation
 const US_STATE_ABBR: Record<string, string> = {
@@ -243,44 +244,8 @@ async function requestBackgroundLocationPermission(): Promise<void> {
   }
 }
 
-/**
- * Requests Android 13+ notification permission used by the foreground-service
- * recording notification. Recording still starts even if denied.
- */
-async function requestForegroundNotificationPermission(): Promise<void> {
-  if (Platform.OS !== 'android' || Number(Platform.Version) < 33) {
-    return;
-  }
-  try {
-    const permission =
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS ??
-      ('android.permission.POST_NOTIFICATIONS' as any);
-    const alreadyGranted = await PermissionsAndroid.check(permission);
-    if (alreadyGranted) {
-      return;
-    }
-    const result = await PermissionsAndroid.request(permission, {
-      title: 'Notification Permission',
-      message:
-        'TOAST uses a persistent notification while recording so trail tracking can continue with your screen locked.',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'Allow',
-    });
-    if (result !== PermissionsAndroid.RESULTS.GRANTED) {
-      Alert.alert(
-        'Notifications Disabled',
-        'Trail recording will still work, but Android may hide the recording notification. You can enable notifications for TOAST later in Settings.',
-        [{ text: 'OK' }],
-      );
-    }
-  } catch {
-    // Non-fatal — recording still works; notification visibility may vary.
-  }
-}
-
 /** Starts the Android foreground service that keeps GPS alive in background.
- * Fire-and-forget — the native method is void and no response is needed. */
+ * Waits for Android 13+ notification permission flow, then starts native service. */
 async function startAndroidForegroundService(): Promise<void> {
   if (Platform.OS !== 'android') {
     return;
