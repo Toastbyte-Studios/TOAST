@@ -122,6 +122,7 @@ function NavigatorContent(): JSX.Element {
           initialRouteName="Home"
           screenOptions={{
             headerShown: false,
+            animation: 'default',
             contentStyle: {
               backgroundColor: 'transparent',
             },
