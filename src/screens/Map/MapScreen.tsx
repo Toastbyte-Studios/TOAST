@@ -47,6 +47,7 @@ import MapPanel, {
 } from './components/MapPanel';
 import WaypointBottomSheet from './components/WaypointBottomSheet';
 import { haversineMeters } from './components/WaypointBottomSheet/waypointGeometry';
+import { requestForegroundNotificationPermission } from './requestForegroundNotificationPermission';
 
 // US state name → 2-letter abbreviation
 const US_STATE_ABBR: Record<string, string> = {
@@ -244,12 +245,13 @@ async function requestBackgroundLocationPermission(): Promise<void> {
 }
 
 /** Starts the Android foreground service that keeps GPS alive in background.
- * Fire-and-forget — the native method is void and no response is needed. */
-function startAndroidForegroundService(): void {
+ * Waits for Android 13+ notification permission flow, then starts native service. */
+async function startAndroidForegroundService(): Promise<void> {
   if (Platform.OS !== 'android') {
     return;
   }
   try {
+    await requestForegroundNotificationPermission();
     // The native module method is void; we intentionally don't await anything.
 
     NativeModules.LocationForegroundService?.start?.();
