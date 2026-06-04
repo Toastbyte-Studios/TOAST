@@ -83,6 +83,26 @@ export default function AppShell({ children }: Props) {
   const COLORS = useTheme();
   const sunShadow = useSunShadow();
 
+  const markTutorialComplete = () => {
+    AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true')
+      .catch(() => {
+        // Ignore persistence failures so users are not blocked in the tutorial.
+      })
+      .finally(() => {
+        setIsTutorialVisible(false);
+      });
+  };
+
+  const resetTutorialState = () => {
+    AsyncStorage.removeItem(TUTORIAL_STORAGE_KEY)
+      .catch(() => {
+        // Ignore persistence failures and still allow reopening for QA/testing.
+      })
+      .finally(() => {
+        setIsTutorialVisible(true);
+      });
+  };
+
   // Keep `currentDate` in sync with the calendar date by scheduling a timeout
   // to fire exactly at the next midnight. When the timeout runs, it updates
   // the formatted date and then reschedules itself for the following midnight.
@@ -259,22 +279,15 @@ export default function AppShell({ children }: Props) {
           setIsTutorialVisible(true);
         }}
         onResetTutorial={() => {
-          AsyncStorage.removeItem(TUTORIAL_STORAGE_KEY).catch(() => {});
           setIsHelpVisible(false);
-          setIsTutorialVisible(true);
+          resetTutorialState();
         }}
       />
 
       <TutorialModal
         visible={isTutorialVisible}
-        onComplete={() => {
-          AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true').catch(() => {});
-          setIsTutorialVisible(false);
-        }}
-        onSkip={() => {
-          AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true').catch(() => {});
-          setIsTutorialVisible(false);
-        }}
+        onComplete={markTutorialComplete}
+        onSkip={markTutorialComplete}
       />
     </ScreenContainer>
   );

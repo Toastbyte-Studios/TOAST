@@ -19,7 +19,7 @@ describe('Tutorial flow components', () => {
   test('TutorialModal advances through steps and completes', () => {
     const onComplete = jest.fn();
     const onSkip = jest.fn();
-    let tree: ReactTestRenderer.ReactTestRenderer;
+    let tree!: ReactTestRenderer.ReactTestRenderer;
 
     ReactTestRenderer.act(() => {
       tree = ReactTestRenderer.create(
@@ -47,7 +47,7 @@ describe('Tutorial flow components', () => {
 
   test('HelpModal launches tutorial from How to use section', () => {
     const onLaunchTutorial = jest.fn();
-    let tree: ReactTestRenderer.ReactTestRenderer;
+    let tree!: ReactTestRenderer.ReactTestRenderer;
 
     ReactTestRenderer.act(() => {
       tree = ReactTestRenderer.create(

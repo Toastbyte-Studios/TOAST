@@ -216,116 +216,128 @@ export const HelpModal = ({
               </View>
 
               <ScrollView style={styles.content}>
-                {helpSections.map((section) => (
-                  <View key={section.id} style={styles.accordionItem}>
-                    <TouchableOpacity
-                      style={[
-                        styles.accordionHeader,
-                        {
-                          borderColor: COLORS.TOAST_BROWN,
-                          backgroundColor: COLORS.BACKGROUND,
-                        },
-                        expandedSection === section.id && {
-                          backgroundColor: COLORS.TOAST_BROWN,
-                          borderColor: COLORS.PRIMARY_DARK,
-                        },
-                      ]}
-                      onPress={() => handleSectionPress(section.id)}
-                      accessibilityLabel={`${section.title} ${
-                        expandedSection === section.id
-                          ? 'expanded'
-                          : 'collapsed'
-                      }`}
-                      accessibilityRole="button"
-                      accessibilityHint={`Tap to ${
-                        expandedSection === section.id ? 'collapse' : 'expand'
-                      } ${section.title}`}
-                    >
-                      <RNText
+                {helpSections.map((section) => {
+                  const shouldShowTutorialActions = section.id === 'how';
+                  const hasTutorialActionHandlers =
+                    !!onLaunchTutorial || !!onResetTutorial;
+
+                  return (
+                    <View key={section.id} style={styles.accordionItem}>
+                      <TouchableOpacity
                         style={[
-                          styles.accordionTitle,
-                          { color: COLORS.PRIMARY_DARK },
-                        ]}
-                      >
-                        {section.title}
-                      </RNText>
-                      <Ionicons
-                        name={
-                          expandedSection === section.id
-                            ? 'chevron-up-outline'
-                            : 'chevron-down-outline'
-                        }
-                        size={24}
-                        color={COLORS.PRIMARY_DARK}
-                      />
-                    </TouchableOpacity>
-                    {expandedSection === section.id && (
-                      <View
-                        style={[
-                          styles.accordionContent,
+                          styles.accordionHeader,
                           {
-                            backgroundColor: COLORS.PRIMARY_LIGHT,
                             borderColor: COLORS.TOAST_BROWN,
+                            backgroundColor: COLORS.BACKGROUND,
+                          },
+                          expandedSection === section.id && {
+                            backgroundColor: COLORS.TOAST_BROWN,
+                            borderColor: COLORS.PRIMARY_DARK,
                           },
                         ]}
+                        onPress={() => handleSectionPress(section.id)}
+                        accessibilityLabel={`${section.title} ${
+                          expandedSection === section.id
+                            ? 'expanded'
+                            : 'collapsed'
+                        }`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Tap to ${
+                          expandedSection === section.id ? 'collapse' : 'expand'
+                        } ${section.title}`}
                       >
                         <RNText
                           style={[
-                            styles.accordionText,
+                            styles.accordionTitle,
                             { color: COLORS.PRIMARY_DARK },
                           ]}
                         >
-                          {renderLinkableText(section.content)}
+                          {section.title}
                         </RNText>
-                        {section.id === 'how' && onLaunchTutorial && (
-                          <TouchableOpacity
+                        <Ionicons
+                          name={
+                            expandedSection === section.id
+                              ? 'chevron-up-outline'
+                              : 'chevron-down-outline'
+                          }
+                          size={24}
+                          color={COLORS.PRIMARY_DARK}
+                        />
+                      </TouchableOpacity>
+                      {expandedSection === section.id && (
+                        <View
+                          style={[
+                            styles.accordionContent,
+                            {
+                              backgroundColor: COLORS.PRIMARY_LIGHT,
+                              borderColor: COLORS.TOAST_BROWN,
+                            },
+                          ]}
+                        >
+                          <RNText
                             style={[
-                              styles.tutorialActionButton,
-                              {
-                                backgroundColor: COLORS.SECONDARY_ACCENT,
-                              },
+                              styles.accordionText,
+                              { color: COLORS.PRIMARY_DARK },
                             ]}
-                            onPress={onLaunchTutorial}
-                            accessibilityLabel="Launch tutorial"
-                            accessibilityRole="button"
                           >
-                            <RNText
-                              style={[
-                                styles.tutorialActionButtonText,
-                                { color: COLORS.PRIMARY_DARK },
-                              ]}
-                            >
-                              Launch Tutorial
-                            </RNText>
-                          </TouchableOpacity>
-                        )}
-                        {section.id === 'how' && onResetTutorial && (
-                          <TouchableOpacity
-                            style={[
-                              styles.tutorialActionButton,
-                              styles.secondaryTutorialButton,
-                              {
-                                borderColor: COLORS.TOAST_BROWN,
-                              },
-                            ]}
-                            onPress={onResetTutorial}
-                            accessibilityLabel="Reset tutorial"
-                            accessibilityRole="button"
-                          >
-                            <RNText
-                              style={[
-                                styles.tutorialActionButtonText,
-                                { color: COLORS.PRIMARY_DARK },
-                              ]}
-                            >
-                              Reset Tutorial
-                            </RNText>
-                          </TouchableOpacity>
-                        )}
-                      </View>
-                    )}
-                  </View>
-                ))}
+                            {renderLinkableText(section.content)}
+                          </RNText>
+                          {shouldShowTutorialActions &&
+                            hasTutorialActionHandlers && (
+                              <>
+                                {onLaunchTutorial && (
+                                  <TouchableOpacity
+                                    style={[
+                                      styles.tutorialActionButton,
+                                      {
+                                        backgroundColor:
+                                          COLORS.SECONDARY_ACCENT,
+                                      },
+                                    ]}
+                                    onPress={onLaunchTutorial}
+                                    accessibilityLabel="Launch tutorial"
+                                    accessibilityRole="button"
+                                  >
+                                    <RNText
+                                      style={[
+                                        styles.tutorialActionButtonText,
+                                        { color: COLORS.PRIMARY_DARK },
+                                      ]}
+                                    >
+                                      Launch Tutorial
+                                    </RNText>
+                                  </TouchableOpacity>
+                                )}
+                                {onResetTutorial && (
+                                  <TouchableOpacity
+                                    style={[
+                                      styles.tutorialActionButton,
+                                      styles.secondaryTutorialButton,
+                                      {
+                                        borderColor: COLORS.TOAST_BROWN,
+                                      },
+                                    ]}
+                                    onPress={onResetTutorial}
+                                    accessibilityLabel="Reset tutorial"
+                                    accessibilityRole="button"
+                                  >
+                                    <RNText
+                                      style={[
+                                        styles.tutorialActionButtonText,
+                                        { color: COLORS.PRIMARY_DARK },
+                                      ]}
+                                    >
+                                      Reset Tutorial
+                                    </RNText>
+                                  </TouchableOpacity>
+                                )}
+                              </>
+                            )}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
