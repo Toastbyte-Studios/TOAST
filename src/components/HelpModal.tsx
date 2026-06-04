@@ -15,6 +15,8 @@ import { useTheme } from '../hooks/useTheme';
 interface HelpModalProps {
   visible: boolean;
   onClose: () => void;
+  onLaunchTutorial?: () => void;
+  onResetTutorial?: () => void;
 }
 
 type HelpSection = 'what' | 'how' | 'privacy' | 'terms' | 'contact';
@@ -36,7 +38,12 @@ interface AccordionItem {
 // No-op handler to prevent backdrop touch from propagating
 const preventClose = () => {};
 
-export const HelpModal = ({ visible, onClose }: HelpModalProps) => {
+export const HelpModal = ({
+  visible,
+  onClose,
+  onLaunchTutorial,
+  onResetTutorial,
+}: HelpModalProps) => {
   const COLORS = useTheme();
   const [expandedSection, setExpandedSection] = useState<HelpSection | null>(
     null,
@@ -270,6 +277,51 @@ export const HelpModal = ({ visible, onClose }: HelpModalProps) => {
                         >
                           {renderLinkableText(section.content)}
                         </RNText>
+                        {section.id === 'how' && onLaunchTutorial && (
+                          <TouchableOpacity
+                            style={[
+                              styles.tutorialActionButton,
+                              {
+                                backgroundColor: COLORS.SECONDARY_ACCENT,
+                              },
+                            ]}
+                            onPress={onLaunchTutorial}
+                            accessibilityLabel="Launch tutorial"
+                            accessibilityRole="button"
+                          >
+                            <RNText
+                              style={[
+                                styles.tutorialActionButtonText,
+                                { color: COLORS.PRIMARY_DARK },
+                              ]}
+                            >
+                              Launch Tutorial
+                            </RNText>
+                          </TouchableOpacity>
+                        )}
+                        {section.id === 'how' && onResetTutorial && (
+                          <TouchableOpacity
+                            style={[
+                              styles.tutorialActionButton,
+                              styles.secondaryTutorialButton,
+                              {
+                                borderColor: COLORS.TOAST_BROWN,
+                              },
+                            ]}
+                            onPress={onResetTutorial}
+                            accessibilityLabel="Reset tutorial"
+                            accessibilityRole="button"
+                          >
+                            <RNText
+                              style={[
+                                styles.tutorialActionButtonText,
+                                { color: COLORS.PRIMARY_DARK },
+                              ]}
+                            >
+                              Reset Tutorial
+                            </RNText>
+                          </TouchableOpacity>
+                        )}
                       </View>
                     )}
                   </View>
@@ -348,5 +400,20 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: 'underline',
+  },
+  tutorialActionButton: {
+    marginTop: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  tutorialActionButtonText: {
+    fontSize: 14,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+  secondaryTutorialButton: {
+    borderWidth: 1,
+    backgroundColor: 'transparent',
   },
 });

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
@@ -33,6 +34,7 @@ import { HorizontalRule } from './HorizontalRule';
 import LogoHeader from './LogoHeader';
 import ScreenContainer from './ScreenContainer';
 import { SettingsModal } from './SettingsModal';
+import TutorialModal from './TutorialModal';
 
 type Props = PropsWithChildren;
 
@@ -41,6 +43,7 @@ type AppShellNavigationProp = NativeStackNavigationProp<{
 }>;
 
 const DATE_FORMAT = 'dddd, MMMM D, YYYY';
+const TUTORIAL_STORAGE_KEY = 'hasSeenTutorial';
 
 /**
  * Root layout wrapper for the app.
@@ -72,6 +75,7 @@ export default function AppShell({ children }: Props) {
   const translateYRef = useRef(new Animated.Value(0)).current;
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [isHelpVisible, setIsHelpVisible] = useState(false);
+  const [isTutorialVisible, setIsTutorialVisible] = useState(false);
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );
@@ -101,6 +105,22 @@ export default function AppShell({ children }: Props) {
       if (timeoutRef.current !== null) {
         clearTimeout(timeoutRef.current);
       }
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    AsyncStorage.getItem(TUTORIAL_STORAGE_KEY)
+      .then((value) => {
+        if (isMounted && value === null) {
+          setIsTutorialVisible(true);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
     };
   }, []);
 
@@ -234,6 +254,27 @@ export default function AppShell({ children }: Props) {
       <HelpModal
         visible={isHelpVisible}
         onClose={() => setIsHelpVisible(false)}
+        onLaunchTutorial={() => {
+          setIsHelpVisible(false);
+          setIsTutorialVisible(true);
+        }}
+        onResetTutorial={() => {
+          AsyncStorage.removeItem(TUTORIAL_STORAGE_KEY).catch(() => {});
+          setIsHelpVisible(false);
+          setIsTutorialVisible(true);
+        }}
+      />
+
+      <TutorialModal
+        visible={isTutorialVisible}
+        onComplete={() => {
+          AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true').catch(() => {});
+          setIsTutorialVisible(false);
+        }}
+        onSkip={() => {
+          AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true').catch(() => {});
+          setIsTutorialVisible(false);
+        }}
       />
     </ScreenContainer>
   );
