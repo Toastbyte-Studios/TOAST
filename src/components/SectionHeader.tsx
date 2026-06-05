@@ -98,7 +98,9 @@ export default function SectionHeader({
           </View>
         </TouchableOpacity>
       ) : (
-        header
+        <View style={isSectionHeaderSpotlighted ? styles.spotlight : undefined}>
+          {header}
+        </View>
       )}
       {isShowHr && <HorizontalRule />}
     </>

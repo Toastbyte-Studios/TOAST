@@ -276,6 +276,10 @@ export default function AppShell({ children }: Props) {
             <HorizontalRule />
           </View>
 
+          {isTutorialVisible && (
+            <View style={styles.tutorialBackdrop} pointerEvents="none" />
+          )}
+
           <View
             style={
               tutorialSpotlightTarget === 'footerButtons'
@@ -361,6 +365,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: FOOTER_HEIGHT,
     width: '100%',
+  },
+  tutorialBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    zIndex: 100,
   },
   spotlightTarget: {
     position: 'relative',

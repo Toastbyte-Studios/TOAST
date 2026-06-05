@@ -118,7 +118,6 @@ export default function TutorialModal({
 
   return (
     <View style={styles.overlay}>
-      <View style={styles.fullBackdrop} pointerEvents="none" />
       <View style={styles.cardContainer}>
         <View
           style={[
@@ -207,11 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
-    zIndex: 100,
-  },
-  fullBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    zIndex: 300,
   },
   cardContainer: {
     width: '100%',
