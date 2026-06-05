@@ -292,7 +292,8 @@ export const HelpModal = ({
                                   ]}
                                 >
                                   Replay runs the tutorial now. Reset clears
-                                  first-run progress and starts it again.
+                                  first-run progress and restarts onboarding
+                                  now.
                                 </RNText>
                                 {onLaunchTutorial && (
                                   <TouchableOpacity

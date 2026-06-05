@@ -135,7 +135,7 @@ describe('Tutorial flow components', () => {
     expect(
       tree.root.findByProps({
         children:
-          'Replay runs the tutorial now. Reset clears first-run progress and starts it again.',
+          'Replay runs the tutorial now. Reset clears first-run progress and restarts onboarding now.',
       }),
     ).toBeTruthy();
 
