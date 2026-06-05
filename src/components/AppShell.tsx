@@ -4,6 +4,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {
   PropsWithChildren,
+  useCallback,
   useMemo,
   useEffect,
   useRef,
@@ -200,10 +201,16 @@ export default function AppShell({ children }: Props) {
       }),
     [navigationHistory, disableGestureNavigation],
   );
+  const handleSpotlightTargetChange = useCallback(
+    (target?: TutorialSpotlightTarget) => {
+      setTutorialSpotlightTarget(target);
+    },
+    [],
+  );
 
   return (
-    <TutorialSpotlightContext.Provider value={tutorialSpotlightTarget}>
-      <ScreenContainer>
+    <ScreenContainer>
+      <TutorialSpotlightContext.Provider value={tutorialSpotlightTarget}>
         <View style={styles.gestureContainer} {...panResponder.panHandlers}>
           <Animated.View
             style={[
@@ -283,25 +290,25 @@ export default function AppShell({ children }: Props) {
             visible={isTutorialVisible}
             onComplete={markTutorialComplete}
             onSkip={markTutorialComplete}
-            onSpotlightTargetChange={setTutorialSpotlightTarget}
+            onSpotlightTargetChange={handleSpotlightTargetChange}
           />
         </View>
+      </TutorialSpotlightContext.Provider>
 
-        <SettingsModal
-          visible={isSettingsVisible}
-          onClose={() => setIsSettingsVisible(false)}
-        />
+      <SettingsModal
+        visible={isSettingsVisible}
+        onClose={() => setIsSettingsVisible(false)}
+      />
 
-        <HelpModal
-          visible={isHelpVisible}
-          onClose={() => setIsHelpVisible(false)}
-          onLaunchTutorial={() => {
-            setIsHelpVisible(false);
-            setIsTutorialVisible(true);
-          }}
-        />
-      </ScreenContainer>
-    </TutorialSpotlightContext.Provider>
+      <HelpModal
+        visible={isHelpVisible}
+        onClose={() => setIsHelpVisible(false)}
+        onLaunchTutorial={() => {
+          setIsHelpVisible(false);
+          setIsTutorialVisible(true);
+        }}
+      />
+    </ScreenContainer>
   );
 }
 
