@@ -250,9 +250,9 @@ export default function AppShell({ children }: Props) {
                 onPress={() => {
                   navigation.navigate('Home');
                 }}
-                style={
-                  tutorialSpotlightTarget === 'logo' && styles.spotlightTarget
-                }
+                style={[
+                  tutorialSpotlightTarget === 'logo' && styles.spotlightTarget,
+                ]}
                 accessibilityLabel="Go to home screen"
                 accessibilityRole="button"
               >
@@ -268,10 +268,10 @@ export default function AppShell({ children }: Props) {
           </View>
 
           <View
-            style={
+            style={[
               tutorialSpotlightTarget === 'footerButtons' &&
-              styles.spotlightTarget
-            }
+                styles.spotlightTarget,
+            ]}
           >
             <Footer />
           </View>

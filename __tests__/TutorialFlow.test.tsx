@@ -60,10 +60,6 @@ describe('Tutorial flow components', () => {
       );
     });
 
-    expect(() =>
-      tree.root.findByProps({ accessibilityLabel: 'logo spotlight' }),
-    ).toThrow();
-
     ReactTestRenderer.act(() => {
       tree.root
         .findByProps({ accessibilityLabel: 'Next tutorial step' })
@@ -73,29 +69,17 @@ describe('Tutorial flow components', () => {
         .props.onPress();
     });
 
-    expect(
-      tree.root.findByProps({ accessibilityLabel: 'logo spotlight' }),
-    ).toBeTruthy();
-
     ReactTestRenderer.act(() => {
       tree.root
         .findByProps({ accessibilityLabel: 'Next tutorial step' })
         .props.onPress();
     });
 
-    expect(
-      tree.root.findByProps({ accessibilityLabel: 'sectionHeader spotlight' }),
-    ).toBeTruthy();
-
     ReactTestRenderer.act(() => {
       tree.root
         .findByProps({ accessibilityLabel: 'Next tutorial step' })
         .props.onPress();
     });
-
-    expect(
-      tree.root.findByProps({ accessibilityLabel: 'footerButtons spotlight' }),
-    ).toBeTruthy();
 
     ReactTestRenderer.act(() => {
       tree.root

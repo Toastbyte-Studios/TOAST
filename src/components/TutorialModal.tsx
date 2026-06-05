@@ -119,12 +119,6 @@ export default function TutorialModal({
   return (
     <View style={styles.overlay}>
       <View style={styles.fullBackdrop} pointerEvents="none" />
-      {spotlightTarget && (
-        <View
-          pointerEvents="none"
-          accessibilityLabel={`${spotlightTarget} spotlight`}
-        />
-      )}
       <View style={styles.cardContainer}>
         <View
           style={[
@@ -206,6 +200,8 @@ export default function TutorialModal({
 
 const styles = StyleSheet.create({
   overlay: {
+    // AppShell renders this inside a full-screen flex container, so
+    // absolute fill correctly covers the active app viewport.
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
