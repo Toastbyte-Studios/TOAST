@@ -67,6 +67,10 @@ const TUTORIAL_STEPS: TutorialStep[] = [
 ];
 
 type SpotlightTarget = NonNullable<TutorialStep['spotlightTarget']>;
+const FOOTER_SPOTLIGHT_HEIGHT = 94;
+const TUTORIAL_CARD_BOTTOM_GAP = 5;
+const TUTORIAL_CARD_BOTTOM_OFFSET =
+  FOOTER_SPOTLIGHT_HEIGHT + TUTORIAL_CARD_BOTTOM_GAP;
 
 const SPOTLIGHT_BACKDROP_STYLES: Record<
   SpotlightTarget,
@@ -90,10 +94,15 @@ const SPOTLIGHT_BACKDROP_STYLES: Record<
     right: { right: 0, top: 198, width: '10%', height: 56 },
   },
   footerButtons: {
-    top: { left: 0, right: 0, top: 0, bottom: 94 },
+    top: { left: 0, right: 0, top: 0, bottom: FOOTER_SPOTLIGHT_HEIGHT },
     bottom: { left: 0, right: 0, bottom: 0, height: 0 },
-    left: { left: 0, bottom: 0, width: '2%', height: 94 },
-    right: { right: 0, bottom: 0, width: '2%', height: 94 },
+    left: { left: 0, bottom: 0, width: '2%', height: FOOTER_SPOTLIGHT_HEIGHT },
+    right: {
+      right: 0,
+      bottom: 0,
+      width: '2%',
+      height: FOOTER_SPOTLIGHT_HEIGHT,
+    },
   },
 };
 
@@ -252,7 +261,7 @@ export default function TutorialModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
@@ -271,6 +280,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
     maxWidth: 560,
+    marginBottom: TUTORIAL_CARD_BOTTOM_OFFSET,
   },
   card: {
     width: '100%',
