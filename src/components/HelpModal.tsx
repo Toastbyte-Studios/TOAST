@@ -285,6 +285,15 @@ export const HelpModal = ({
                           {shouldShowTutorialActions &&
                             hasTutorialActionHandlers && (
                               <>
+                                <RNText
+                                  style={[
+                                    styles.tutorialActionHint,
+                                    { color: COLORS.PRIMARY_DARK },
+                                  ]}
+                                >
+                                  Replay runs the tutorial now. Reset clears
+                                  first-run progress and starts it again.
+                                </RNText>
                                 {onLaunchTutorial && (
                                   <TouchableOpacity
                                     style={[
@@ -295,7 +304,7 @@ export const HelpModal = ({
                                       },
                                     ]}
                                     onPress={onLaunchTutorial}
-                                    accessibilityLabel="Launch tutorial"
+                                    accessibilityLabel="Replay tutorial now"
                                     accessibilityRole="button"
                                   >
                                     <RNText
@@ -304,7 +313,7 @@ export const HelpModal = ({
                                         { color: COLORS.PRIMARY_DARK },
                                       ]}
                                     >
-                                      Launch Tutorial
+                                      Replay Tutorial
                                     </RNText>
                                   </TouchableOpacity>
                                 )}
@@ -318,7 +327,7 @@ export const HelpModal = ({
                                       },
                                     ]}
                                     onPress={onResetTutorial}
-                                    accessibilityLabel="Reset tutorial"
+                                    accessibilityLabel="Reset tutorial progress"
                                     accessibilityRole="button"
                                   >
                                     <RNText
@@ -327,7 +336,7 @@ export const HelpModal = ({
                                         { color: COLORS.PRIMARY_DARK },
                                       ]}
                                     >
-                                      Reset Tutorial
+                                      Reset Tutorial Progress
                                     </RNText>
                                   </TouchableOpacity>
                                 )}
@@ -418,6 +427,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 14,
+  },
+  tutorialActionHint: {
+    marginTop: 12,
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '600',
   },
   tutorialActionButtonText: {
     fontSize: 14,

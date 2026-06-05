@@ -45,7 +45,7 @@ describe('Tutorial flow components', () => {
     expect(onSkip).not.toHaveBeenCalled();
   });
 
-  test('TutorialModal shows directional indicators for guided UI targets', () => {
+  test('TutorialModal spotlights guided UI targets and hides skip on done', () => {
     let tree!: ReactTestRenderer.ReactTestRenderer;
 
     ReactTestRenderer.act(() => {
@@ -55,7 +55,7 @@ describe('Tutorial flow components', () => {
     });
 
     expect(() =>
-      tree.root.findByProps({ accessibilityLabel: 'TOAST logo indicator' }),
+      tree.root.findByProps({ accessibilityLabel: 'logo spotlight' }),
     ).toThrow();
 
     ReactTestRenderer.act(() => {
@@ -68,7 +68,7 @@ describe('Tutorial flow components', () => {
     });
 
     expect(
-      tree.root.findByProps({ accessibilityLabel: 'TOAST logo indicator' }),
+      tree.root.findByProps({ accessibilityLabel: 'logo spotlight' }),
     ).toBeTruthy();
 
     ReactTestRenderer.act(() => {
@@ -78,7 +78,7 @@ describe('Tutorial flow components', () => {
     });
 
     expect(
-      tree.root.findByProps({ accessibilityLabel: 'Section header indicator' }),
+      tree.root.findByProps({ accessibilityLabel: 'sectionHeader spotlight' }),
     ).toBeTruthy();
 
     ReactTestRenderer.act(() => {
@@ -88,10 +88,21 @@ describe('Tutorial flow components', () => {
     });
 
     expect(
-      tree.root.findByProps({
-        accessibilityLabel: 'Footer controls indicator',
-      }),
+      tree.root.findByProps({ accessibilityLabel: 'footerButtons spotlight' }),
     ).toBeTruthy();
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    expect(() =>
+      tree.root.findByProps({ accessibilityLabel: 'Skip tutorial' }),
+    ).toThrow();
   });
 
   test('HelpModal launches tutorial from How to use section', () => {
@@ -117,9 +128,20 @@ describe('Tutorial flow components', () => {
 
     ReactTestRenderer.act(() => {
       tree.root
-        .findByProps({ accessibilityLabel: 'Launch tutorial' })
+        .findByProps({ accessibilityLabel: 'Replay tutorial now' })
         .props.onPress();
     });
+
+    expect(
+      tree.root.findByProps({
+        children:
+          'Replay runs the tutorial now. Reset clears first-run progress and starts it again.',
+      }),
+    ).toBeTruthy();
+
+    expect(
+      tree.root.findByProps({ accessibilityLabel: 'Reset tutorial progress' }),
+    ).toBeTruthy();
 
     expect(onLaunchTutorial).toHaveBeenCalledTimes(1);
   });

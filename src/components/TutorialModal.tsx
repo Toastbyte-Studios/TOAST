@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   Text as RNText,
+  ViewStyle,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
@@ -19,11 +20,7 @@ interface TutorialStep {
   icon: string;
   title: string;
   description: string;
-  calloutPosition: 'top' | 'center' | 'bottom';
-  indicator?: {
-    label: string;
-    direction: 'up' | 'down';
-  };
+  spotlightTarget?: 'logo' | 'sectionHeader' | 'footerButtons';
 }
 
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -31,59 +28,74 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     icon: 'sparkles-outline',
     title: 'Welcome',
     description: "Welcome to TOAST. Here's a quick tour.",
-    calloutPosition: 'center',
   },
   {
     icon: 'swap-horizontal-outline',
     title: 'Swipe to Navigate',
     description: 'Swipe left or right to move between sections and tools.',
-    calloutPosition: 'center',
   },
   {
     icon: 'home-outline',
     title: 'Tap the Logo',
     description: 'Tap the TOAST logo any time to return to the home screen.',
-    calloutPosition: 'top',
-    indicator: {
-      label: 'TOAST logo',
-      direction: 'up',
-    },
+    spotlightTarget: 'logo',
   },
   {
     icon: 'search-outline',
     title: 'Tap the Section Header',
     description: 'Tap the section header title to open search in that section.',
-    calloutPosition: 'top',
-    indicator: {
-      label: 'Section header',
-      direction: 'up',
-    },
+    spotlightTarget: 'sectionHeader',
   },
   {
     icon: 'notifications-outline',
     title: 'Footer Buttons',
     description:
       'Use footer buttons for notifications and quick access to settings/help.',
-    calloutPosition: 'bottom',
-    indicator: {
-      label: 'Footer controls',
-      direction: 'down',
-    },
+    spotlightTarget: 'footerButtons',
   },
   {
     icon: 'layers-outline',
     title: 'Modules Overview',
     description:
       'TOAST is organized into modules like Reference, Tools, and Prepper.',
-    calloutPosition: 'center',
   },
   {
     icon: 'checkmark-circle-outline',
     title: 'Done',
     description: "You're all set. Tap below to get started.",
-    calloutPosition: 'center',
   },
 ];
+
+type SpotlightTarget = NonNullable<TutorialStep['spotlightTarget']>;
+
+const SPOTLIGHT_BACKDROP_STYLES: Record<
+  SpotlightTarget,
+  {
+    top: ViewStyle;
+    bottom: ViewStyle;
+    left: ViewStyle;
+    right: ViewStyle;
+  }
+> = {
+  logo: {
+    top: { left: 0, right: 0, top: 0, bottom: 140 },
+    bottom: { left: 0, right: 0, top: 224, bottom: 0 },
+    left: { left: 0, top: 140, width: '30%', height: 84 },
+    right: { right: 0, top: 140, width: '30%', height: 84 },
+  },
+  sectionHeader: {
+    top: { left: 0, right: 0, top: 0, bottom: 198 },
+    bottom: { left: 0, right: 0, top: 254, bottom: 0 },
+    left: { left: 0, top: 198, width: '10%', height: 56 },
+    right: { right: 0, top: 198, width: '10%', height: 56 },
+  },
+  footerButtons: {
+    top: { left: 0, right: 0, top: 0, bottom: 94 },
+    bottom: { left: 0, right: 0, bottom: 0, height: 0 },
+    left: { left: 0, bottom: 0, width: '2%', height: 94 },
+    right: { right: 0, bottom: 0, width: '2%', height: 94 },
+  },
+};
 
 export default function TutorialModal({
   visible,
@@ -94,17 +106,7 @@ export default function TutorialModal({
   const [currentStep, setCurrentStep] = useState(0);
   const isLastStep = currentStep === TUTORIAL_STEPS.length - 1;
   const step = TUTORIAL_STEPS[currentStep];
-  const calloutPositionStyle =
-    step.calloutPosition === 'top'
-      ? styles.calloutTop
-      : step.calloutPosition === 'bottom'
-        ? styles.calloutBottom
-        : styles.calloutCenter;
-  const indicatorIcon =
-    step.indicator?.direction === 'up'
-      ? 'arrow-up-circle-outline'
-      : 'arrow-down-circle-outline';
-  const showIndicatorAboveCard = step.indicator?.direction === 'up';
+  const spotlightTarget = step.spotlightTarget;
 
   useEffect(() => {
     if (visible) {
@@ -131,6 +133,25 @@ export default function TutorialModal({
       )),
     [COLORS.SECONDARY_ACCENT, COLORS.TOAST_BROWN, currentStep],
   );
+  const renderSpotlightBackdrop = () => {
+    if (!spotlightTarget) {
+      return <View style={styles.fullBackdrop} pointerEvents="none" />;
+    }
+    const targetBackdropStyle = SPOTLIGHT_BACKDROP_STYLES[spotlightTarget];
+
+    return (
+      <View
+        style={styles.spotlightBackdrop}
+        pointerEvents="none"
+        accessibilityLabel={`${spotlightTarget} spotlight`}
+      >
+        <View style={[styles.spotlightPane, targetBackdropStyle.top]} />
+        <View style={[styles.spotlightPane, targetBackdropStyle.bottom]} />
+        <View style={[styles.spotlightPane, targetBackdropStyle.left]} />
+        <View style={[styles.spotlightPane, targetBackdropStyle.right]} />
+      </View>
+    );
+  };
 
   return (
     <Modal
@@ -139,25 +160,9 @@ export default function TutorialModal({
       transparent
       onRequestClose={onSkip}
     >
-      <View style={[styles.overlay, calloutPositionStyle]}>
-        <View style={styles.calloutContainer}>
-          {step.indicator && showIndicatorAboveCard && (
-            <View
-              style={styles.indicatorWrapper}
-              accessibilityLabel={`${step.indicator.label} indicator`}
-            >
-              <RNText
-                style={[styles.indicatorText, { color: COLORS.PRIMARY_LIGHT }]}
-              >
-                {step.indicator.label}
-              </RNText>
-              <Ionicons
-                name={indicatorIcon}
-                size={22}
-                color={COLORS.SECONDARY_ACCENT}
-              />
-            </View>
-          )}
+      <View style={styles.overlay}>
+        {renderSpotlightBackdrop()}
+        <View style={styles.cardContainer}>
           <View
             style={[
               styles.card,
@@ -167,19 +172,24 @@ export default function TutorialModal({
               },
             ]}
           >
-            <View style={styles.skipRow}>
-              <TouchableOpacity
-                onPress={onSkip}
-                accessibilityLabel="Skip tutorial"
-                accessibilityRole="button"
-              >
-                <RNText
-                  style={[styles.skipText, { color: COLORS.SECONDARY_ACCENT }]}
+            {!isLastStep && (
+              <View style={styles.skipRow}>
+                <TouchableOpacity
+                  onPress={onSkip}
+                  accessibilityLabel="Skip tutorial"
+                  accessibilityRole="button"
                 >
-                  Skip
-                </RNText>
-              </TouchableOpacity>
-            </View>
+                  <RNText
+                    style={[
+                      styles.skipText,
+                      { color: COLORS.SECONDARY_ACCENT },
+                    ]}
+                  >
+                    Skip
+                  </RNText>
+                </TouchableOpacity>
+              </View>
+            )}
 
             <View style={styles.content}>
               <Ionicons
@@ -233,23 +243,6 @@ export default function TutorialModal({
               </TouchableOpacity>
             </View>
           </View>
-          {step.indicator && !showIndicatorAboveCard && (
-            <View
-              style={styles.indicatorWrapper}
-              accessibilityLabel={`${step.indicator.label} indicator`}
-            >
-              <Ionicons
-                name={indicatorIcon}
-                size={22}
-                color={COLORS.SECONDARY_ACCENT}
-              />
-              <RNText
-                style={[styles.indicatorText, { color: COLORS.PRIMARY_LIGHT }]}
-              >
-                {step.indicator.label}
-              </RNText>
-            </View>
-          )}
         </View>
       </View>
     </Modal>
@@ -259,24 +252,25 @@ export default function TutorialModal({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
-  calloutTop: {
-    justifyContent: 'flex-start',
+  fullBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
-  calloutCenter: {
-    justifyContent: 'center',
+  spotlightBackdrop: {
+    ...StyleSheet.absoluteFillObject,
   },
-  calloutBottom: {
-    justifyContent: 'flex-end',
+  spotlightPane: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
-  calloutContainer: {
+  cardContainer: {
     width: '100%',
     maxWidth: 560,
-    alignItems: 'center',
   },
   card: {
     width: '100%',
@@ -286,18 +280,6 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingBottom: 24,
     minHeight: 440,
-  },
-  indicatorWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginVertical: 8,
-  },
-  indicatorText: {
-    fontSize: 13,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.4,
   },
   skipRow: {
     alignItems: 'flex-end',
