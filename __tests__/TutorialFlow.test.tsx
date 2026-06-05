@@ -45,6 +45,55 @@ describe('Tutorial flow components', () => {
     expect(onSkip).not.toHaveBeenCalled();
   });
 
+  test('TutorialModal shows directional indicators for guided UI targets', () => {
+    let tree!: ReactTestRenderer.ReactTestRenderer;
+
+    ReactTestRenderer.act(() => {
+      tree = ReactTestRenderer.create(
+        <TutorialModal visible onComplete={jest.fn()} onSkip={jest.fn()} />,
+      );
+    });
+
+    expect(() =>
+      tree.root.findByProps({ accessibilityLabel: 'TOAST logo indicator' }),
+    ).toThrow();
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    expect(
+      tree.root.findByProps({ accessibilityLabel: 'TOAST logo indicator' }),
+    ).toBeTruthy();
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    expect(
+      tree.root.findByProps({ accessibilityLabel: 'Section header indicator' }),
+    ).toBeTruthy();
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    expect(
+      tree.root.findByProps({
+        accessibilityLabel: 'Footer controls indicator',
+      }),
+    ).toBeTruthy();
+  });
+
   test('HelpModal launches tutorial from How to use section', () => {
     const onLaunchTutorial = jest.fn();
     let tree!: ReactTestRenderer.ReactTestRenderer;
