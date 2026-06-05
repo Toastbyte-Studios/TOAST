@@ -46,11 +46,17 @@ describe('Tutorial flow components', () => {
   });
 
   test('TutorialModal spotlights guided UI targets and hides skip on done', () => {
+    const onSpotlightTargetChange = jest.fn();
     let tree!: ReactTestRenderer.ReactTestRenderer;
 
     ReactTestRenderer.act(() => {
       tree = ReactTestRenderer.create(
-        <TutorialModal visible onComplete={jest.fn()} onSkip={jest.fn()} />,
+        <TutorialModal
+          visible
+          onComplete={jest.fn()}
+          onSkip={jest.fn()}
+          onSpotlightTargetChange={onSpotlightTargetChange}
+        />,
       );
     });
 
@@ -103,6 +109,10 @@ describe('Tutorial flow components', () => {
     expect(() =>
       tree.root.findByProps({ accessibilityLabel: 'Skip tutorial' }),
     ).toThrow();
+
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('logo');
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('sectionHeader');
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('footerButtons');
   });
 
   test('HelpModal launches tutorial from How to use section', () => {
@@ -115,7 +125,6 @@ describe('Tutorial flow components', () => {
           visible
           onClose={jest.fn()}
           onLaunchTutorial={onLaunchTutorial}
-          onResetTutorial={jest.fn()}
         />,
       );
     });
@@ -132,16 +141,9 @@ describe('Tutorial flow components', () => {
         .props.onPress();
     });
 
-    expect(
-      tree.root.findByProps({
-        children:
-          'Replay runs the tutorial now. Reset clears first-run progress and restarts onboarding now.',
-      }),
-    ).toBeTruthy();
-
-    expect(
+    expect(() =>
       tree.root.findByProps({ accessibilityLabel: 'Reset tutorial progress' }),
-    ).toBeTruthy();
+    ).toThrow();
 
     expect(onLaunchTutorial).toHaveBeenCalledTimes(1);
   });

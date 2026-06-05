@@ -16,7 +16,6 @@ interface HelpModalProps {
   visible: boolean;
   onClose: () => void;
   onLaunchTutorial?: () => void;
-  onResetTutorial?: () => void;
 }
 
 type HelpSection = 'what' | 'how' | 'privacy' | 'terms' | 'contact';
@@ -42,7 +41,6 @@ export const HelpModal = ({
   visible,
   onClose,
   onLaunchTutorial,
-  onResetTutorial,
 }: HelpModalProps) => {
   const COLORS = useTheme();
   const [expandedSection, setExpandedSection] = useState<HelpSection | null>(
@@ -218,8 +216,7 @@ export const HelpModal = ({
               <ScrollView style={styles.content}>
                 {helpSections.map((section) => {
                   const shouldShowTutorialActions = section.id === 'how';
-                  const hasTutorialActionHandlers =
-                    !!onLaunchTutorial || !!onResetTutorial;
+                  const hasTutorialActionHandlers = !!onLaunchTutorial;
 
                   return (
                     <View key={section.id} style={styles.accordionItem}>
@@ -285,16 +282,6 @@ export const HelpModal = ({
                           {shouldShowTutorialActions &&
                             hasTutorialActionHandlers && (
                               <>
-                                <RNText
-                                  style={[
-                                    styles.tutorialActionHint,
-                                    { color: COLORS.PRIMARY_DARK },
-                                  ]}
-                                >
-                                  Replay runs the tutorial now. Reset clears
-                                  first-run progress and restarts onboarding
-                                  now.
-                                </RNText>
                                 {onLaunchTutorial && (
                                   <TouchableOpacity
                                     style={[
@@ -315,29 +302,6 @@ export const HelpModal = ({
                                       ]}
                                     >
                                       Replay Tutorial
-                                    </RNText>
-                                  </TouchableOpacity>
-                                )}
-                                {onResetTutorial && (
-                                  <TouchableOpacity
-                                    style={[
-                                      styles.tutorialActionButton,
-                                      styles.secondaryTutorialButton,
-                                      {
-                                        borderColor: COLORS.TOAST_BROWN,
-                                      },
-                                    ]}
-                                    onPress={onResetTutorial}
-                                    accessibilityLabel="Reset tutorial progress"
-                                    accessibilityRole="button"
-                                  >
-                                    <RNText
-                                      style={[
-                                        styles.tutorialActionButtonText,
-                                        { color: COLORS.PRIMARY_DARK },
-                                      ]}
-                                    >
-                                      Reset Tutorial Progress
                                     </RNText>
                                   </TouchableOpacity>
                                 )}
@@ -429,19 +393,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 14,
   },
-  tutorialActionHint: {
-    marginTop: 12,
-    fontSize: 12,
-    lineHeight: 17,
-    fontWeight: '600',
-  },
   tutorialActionButtonText: {
     fontSize: 14,
     fontWeight: '800',
     textAlign: 'center',
-  },
-  secondaryTutorialButton: {
-    borderWidth: 1,
-    backgroundColor: 'transparent',
   },
 });

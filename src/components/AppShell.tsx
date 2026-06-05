@@ -35,6 +35,10 @@ import LogoHeader from './LogoHeader';
 import ScreenContainer from './ScreenContainer';
 import { SettingsModal } from './SettingsModal';
 import TutorialModal from './TutorialModal';
+import {
+  TutorialSpotlightContext,
+  TutorialSpotlightTarget,
+} from './TutorialSpotlightContext';
 
 type Props = PropsWithChildren;
 
@@ -76,6 +80,9 @@ export default function AppShell({ children }: Props) {
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [isHelpVisible, setIsHelpVisible] = useState(false);
   const [isTutorialVisible, setIsTutorialVisible] = useState(false);
+  const [tutorialSpotlightTarget, setTutorialSpotlightTarget] = useState<
+    TutorialSpotlightTarget | undefined
+  >(undefined);
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );
@@ -90,16 +97,6 @@ export default function AppShell({ children }: Props) {
       })
       .finally(() => {
         setIsTutorialVisible(false);
-      });
-  };
-
-  const resetTutorialState = () => {
-    AsyncStorage.removeItem(TUTORIAL_STORAGE_KEY)
-      .catch(() => {
-        // Ignore persistence failures and still allow reopening for QA/testing.
-      })
-      .finally(() => {
-        setIsTutorialVisible(true);
       });
   };
 
@@ -205,91 +202,103 @@ export default function AppShell({ children }: Props) {
   );
 
   return (
-    <ScreenContainer>
-      <View style={styles.gestureContainer} {...panResponder.panHandlers}>
-        <Animated.View
-          style={[styles.shell, { transform: [{ translateY: translateYRef }] }]}
-        >
-          <View style={styles.header}>
-            <View style={styles.dateAndHelpContainer}>
-              <Text
-                style={[styles.dateText, { color: COLORS.PRIMARY_DARK }]}
-                accessibilityLabel={`Current date: ${currentDate}`}
-              >
-                {currentDate}
-              </Text>
+    <TutorialSpotlightContext.Provider value={tutorialSpotlightTarget}>
+      <ScreenContainer>
+        <View style={styles.gestureContainer} {...panResponder.panHandlers}>
+          <Animated.View
+            style={[
+              styles.shell,
+              { transform: [{ translateY: translateYRef }] },
+            ]}
+          >
+            <View style={styles.header}>
+              <View style={styles.dateAndHelpContainer}>
+                <Text
+                  style={[styles.dateText, { color: COLORS.PRIMARY_DARK }]}
+                  accessibilityLabel={`Current date: ${currentDate}`}
+                >
+                  {currentDate}
+                </Text>
+                <TouchableOpacity
+                  style={styles.helpButton}
+                  onPress={() => setIsHelpVisible(true)}
+                  accessibilityLabel="Help"
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name="help-circle-outline"
+                    size={32}
+                    color={COLORS.PRIMARY_DARK}
+                  />
+                </TouchableOpacity>
+              </View>
+
               <TouchableOpacity
-                style={styles.helpButton}
-                onPress={() => setIsHelpVisible(true)}
-                accessibilityLabel="Help"
+                style={styles.settingsButton}
+                onPress={() => setIsSettingsVisible(true)}
+                accessibilityLabel="Settings"
                 accessibilityRole="button"
               >
                 <Ionicons
-                  name="help-circle-outline"
-                  size={32}
+                  name="settings-outline"
+                  size={26}
                   color={COLORS.PRIMARY_DARK}
                 />
               </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('Home');
+                }}
+                style={
+                  tutorialSpotlightTarget === 'logo' && styles.spotlightTarget
+                }
+                accessibilityLabel="Go to home screen"
+                accessibilityRole="button"
+              >
+                <LogoHeader shadowStyle={sunShadow} />
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={() => setIsSettingsVisible(true)}
-              accessibilityLabel="Settings"
-              accessibilityRole="button"
-            >
-              <Ionicons
-                name="settings-outline"
-                size={26}
-                color={COLORS.PRIMARY_DARK}
-              />
-            </TouchableOpacity>
+            <View style={styles.content}>{children}</View>
+          </Animated.View>
 
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('Home');
-              }}
-              accessibilityLabel="Go to home screen"
-              accessibilityRole="button"
-            >
-              <LogoHeader shadowStyle={sunShadow} />
-            </TouchableOpacity>
+          <View style={styles.bottomRule}>
+            <HorizontalRule />
           </View>
 
-          <View style={styles.content}>{children}</View>
-        </Animated.View>
+          <View
+            style={
+              tutorialSpotlightTarget === 'footerButtons' &&
+              styles.spotlightTarget
+            }
+          >
+            <Footer />
+          </View>
 
-        <View style={styles.bottomRule}>
-          <HorizontalRule />
+          <TutorialModal
+            visible={isTutorialVisible}
+            onComplete={markTutorialComplete}
+            onSkip={markTutorialComplete}
+            onSpotlightTargetChange={setTutorialSpotlightTarget}
+          />
         </View>
 
-        <Footer />
-      </View>
+        <SettingsModal
+          visible={isSettingsVisible}
+          onClose={() => setIsSettingsVisible(false)}
+        />
 
-      <SettingsModal
-        visible={isSettingsVisible}
-        onClose={() => setIsSettingsVisible(false)}
-      />
-
-      <HelpModal
-        visible={isHelpVisible}
-        onClose={() => setIsHelpVisible(false)}
-        onLaunchTutorial={() => {
-          setIsHelpVisible(false);
-          setIsTutorialVisible(true);
-        }}
-        onResetTutorial={() => {
-          setIsHelpVisible(false);
-          resetTutorialState();
-        }}
-      />
-
-      <TutorialModal
-        visible={isTutorialVisible}
-        onComplete={markTutorialComplete}
-        onSkip={markTutorialComplete}
-      />
-    </ScreenContainer>
+        <HelpModal
+          visible={isHelpVisible}
+          onClose={() => setIsHelpVisible(false)}
+          onLaunchTutorial={() => {
+            setIsHelpVisible(false);
+            setIsTutorialVisible(true);
+          }}
+        />
+      </ScreenContainer>
+    </TutorialSpotlightContext.Provider>
   );
 }
 
@@ -342,5 +351,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: FOOTER_HEIGHT,
     width: '100%',
+  },
+  spotlightTarget: {
+    position: 'relative',
+    zIndex: 200,
+    elevation: 200,
   },
 });

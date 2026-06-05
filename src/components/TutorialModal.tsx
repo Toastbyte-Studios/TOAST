@@ -1,26 +1,26 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
-  Modal,
   StyleSheet,
   TouchableOpacity,
   View,
   Text as RNText,
-  ViewStyle,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
+import { TutorialSpotlightTarget } from './TutorialSpotlightContext';
 
 interface TutorialModalProps {
   visible: boolean;
   onComplete: () => void;
   onSkip: () => void;
+  onSpotlightTargetChange?: (target?: TutorialSpotlightTarget) => void;
 }
 
 interface TutorialStep {
   icon: string;
   title: string;
   description: string;
-  spotlightTarget?: 'logo' | 'sectionHeader' | 'footerButtons';
+  spotlightTarget?: TutorialSpotlightTarget;
 }
 
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -66,50 +66,16 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   },
 ];
 
-type SpotlightTarget = NonNullable<TutorialStep['spotlightTarget']>;
 const FOOTER_SPOTLIGHT_HEIGHT = 94;
 const TUTORIAL_CARD_BOTTOM_GAP = 5;
 const TUTORIAL_CARD_BOTTOM_OFFSET =
   FOOTER_SPOTLIGHT_HEIGHT + TUTORIAL_CARD_BOTTOM_GAP;
 
-const SPOTLIGHT_BACKDROP_STYLES: Record<
-  SpotlightTarget,
-  {
-    top: ViewStyle;
-    bottom: ViewStyle;
-    left: ViewStyle;
-    right: ViewStyle;
-  }
-> = {
-  logo: {
-    top: { left: 0, right: 0, top: 0, bottom: 140 },
-    bottom: { left: 0, right: 0, top: 224, bottom: 0 },
-    left: { left: 0, top: 140, width: '30%', height: 84 },
-    right: { right: 0, top: 140, width: '30%', height: 84 },
-  },
-  sectionHeader: {
-    top: { left: 0, right: 0, top: 0, bottom: 198 },
-    bottom: { left: 0, right: 0, top: 254, bottom: 0 },
-    left: { left: 0, top: 198, width: '10%', height: 56 },
-    right: { right: 0, top: 198, width: '10%', height: 56 },
-  },
-  footerButtons: {
-    top: { left: 0, right: 0, top: 0, bottom: FOOTER_SPOTLIGHT_HEIGHT },
-    bottom: { left: 0, right: 0, bottom: 0, height: 0 },
-    left: { left: 0, bottom: 0, width: '2%', height: FOOTER_SPOTLIGHT_HEIGHT },
-    right: {
-      right: 0,
-      bottom: 0,
-      width: '2%',
-      height: FOOTER_SPOTLIGHT_HEIGHT,
-    },
-  },
-};
-
 export default function TutorialModal({
   visible,
   onComplete,
   onSkip,
+  onSpotlightTargetChange,
 }: TutorialModalProps) {
   const COLORS = useTheme();
   const [currentStep, setCurrentStep] = useState(0);
@@ -122,6 +88,10 @@ export default function TutorialModal({
       setCurrentStep(0);
     }
   }, [visible]);
+
+  useEffect(() => {
+    onSpotlightTargetChange?.(visible ? spotlightTarget : undefined);
+  }, [onSpotlightTargetChange, spotlightTarget, visible]);
 
   const dots = useMemo(
     () =>
@@ -142,139 +112,109 @@ export default function TutorialModal({
       )),
     [COLORS.SECONDARY_ACCENT, COLORS.TOAST_BROWN, currentStep],
   );
-  const renderSpotlightBackdrop = () => {
-    if (!spotlightTarget) {
-      return <View style={styles.fullBackdrop} pointerEvents="none" />;
-    }
-    const targetBackdropStyle = SPOTLIGHT_BACKDROP_STYLES[spotlightTarget];
-
-    return (
-      <View
-        style={styles.spotlightBackdrop}
-        pointerEvents="none"
-        accessibilityLabel={`${spotlightTarget} spotlight`}
-      >
-        <View style={[styles.spotlightPane, targetBackdropStyle.top]} />
-        <View style={[styles.spotlightPane, targetBackdropStyle.bottom]} />
-        <View style={[styles.spotlightPane, targetBackdropStyle.left]} />
-        <View style={[styles.spotlightPane, targetBackdropStyle.right]} />
-      </View>
-    );
-  };
+  if (!visible) {
+    return null;
+  }
 
   return (
-    <Modal
-      visible={visible}
-      animationType="fade"
-      transparent
-      onRequestClose={onSkip}
-    >
-      <View style={styles.overlay}>
-        {renderSpotlightBackdrop()}
-        <View style={styles.cardContainer}>
-          <View
-            style={[
-              styles.card,
-              {
-                backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
-              },
-            ]}
-          >
-            {!isLastStep && (
-              <View style={styles.skipRow}>
-                <TouchableOpacity
-                  onPress={onSkip}
-                  accessibilityLabel="Skip tutorial"
-                  accessibilityRole="button"
-                >
-                  <RNText
-                    style={[
-                      styles.skipText,
-                      { color: COLORS.SECONDARY_ACCENT },
-                    ]}
-                  >
-                    Skip
-                  </RNText>
-                </TouchableOpacity>
-              </View>
-            )}
-
-            <View style={styles.content}>
-              <Ionicons
-                name={step.icon}
-                size={66}
-                color={COLORS.PRIMARY_DARK}
-              />
-              <RNText style={[styles.title, { color: COLORS.PRIMARY_DARK }]}>
-                {step.title}
-              </RNText>
-              <RNText
-                style={[styles.description, { color: COLORS.PRIMARY_DARK }]}
-                accessibilityLabel={step.description}
-              >
-                {step.description}
-              </RNText>
-            </View>
-
-            <View style={styles.footer}>
-              <RNText
-                style={[styles.progressText, { color: COLORS.PRIMARY_DARK }]}
-              >
-                {currentStep + 1} / {TUTORIAL_STEPS.length}
-              </RNText>
-              <View style={styles.dots}>{dots}</View>
+    <View style={styles.overlay}>
+      <View style={styles.fullBackdrop} pointerEvents="none" />
+      {spotlightTarget && (
+        <View
+          pointerEvents="none"
+          accessibilityLabel={`${spotlightTarget} spotlight`}
+        />
+      )}
+      <View style={styles.cardContainer}>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: COLORS.PRIMARY_LIGHT,
+              borderColor: COLORS.TOAST_BROWN,
+            },
+          ]}
+        >
+          {!isLastStep && (
+            <View style={styles.skipRow}>
               <TouchableOpacity
-                onPress={() => {
-                  if (isLastStep) {
-                    onComplete();
-                    return;
-                  }
-                  setCurrentStep((prev) => prev + 1);
-                }}
-                style={[
-                  styles.primaryButton,
-                  { backgroundColor: COLORS.SECONDARY_ACCENT },
-                ]}
-                accessibilityLabel={
-                  isLastStep ? 'Finish tutorial' : 'Next tutorial step'
-                }
+                onPress={onSkip}
+                accessibilityLabel="Skip tutorial"
                 accessibilityRole="button"
               >
                 <RNText
-                  style={[
-                    styles.primaryButtonText,
-                    { color: COLORS.PRIMARY_DARK },
-                  ]}
+                  style={[styles.skipText, { color: COLORS.SECONDARY_ACCENT }]}
                 >
-                  {isLastStep ? 'Done' : 'Next'}
+                  Skip
                 </RNText>
               </TouchableOpacity>
             </View>
+          )}
+
+          <View style={styles.content}>
+            <Ionicons name={step.icon} size={66} color={COLORS.PRIMARY_DARK} />
+            <RNText style={[styles.title, { color: COLORS.PRIMARY_DARK }]}>
+              {step.title}
+            </RNText>
+            <RNText
+              style={[styles.description, { color: COLORS.PRIMARY_DARK }]}
+              accessibilityLabel={step.description}
+            >
+              {step.description}
+            </RNText>
+          </View>
+
+          <View style={styles.footer}>
+            <RNText
+              style={[styles.progressText, { color: COLORS.PRIMARY_DARK }]}
+            >
+              {currentStep + 1} / {TUTORIAL_STEPS.length}
+            </RNText>
+            <View style={styles.dots}>{dots}</View>
+            <TouchableOpacity
+              onPress={() => {
+                if (isLastStep) {
+                  onComplete();
+                  return;
+                }
+                setCurrentStep((prev) => prev + 1);
+              }}
+              style={[
+                styles.primaryButton,
+                { backgroundColor: COLORS.SECONDARY_ACCENT },
+              ]}
+              accessibilityLabel={
+                isLastStep ? 'Finish tutorial' : 'Next tutorial step'
+              }
+              accessibilityRole="button"
+            >
+              <RNText
+                style={[
+                  styles.primaryButtonText,
+                  { color: COLORS.PRIMARY_DARK },
+                ]}
+              >
+                {isLastStep ? 'Done' : 'Next'}
+              </RNText>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
-    </Modal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   overlay: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'flex-end',
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 20,
+    zIndex: 100,
   },
   fullBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
-  },
-  spotlightBackdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  spotlightPane: {
-    position: 'absolute',
     backgroundColor: 'rgba(0, 0, 0, 0.65)',
   },
   cardContainer: {
