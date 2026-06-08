@@ -19,6 +19,7 @@ import {
   Easing,
   Text,
 } from 'react-native';
+import Svg, { Circle, Defs, Mask, Rect as SvgRect } from 'react-native-svg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useKeyboardStatus } from '../hooks/useKeyboardStatus';
 import { useSunShadow } from '../hooks/useSunShadow';
@@ -37,6 +38,7 @@ import ScreenContainer from './ScreenContainer';
 import { SettingsModal } from './SettingsModal';
 import TutorialModal from './TutorialModal';
 import {
+  SpotlightLayout,
   TutorialSpotlightContext,
   TutorialSpotlightTarget,
 } from './TutorialSpotlightContext';
@@ -84,6 +86,11 @@ export default function AppShell({ children }: Props) {
   const [tutorialSpotlightTarget, setTutorialSpotlightTarget] = useState<
     TutorialSpotlightTarget | undefined
   >(undefined);
+  const [spotlightLayout, setSpotlightLayout] =
+    useState<SpotlightLayout | null>(null);
+  const logoRef = useRef<React.ElementRef<typeof TouchableOpacity>>(null);
+  const gestureContainerRef = useRef<View>(null);
+  const sectionHeaderRef = useRef<any>(null);
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );
@@ -151,6 +158,31 @@ export default function AppShell({ children }: Props) {
     }).start();
   }, [isKeyboardVisible, keyboardHeight, translateYRef]);
 
+  useEffect(() => {
+    setSpotlightLayout(null);
+    const targetRef =
+      tutorialSpotlightTarget === 'logo'
+        ? logoRef.current
+        : tutorialSpotlightTarget === 'sectionHeader'
+          ? sectionHeaderRef.current
+          : null;
+    if (!targetRef) return;
+    targetRef.measureInWindow(
+      (ex: number, ey: number, ew: number, eh: number) => {
+        gestureContainerRef.current?.measureInWindow(
+          (cx: number, cy: number) => {
+            setSpotlightLayout({
+              x: ex - cx,
+              y: ey - cy,
+              width: ew,
+              height: eh,
+            });
+          },
+        );
+      },
+    );
+  }, [tutorialSpotlightTarget]);
+
   const panResponder = useMemo(
     () =>
       PanResponder.create({
@@ -210,8 +242,19 @@ export default function AppShell({ children }: Props) {
 
   return (
     <ScreenContainer>
-      <TutorialSpotlightContext.Provider value={tutorialSpotlightTarget}>
-        <View style={styles.gestureContainer} {...panResponder.panHandlers}>
+      <TutorialSpotlightContext.Provider
+        value={{
+          target: tutorialSpotlightTarget,
+          setSpotlightLayout,
+          containerRef: gestureContainerRef,
+          sectionHeaderRef,
+        }}
+      >
+        <View
+          ref={gestureContainerRef}
+          style={styles.gestureContainer}
+          {...panResponder.panHandlers}
+        >
           <Animated.View
             style={[
               styles.shell,
@@ -254,14 +297,10 @@ export default function AppShell({ children }: Props) {
               </TouchableOpacity>
 
               <TouchableOpacity
+                ref={logoRef}
                 onPress={() => {
                   navigation.navigate('Home');
                 }}
-                style={
-                  tutorialSpotlightTarget === 'logo'
-                    ? styles.spotlightTarget
-                    : undefined
-                }
                 accessibilityLabel="Go to home screen"
                 accessibilityRole="button"
               >
@@ -277,7 +316,57 @@ export default function AppShell({ children }: Props) {
           </View>
 
           {isTutorialVisible && (
-            <View style={styles.tutorialBackdrop} pointerEvents="none" />
+            <Svg
+              width="100%"
+              height="100%"
+              pointerEvents="none"
+              style={styles.tutorialBackdrop}
+            >
+              <Defs>
+                <Mask id="backdropMask">
+                  <SvgRect
+                    x="-1000"
+                    y="-1000"
+                    width="5000"
+                    height="5000"
+                    fill="white"
+                  />
+                  {spotlightLayout && tutorialSpotlightTarget === 'logo' && (
+                    <Circle
+                      cx={spotlightLayout.x + spotlightLayout.width / 2}
+                      cy={spotlightLayout.y + spotlightLayout.height / 2}
+                      r={
+                        Math.min(
+                          spotlightLayout.width,
+                          spotlightLayout.height,
+                        ) / 2
+                      }
+                      fill="black"
+                    />
+                  )}
+                  {spotlightLayout &&
+                    tutorialSpotlightTarget === 'sectionHeader' && (
+                      <SvgRect
+                        x={spotlightLayout.x}
+                        y={spotlightLayout.y}
+                        width={spotlightLayout.width}
+                        height={spotlightLayout.height}
+                        rx={8}
+                        ry={8}
+                        fill="black"
+                      />
+                    )}
+                </Mask>
+              </Defs>
+              <SvgRect
+                x="-1000"
+                y="-1000"
+                width="5000"
+                height="5000"
+                fill="rgba(0,0,0,0.65)"
+                mask="url(#backdropMask)"
+              />
+            </Svg>
           )}
 
           <View
@@ -368,7 +457,6 @@ const styles = StyleSheet.create({
   },
   tutorialBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.65)',
     zIndex: 100,
   },
   spotlightTarget: {

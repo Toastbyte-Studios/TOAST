@@ -43,9 +43,7 @@ export default function SectionHeader({
 }: Props) {
   const navigation = useNavigation<SectionHeaderNavigationProp>();
   const COLORS = useTheme();
-  const tutorialSpotlightTarget = React.useContext(TutorialSpotlightContext);
-  const isSectionHeaderSpotlighted =
-    tutorialSpotlightTarget === 'sectionHeader';
+  const { sectionHeaderRef } = React.useContext(TutorialSpotlightContext);
 
   const handlePress = () => {
     navigation.navigate('Search');
@@ -76,12 +74,10 @@ export default function SectionHeader({
     <>
       {enableSearch ? (
         <TouchableOpacity
+          ref={sectionHeaderRef}
           onPress={handlePress}
           activeOpacity={0.7}
-          style={[
-            styles.searchBar,
-            isSectionHeaderSpotlighted && styles.spotlight,
-          ]}
+          style={styles.searchBar}
           accessibilityRole="button"
           accessibilityLabel="Search"
           accessibilityHint="Double tap to open search screen"
@@ -98,9 +94,7 @@ export default function SectionHeader({
           </View>
         </TouchableOpacity>
       ) : (
-        <View style={isSectionHeaderSpotlighted ? styles.spotlight : undefined}>
-          {header}
-        </View>
+        <View ref={sectionHeaderRef}>{header}</View>
       )}
       {isShowHr && <HorizontalRule />}
     </>
@@ -138,10 +132,5 @@ const styles = StyleSheet.create({
   },
   headerWithSearch: {
     paddingHorizontal: 40,
-  },
-  spotlight: {
-    position: 'relative',
-    zIndex: 200,
-    elevation: 200,
   },
 });
