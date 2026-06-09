@@ -281,31 +281,27 @@ export const HelpModal = ({
                           </RNText>
                           {shouldShowTutorialActions &&
                             hasTutorialActionHandlers && (
-                              <>
-                                {onLaunchTutorial && (
-                                  <TouchableOpacity
-                                    style={[
-                                      styles.tutorialActionButton,
-                                      {
-                                        backgroundColor:
-                                          COLORS.SECONDARY_ACCENT,
-                                      },
-                                    ]}
-                                    onPress={onLaunchTutorial}
-                                    accessibilityLabel="Replay tutorial now"
-                                    accessibilityRole="button"
-                                  >
-                                    <RNText
-                                      style={[
-                                        styles.tutorialActionButtonText,
-                                        { color: COLORS.PRIMARY_DARK },
-                                      ]}
-                                    >
-                                      Replay Tutorial
-                                    </RNText>
-                                  </TouchableOpacity>
-                                )}
-                              </>
+                              <TouchableOpacity
+                                style={[
+                                  styles.tutorialActionButton,
+                                  {
+                                    backgroundColor:
+                                      COLORS.SECONDARY_ACCENT,
+                                  },
+                                ]}
+                                onPress={onLaunchTutorial}
+                                accessibilityLabel="Replay tutorial now"
+                                accessibilityRole="button"
+                              >
+                                <RNText
+                                  style={[
+                                    styles.tutorialActionButtonText,
+                                    { color: COLORS.PRIMARY_DARK },
+                                  ]}
+                                >
+                                  Replay Tutorial
+                                </RNText>
+                              </TouchableOpacity>
                             )}
                         </View>
                       )}

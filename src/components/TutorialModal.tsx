@@ -8,6 +8,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
 import { TutorialSpotlightTarget } from './TutorialSpotlightContext';
+import { FOOTER_HEIGHT } from '../theme/constants';
 
 interface TutorialModalProps {
   visible: boolean;
@@ -66,10 +67,8 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   },
 ];
 
-const FOOTER_SPOTLIGHT_HEIGHT = 94;
 const TUTORIAL_CARD_BOTTOM_GAP = 5;
-const TUTORIAL_CARD_BOTTOM_OFFSET =
-  FOOTER_SPOTLIGHT_HEIGHT + TUTORIAL_CARD_BOTTOM_GAP;
+const TUTORIAL_CARD_BOTTOM_OFFSET = FOOTER_HEIGHT + TUTORIAL_CARD_BOTTOM_GAP;
 
 export default function TutorialModal({
   visible,

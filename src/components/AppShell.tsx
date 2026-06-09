@@ -167,20 +167,26 @@ export default function AppShell({ children }: Props) {
           ? sectionHeaderRef.current
           : null;
     if (!targetRef) return;
+    let cancelled = false;
     targetRef.measureInWindow(
       (ex: number, ey: number, ew: number, eh: number) => {
         gestureContainerRef.current?.measureInWindow(
           (cx: number, cy: number) => {
-            setSpotlightLayout({
-              x: ex - cx,
-              y: ey - cy,
-              width: ew,
-              height: eh,
-            });
+            if (!cancelled) {
+              setSpotlightLayout({
+                x: ex - cx,
+                y: ey - cy,
+                width: ew,
+                height: eh,
+              });
+            }
           },
         );
       },
     );
+    return () => {
+      cancelled = true;
+    };
   }, [tutorialSpotlightTarget]);
 
   const panResponder = useMemo(
