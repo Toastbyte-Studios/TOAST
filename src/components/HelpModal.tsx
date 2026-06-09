@@ -15,6 +15,7 @@ import { useTheme } from '../hooks/useTheme';
 interface HelpModalProps {
   visible: boolean;
   onClose: () => void;
+  onLaunchTutorial?: () => void;
 }
 
 type HelpSection = 'what' | 'how' | 'privacy' | 'terms' | 'contact';
@@ -36,7 +37,11 @@ interface AccordionItem {
 // No-op handler to prevent backdrop touch from propagating
 const preventClose = () => {};
 
-export const HelpModal = ({ visible, onClose }: HelpModalProps) => {
+export const HelpModal = ({
+  visible,
+  onClose,
+  onLaunchTutorial,
+}: HelpModalProps) => {
   const COLORS = useTheme();
   const [expandedSection, setExpandedSection] = useState<HelpSection | null>(
     null,
@@ -209,71 +214,100 @@ export const HelpModal = ({ visible, onClose }: HelpModalProps) => {
               </View>
 
               <ScrollView style={styles.content}>
-                {helpSections.map((section) => (
-                  <View key={section.id} style={styles.accordionItem}>
-                    <TouchableOpacity
-                      style={[
-                        styles.accordionHeader,
-                        {
-                          borderColor: COLORS.TOAST_BROWN,
-                          backgroundColor: COLORS.BACKGROUND,
-                        },
-                        expandedSection === section.id && {
-                          backgroundColor: COLORS.TOAST_BROWN,
-                          borderColor: COLORS.PRIMARY_DARK,
-                        },
-                      ]}
-                      onPress={() => handleSectionPress(section.id)}
-                      accessibilityLabel={`${section.title} ${
-                        expandedSection === section.id
-                          ? 'expanded'
-                          : 'collapsed'
-                      }`}
-                      accessibilityRole="button"
-                      accessibilityHint={`Tap to ${
-                        expandedSection === section.id ? 'collapse' : 'expand'
-                      } ${section.title}`}
-                    >
-                      <RNText
+                {helpSections.map((section) => {
+                  const shouldShowTutorialActions = section.id === 'how';
+                  const hasTutorialActionHandlers = !!onLaunchTutorial;
+
+                  return (
+                    <View key={section.id} style={styles.accordionItem}>
+                      <TouchableOpacity
                         style={[
-                          styles.accordionTitle,
-                          { color: COLORS.PRIMARY_DARK },
-                        ]}
-                      >
-                        {section.title}
-                      </RNText>
-                      <Ionicons
-                        name={
-                          expandedSection === section.id
-                            ? 'chevron-up-outline'
-                            : 'chevron-down-outline'
-                        }
-                        size={24}
-                        color={COLORS.PRIMARY_DARK}
-                      />
-                    </TouchableOpacity>
-                    {expandedSection === section.id && (
-                      <View
-                        style={[
-                          styles.accordionContent,
+                          styles.accordionHeader,
                           {
-                            backgroundColor: COLORS.PRIMARY_LIGHT,
                             borderColor: COLORS.TOAST_BROWN,
+                            backgroundColor: COLORS.BACKGROUND,
+                          },
+                          expandedSection === section.id && {
+                            backgroundColor: COLORS.TOAST_BROWN,
+                            borderColor: COLORS.PRIMARY_DARK,
                           },
                         ]}
+                        onPress={() => handleSectionPress(section.id)}
+                        accessibilityLabel={`${section.title} ${
+                          expandedSection === section.id
+                            ? 'expanded'
+                            : 'collapsed'
+                        }`}
+                        accessibilityRole="button"
+                        accessibilityHint={`Tap to ${
+                          expandedSection === section.id ? 'collapse' : 'expand'
+                        } ${section.title}`}
                       >
                         <RNText
                           style={[
-                            styles.accordionText,
+                            styles.accordionTitle,
                             { color: COLORS.PRIMARY_DARK },
                           ]}
                         >
-                          {renderLinkableText(section.content)}
+                          {section.title}
                         </RNText>
-                      </View>
-                    )}
-                  </View>
-                ))}
+                        <Ionicons
+                          name={
+                            expandedSection === section.id
+                              ? 'chevron-up-outline'
+                              : 'chevron-down-outline'
+                          }
+                          size={24}
+                          color={COLORS.PRIMARY_DARK}
+                        />
+                      </TouchableOpacity>
+                      {expandedSection === section.id && (
+                        <View
+                          style={[
+                            styles.accordionContent,
+                            {
+                              backgroundColor: COLORS.PRIMARY_LIGHT,
+                              borderColor: COLORS.TOAST_BROWN,
+                            },
+                          ]}
+                        >
+                          <RNText
+                            style={[
+                              styles.accordionText,
+                              { color: COLORS.PRIMARY_DARK },
+                            ]}
+                          >
+                            {renderLinkableText(section.content)}
+                          </RNText>
+                          {shouldShowTutorialActions &&
+                            hasTutorialActionHandlers && (
+                              <TouchableOpacity
+                                style={[
+                                  styles.tutorialActionButton,
+                                  {
+                                    backgroundColor:
+                                      COLORS.SECONDARY_ACCENT,
+                                  },
+                                ]}
+                                onPress={onLaunchTutorial}
+                                accessibilityLabel="Replay tutorial now"
+                                accessibilityRole="button"
+                              >
+                                <RNText
+                                  style={[
+                                    styles.tutorialActionButtonText,
+                                    { color: COLORS.PRIMARY_DARK },
+                                  ]}
+                                >
+                                  Replay Tutorial
+                                </RNText>
+                              </TouchableOpacity>
+                            )}
+                        </View>
+                      )}
+                    </View>
+                  );
+                })}
               </ScrollView>
             </View>
           </TouchableWithoutFeedback>
@@ -348,5 +382,16 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: 'underline',
+  },
+  tutorialActionButton: {
+    marginTop: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  tutorialActionButtonText: {
+    fontSize: 14,
+    fontWeight: '800',
+    textAlign: 'center',
   },
 });

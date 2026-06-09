@@ -1,0 +1,134 @@
+import React from 'react';
+import ReactTestRenderer from 'react-test-renderer';
+import { HelpModal } from '../src/components/HelpModal';
+import TutorialModal from '../src/components/TutorialModal';
+
+jest.mock('../src/hooks/useTheme', () => ({
+  useTheme: jest.fn(() => ({
+    TOAST_BROWN: '#C09A6B',
+    PRIMARY_DARK: '#1F1F1F',
+    PRIMARY_LIGHT: '#F2EDE4',
+    SECONDARY_ACCENT: '#8DAA9D',
+    BACKGROUND: '#D9C8B0',
+  })),
+}));
+
+jest.mock('react-native-vector-icons/Ionicons', () => 'Ionicons');
+
+describe('Tutorial flow components', () => {
+  test('TutorialModal advances through steps and completes', () => {
+    const onComplete = jest.fn();
+    const onSkip = jest.fn();
+    let tree!: ReactTestRenderer.ReactTestRenderer;
+
+    ReactTestRenderer.act(() => {
+      tree = ReactTestRenderer.create(
+        <TutorialModal visible onComplete={onComplete} onSkip={onSkip} />,
+      );
+    });
+
+    for (let step = 0; step < 6; step += 1) {
+      ReactTestRenderer.act(() => {
+        tree.root
+          .findByProps({ accessibilityLabel: 'Next tutorial step' })
+          .props.onPress();
+      });
+    }
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Finish tutorial' })
+        .props.onPress();
+    });
+
+    expect(onComplete).toHaveBeenCalledTimes(1);
+    expect(onSkip).not.toHaveBeenCalled();
+  });
+
+  test('TutorialModal spotlights guided UI targets and hides skip on done', () => {
+    const onSpotlightTargetChange = jest.fn();
+    let tree!: ReactTestRenderer.ReactTestRenderer;
+
+    ReactTestRenderer.act(() => {
+      tree = ReactTestRenderer.create(
+        <TutorialModal
+          visible
+          onComplete={jest.fn()}
+          onSkip={jest.fn()}
+          onSpotlightTargetChange={onSpotlightTargetChange}
+        />,
+      );
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+      tree.root
+        .findByProps({ accessibilityLabel: 'Next tutorial step' })
+        .props.onPress();
+    });
+
+    expect(() =>
+      tree.root.findByProps({ accessibilityLabel: 'Skip tutorial' }),
+    ).toThrow();
+
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('logo');
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('sectionHeader');
+    expect(onSpotlightTargetChange).toHaveBeenCalledWith('footerButtons');
+  });
+
+  test('HelpModal launches tutorial from How to use section', () => {
+    const onLaunchTutorial = jest.fn();
+    let tree!: ReactTestRenderer.ReactTestRenderer;
+
+    ReactTestRenderer.act(() => {
+      tree = ReactTestRenderer.create(
+        <HelpModal
+          visible
+          onClose={jest.fn()}
+          onLaunchTutorial={onLaunchTutorial}
+        />,
+      );
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'How to use collapsed' })
+        .props.onPress();
+    });
+
+    ReactTestRenderer.act(() => {
+      tree.root
+        .findByProps({ accessibilityLabel: 'Replay tutorial now' })
+        .props.onPress();
+    });
+
+    expect(() =>
+      tree.root.findByProps({ accessibilityLabel: 'Reset tutorial progress' }),
+    ).toThrow();
+
+    expect(onLaunchTutorial).toHaveBeenCalledTimes(1);
+  });
+});

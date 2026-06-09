@@ -8,6 +8,7 @@ import { SPACING } from '../theme';
 import { LIGHT_COLORS } from '../theme/colors';
 import { HorizontalRule } from './HorizontalRule';
 import { Text } from './ScaledText';
+import { TutorialSpotlightContext } from './TutorialSpotlightContext';
 
 type Props = TextProps & {
   title?: string;
@@ -42,6 +43,7 @@ export default function SectionHeader({
 }: Props) {
   const navigation = useNavigation<SectionHeaderNavigationProp>();
   const COLORS = useTheme();
+  const { sectionHeaderRef } = React.useContext(TutorialSpotlightContext);
 
   const handlePress = () => {
     navigation.navigate('Search');
@@ -72,6 +74,7 @@ export default function SectionHeader({
     <>
       {enableSearch ? (
         <TouchableOpacity
+          ref={sectionHeaderRef}
           onPress={handlePress}
           activeOpacity={0.7}
           style={styles.searchBar}
@@ -91,7 +94,7 @@ export default function SectionHeader({
           </View>
         </TouchableOpacity>
       ) : (
-        header
+        <View ref={sectionHeaderRef}>{header}</View>
       )}
       {isShowHr && <HorizontalRule />}
     </>

@@ -1,8 +1,10 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import dayjs from 'dayjs';
 import React, {
   PropsWithChildren,
+  useCallback,
   useMemo,
   useEffect,
   useRef,
@@ -17,6 +19,7 @@ import {
   Easing,
   Text,
 } from 'react-native';
+import Svg, { Circle, Defs, Mask, Rect as SvgRect } from 'react-native-svg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useKeyboardStatus } from '../hooks/useKeyboardStatus';
 import { useSunShadow } from '../hooks/useSunShadow';
@@ -33,6 +36,12 @@ import { HorizontalRule } from './HorizontalRule';
 import LogoHeader from './LogoHeader';
 import ScreenContainer from './ScreenContainer';
 import { SettingsModal } from './SettingsModal';
+import TutorialModal from './TutorialModal';
+import {
+  SpotlightLayout,
+  TutorialSpotlightContext,
+  TutorialSpotlightTarget,
+} from './TutorialSpotlightContext';
 
 type Props = PropsWithChildren;
 
@@ -41,6 +50,7 @@ type AppShellNavigationProp = NativeStackNavigationProp<{
 }>;
 
 const DATE_FORMAT = 'dddd, MMMM D, YYYY';
+const TUTORIAL_STORAGE_KEY = 'hasSeenTutorial';
 
 /**
  * Root layout wrapper for the app.
@@ -72,12 +82,31 @@ export default function AppShell({ children }: Props) {
   const translateYRef = useRef(new Animated.Value(0)).current;
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
   const [isHelpVisible, setIsHelpVisible] = useState(false);
+  const [isTutorialVisible, setIsTutorialVisible] = useState(false);
+  const [tutorialSpotlightTarget, setTutorialSpotlightTarget] = useState<
+    TutorialSpotlightTarget | undefined
+  >(undefined);
+  const [spotlightLayout, setSpotlightLayout] =
+    useState<SpotlightLayout | null>(null);
+  const logoRef = useRef<React.ElementRef<typeof TouchableOpacity>>(null);
+  const gestureContainerRef = useRef<View>(null);
+  const sectionHeaderRef = useRef<any>(null);
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );
   const timeoutRef = useRef<number | null>(null);
   const COLORS = useTheme();
   const sunShadow = useSunShadow();
+
+  const markTutorialComplete = () => {
+    AsyncStorage.setItem(TUTORIAL_STORAGE_KEY, 'true')
+      .catch(() => {
+        // Ignore persistence failures so users are not blocked in the tutorial.
+      })
+      .finally(() => {
+        setIsTutorialVisible(false);
+      });
+  };
 
   // Keep `currentDate` in sync with the calendar date by scheduling a timeout
   // to fire exactly at the next midnight. When the timeout runs, it updates
@@ -105,6 +134,22 @@ export default function AppShell({ children }: Props) {
   }, []);
 
   useEffect(() => {
+    let isMounted = true;
+
+    AsyncStorage.getItem(TUTORIAL_STORAGE_KEY)
+      .then((value) => {
+        if (isMounted && value === null) {
+          setIsTutorialVisible(true);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     Animated.timing(translateYRef, {
       toValue: isKeyboardVisible ? -keyboardHeight : 0,
       duration: 300,
@@ -112,6 +157,37 @@ export default function AppShell({ children }: Props) {
       useNativeDriver: true,
     }).start();
   }, [isKeyboardVisible, keyboardHeight, translateYRef]);
+
+  useEffect(() => {
+    setSpotlightLayout(null);
+    const targetRef =
+      tutorialSpotlightTarget === 'logo'
+        ? logoRef.current
+        : tutorialSpotlightTarget === 'sectionHeader'
+          ? sectionHeaderRef.current
+          : null;
+    if (!targetRef) return;
+    let cancelled = false;
+    targetRef.measureInWindow(
+      (ex: number, ey: number, ew: number, eh: number) => {
+        gestureContainerRef.current?.measureInWindow(
+          (cx: number, cy: number) => {
+            if (!cancelled) {
+              setSpotlightLayout({
+                x: ex - cx,
+                y: ey - cy,
+                width: ew,
+                height: eh,
+              });
+            }
+          },
+        );
+      },
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [tutorialSpotlightTarget]);
 
   const panResponder = useMemo(
     () =>
@@ -163,68 +239,160 @@ export default function AppShell({ children }: Props) {
       }),
     [navigationHistory, disableGestureNavigation],
   );
+  const handleSpotlightTargetChange = useCallback(
+    (target?: TutorialSpotlightTarget) => {
+      setTutorialSpotlightTarget(target);
+    },
+    [],
+  );
 
   return (
     <ScreenContainer>
-      <View style={styles.gestureContainer} {...panResponder.panHandlers}>
-        <Animated.View
-          style={[styles.shell, { transform: [{ translateY: translateYRef }] }]}
+      <TutorialSpotlightContext.Provider
+        value={{
+          target: tutorialSpotlightTarget,
+          setSpotlightLayout,
+          containerRef: gestureContainerRef,
+          sectionHeaderRef,
+        }}
+      >
+        <View
+          ref={gestureContainerRef}
+          style={styles.gestureContainer}
+          {...panResponder.panHandlers}
         >
-          <View style={styles.header}>
-            <View style={styles.dateAndHelpContainer}>
-              <Text
-                style={[styles.dateText, { color: COLORS.PRIMARY_DARK }]}
-                accessibilityLabel={`Current date: ${currentDate}`}
-              >
-                {currentDate}
-              </Text>
+          <Animated.View
+            style={[
+              styles.shell,
+              { transform: [{ translateY: translateYRef }] },
+            ]}
+          >
+            <View style={styles.header}>
+              <View style={styles.dateAndHelpContainer}>
+                <Text
+                  style={[styles.dateText, { color: COLORS.PRIMARY_DARK }]}
+                  accessibilityLabel={`Current date: ${currentDate}`}
+                >
+                  {currentDate}
+                </Text>
+                <TouchableOpacity
+                  style={styles.helpButton}
+                  onPress={() => setIsHelpVisible(true)}
+                  accessibilityLabel="Help"
+                  accessibilityRole="button"
+                >
+                  <Ionicons
+                    name="help-circle-outline"
+                    size={32}
+                    color={COLORS.PRIMARY_DARK}
+                  />
+                </TouchableOpacity>
+              </View>
+
               <TouchableOpacity
-                style={styles.helpButton}
-                onPress={() => setIsHelpVisible(true)}
-                accessibilityLabel="Help"
+                style={styles.settingsButton}
+                onPress={() => setIsSettingsVisible(true)}
+                accessibilityLabel="Settings"
                 accessibilityRole="button"
               >
                 <Ionicons
-                  name="help-circle-outline"
-                  size={32}
+                  name="settings-outline"
+                  size={26}
                   color={COLORS.PRIMARY_DARK}
                 />
               </TouchableOpacity>
+
+              <TouchableOpacity
+                ref={logoRef}
+                onPress={() => {
+                  navigation.navigate('Home');
+                }}
+                accessibilityLabel="Go to home screen"
+                accessibilityRole="button"
+              >
+                <LogoHeader shadowStyle={sunShadow} />
+              </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.settingsButton}
-              onPress={() => setIsSettingsVisible(true)}
-              accessibilityLabel="Settings"
-              accessibilityRole="button"
-            >
-              <Ionicons
-                name="settings-outline"
-                size={26}
-                color={COLORS.PRIMARY_DARK}
-              />
-            </TouchableOpacity>
+            <View style={styles.content}>{children}</View>
+          </Animated.View>
 
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate('Home');
-              }}
-              accessibilityLabel="Go to home screen"
-              accessibilityRole="button"
-            >
-              <LogoHeader shadowStyle={sunShadow} />
-            </TouchableOpacity>
+          <View style={styles.bottomRule}>
+            <HorizontalRule />
           </View>
 
-          <View style={styles.content}>{children}</View>
-        </Animated.View>
+          {isTutorialVisible && (
+            <Svg
+              width="100%"
+              height="100%"
+              pointerEvents="none"
+              style={styles.tutorialBackdrop}
+            >
+              <Defs>
+                <Mask id="backdropMask">
+                  <SvgRect
+                    x="-1000"
+                    y="-1000"
+                    width="5000"
+                    height="5000"
+                    fill="white"
+                  />
+                  {spotlightLayout && tutorialSpotlightTarget === 'logo' && (
+                    <Circle
+                      cx={spotlightLayout.x + spotlightLayout.width / 2}
+                      cy={spotlightLayout.y + spotlightLayout.height / 2}
+                      r={
+                        Math.min(
+                          spotlightLayout.width,
+                          spotlightLayout.height,
+                        ) / 2
+                      }
+                      fill="black"
+                    />
+                  )}
+                  {spotlightLayout &&
+                    tutorialSpotlightTarget === 'sectionHeader' && (
+                      <SvgRect
+                        x={spotlightLayout.x}
+                        y={spotlightLayout.y}
+                        width={spotlightLayout.width}
+                        height={spotlightLayout.height}
+                        rx={8}
+                        ry={8}
+                        fill="black"
+                      />
+                    )}
+                </Mask>
+              </Defs>
+              <SvgRect
+                x="-1000"
+                y="-1000"
+                width="5000"
+                height="5000"
+                fill="rgba(0,0,0,0.65)"
+                mask="url(#backdropMask)"
+              />
+            </Svg>
+          )}
 
-        <View style={styles.bottomRule}>
-          <HorizontalRule />
+          <View
+            style={
+              tutorialSpotlightTarget === 'footerButtons'
+                ? styles.spotlightTarget
+                : undefined
+            }
+          >
+            <Footer />
+          </View>
+
+          <TutorialModal
+            visible={isTutorialVisible}
+            onComplete={markTutorialComplete}
+            onSkip={markTutorialComplete}
+            onSpotlightTargetChange={handleSpotlightTargetChange}
+          />
         </View>
-
-        <Footer />
-      </View>
+      </TutorialSpotlightContext.Provider>
 
       <SettingsModal
         visible={isSettingsVisible}
@@ -234,6 +402,10 @@ export default function AppShell({ children }: Props) {
       <HelpModal
         visible={isHelpVisible}
         onClose={() => setIsHelpVisible(false)}
+        onLaunchTutorial={() => {
+          setIsHelpVisible(false);
+          setIsTutorialVisible(true);
+        }}
       />
     </ScreenContainer>
   );
@@ -288,5 +460,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: FOOTER_HEIGHT,
     width: '100%',
+  },
+  tutorialBackdrop: {
+    ...StyleSheet.absoluteFillObject,
+    zIndex: 100,
+  },
+  spotlightTarget: {
+    position: 'relative',
+    zIndex: 200,
+    elevation: 200,
   },
 });
