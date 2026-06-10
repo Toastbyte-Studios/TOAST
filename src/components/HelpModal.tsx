@@ -285,8 +285,7 @@ export const HelpModal = ({
                                 style={[
                                   styles.tutorialActionButton,
                                   {
-                                    backgroundColor:
-                                      COLORS.SECONDARY_ACCENT,
+                                    backgroundColor: COLORS.SECONDARY_ACCENT,
                                   },
                                 ]}
                                 onPress={onLaunchTutorial}

@@ -3,6 +3,7 @@ import { makeAutoObservable, runInAction } from 'mobx';
 import Geolocation from 'react-native-geolocation-service';
 import { NEIGHBORING_STATES } from '../data/neighboringStates';
 import { distanceMiles } from '../utils/distanceMiles';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 import { stateFromCoordinates } from '../utils/stateFromCoordinates';
 
 const CACHE_KEY = '@repeaterbook/cache';
@@ -103,15 +104,16 @@ function mapRow(
  * `X-App-Info` header so that RepeaterBook can authenticate the request even
  * if one of the two is dropped by the runtime.
  *
- * On network errors, non-OK HTTP responses, or JSON parsing failures, this
- * function rejects (throws). Callers such as `fetchRepeaters` use
- * `Promise.allSettled` so that a failure for one state does not affect others.
+ * On network errors, request timeouts, non-OK HTTP responses, or JSON parsing
+ * failures, this function rejects (throws). Callers such as `fetchRepeaters`
+ * use `Promise.allSettled` so that a failure for one state does not affect
+ * others.
  */
 async function fetchStateRepeaters(
   state: string,
 ): Promise<Record<string, string>[]> {
   const url = `${REPEATERBOOK_URL}?state=${encodeURIComponent(state)}&format=json`;
-  const response = await fetch(url, {
+  const response = await fetchWithTimeout(url, {
     headers: {
       'User-Agent': USER_AGENT,
       // Fallback for environments that strip User-Agent (some Android versions
