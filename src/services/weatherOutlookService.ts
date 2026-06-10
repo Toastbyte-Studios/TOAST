@@ -159,7 +159,8 @@ export function parseMonthlyResponse(
 
 /**
  * Fetches SEAS5 seasonal forecast data for the given coordinates.
- * Throws on network error, HTTP error, or request timeout.
+ * Throws when the request fails, the API returns a non-OK HTTP response,
+ * or the response payload is missing required data.
  */
 export async function fetchSeasonalData(
   lat: number,

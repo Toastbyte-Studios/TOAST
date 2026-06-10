@@ -4,8 +4,8 @@
  * React Native's `fetch` has no built-in request timeout: on a marginal
  * connection (one bar of signal at a trailhead) a request can open a TCP
  * connection and then stall indefinitely, leaving the UI in a permanent
- * loading state. Every remote call in the app should go through this helper
- * so a stalled request fails fast and callers can fall back to cached data.
+ * loading state. This helper lets call sites enforce a bounded wait so stalled
+ * requests fail fast and callers can fall back to cached data.
  *
  * See https://github.com/Toastbyte-Studios/TOAST/issues/343
  */
@@ -27,8 +27,8 @@ export class FetchTimeoutError extends Error {
 }
 
 /**
- * Drop-in replacement for `fetch` that aborts the request when no response
- * has been received within `timeoutMs`.
+ * Timeout-enabled wrapper around `fetch` for URL string requests that aborts
+ * when no response has been received within `timeoutMs`.
  *
  * - On timeout, rejects with {@link FetchTimeoutError}.
  * - A caller-provided `options.signal` is respected: if the caller aborts,
