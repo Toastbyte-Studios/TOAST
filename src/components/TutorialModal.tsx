@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
-import { TutorialSpotlightTarget } from './TutorialSpotlightContext';
 import { FOOTER_HEIGHT } from '../theme/constants';
+import { TutorialSpotlightTarget } from './TutorialSpotlightContext';
 
 interface TutorialModalProps {
   visible: boolean;
