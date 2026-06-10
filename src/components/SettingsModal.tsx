@@ -15,9 +15,13 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
 import {
   useCoreStore,
+  useEmergencyPlanStore,
   useInventoryStore,
   usePantryStore,
+  useRepeaterBookStore,
   useSettingsStore,
+  useTrackStore,
+  useWaypointStore,
 } from '../stores';
 import {
   addBookmark,
