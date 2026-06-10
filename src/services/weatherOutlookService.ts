@@ -11,6 +11,7 @@
  */
 
 import { SQLiteDatabase } from '../types/database-types';
+import { fetchWithTimeout } from '../utils/fetchWithTimeout';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -158,7 +159,7 @@ export function parseMonthlyResponse(
 
 /**
  * Fetches SEAS5 seasonal forecast data for the given coordinates.
- * Throws on network or HTTP error.
+ * Throws on network error, HTTP error, or request timeout.
  */
 export async function fetchSeasonalData(
   lat: number,
@@ -172,7 +173,7 @@ export async function fetchSeasonalData(
   });
 
   const url = `${SEASONAL_API_BASE}?${params.toString()}`;
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
 
   if (!response.ok) {
     throw new Error(
