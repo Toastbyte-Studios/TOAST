@@ -34,7 +34,7 @@ describe('DigitalWhistleScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSoundInstance = new Sound();
+    mockSoundInstance = new Sound('', '');
   });
 
   describe('Sound Initialization', () => {
@@ -46,7 +46,7 @@ describe('DigitalWhistleScreen', () => {
     });
 
     it('should verify Sound instance has required methods', () => {
-      const instance = new Sound();
+      const instance = new Sound('', '');
       expect(instance.play).toBeDefined();
       expect(instance.stop).toBeDefined();
       expect(instance.release).toBeDefined();
@@ -187,8 +187,8 @@ describe('DigitalWhistleScreen', () => {
     });
 
     it('should handle cleanup for multiple sound instances', () => {
-      const normalSound = new Sound();
-      const dogSound = new Sound();
+      const normalSound = new Sound('', '');
+      const dogSound = new Sound('', '');
 
       // Cleanup both sounds
       normalSound.stop();
@@ -247,14 +247,14 @@ describe('DigitalWhistleScreen', () => {
       expect(Sound.MAIN_BUNDLE).toBe('MAIN_BUNDLE');
 
       // Verify sound can be created with MAIN_BUNDLE
-      const soundInstance = new Sound();
+      const soundInstance = new Sound('', '');
       expect(soundInstance).toBeDefined();
     });
 
     it('should handle sound file loading with callbacks', () => {
       const errorCallback = jest.fn();
       // eslint-disable-next-line no-new
-      new Sound();
+      new Sound('', '');
 
       // Verify callback can be invoked
       errorCallback(null);

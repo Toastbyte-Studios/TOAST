@@ -94,7 +94,7 @@ export default function AppShell({ children }: Props) {
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );
-  const timeoutRef = useRef<number | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const COLORS = useTheme();
   const sunShadow = useSunShadow();
 
@@ -121,7 +121,7 @@ export default function AppShell({ children }: Props) {
       timeoutRef.current = setTimeout(() => {
         setCurrentDate(dayjs().format(DATE_FORMAT));
         scheduleNextUpdate();
-      }, msUntilMidnight) as number;
+      }, msUntilMidnight);
     };
 
     scheduleNextUpdate();
