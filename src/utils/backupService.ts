@@ -135,7 +135,14 @@ const BackupDataSchema = z.object({
           createdAt: z.string(),
           durationSeconds: z.number(),
           distanceMeters: z.number(),
-          points: z.array(z.any()),
+          points: z.array(
+            z.object({
+              latitude: z.number(),
+              longitude: z.number(),
+              altitude: z.number().nullable(),
+              timestamp: z.number(),
+            }),
+          ),
         }),
       )
       .default([]),
