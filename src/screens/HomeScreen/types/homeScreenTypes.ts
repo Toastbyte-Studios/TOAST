@@ -1,7 +1,7 @@
-import { StackNavigationProp } from '@react-navigation/stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 type HomeScreenProps = {
-  navigation: StackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<any>;
 };
 
 export type { HomeScreenProps };
