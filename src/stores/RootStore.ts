@@ -1,6 +1,7 @@
 import { makeAutoObservable } from 'mobx';
 import { AstronomyEventStore } from './AstronomyEventStore';
 import { BarometerStore } from './BarometerStore';
+import { ChecklistStore } from './ChecklistStore';
 import { CoreStore } from './CoreStore';
 import { EmergencyPlanStore } from './EmergencyPlanStore';
 import { InventoryStore } from './InventoryStore';
@@ -18,6 +19,7 @@ import { WeatherOutlookStore } from './WeatherOutlookStore';
 
 export class RootStore {
   coreStore: CoreStore;
+  checklistStore: ChecklistStore;
   inventoryStore: InventoryStore;
   pantryStore: PantryStore;
   emergencyPlanStore: EmergencyPlanStore;
@@ -37,6 +39,7 @@ export class RootStore {
   constructor() {
     makeAutoObservable(this);
     this.coreStore = new CoreStore();
+    this.checklistStore = new ChecklistStore();
     this.inventoryStore = new InventoryStore();
     this.pantryStore = new PantryStore();
     this.emergencyPlanStore = new EmergencyPlanStore();
@@ -68,6 +71,7 @@ export class RootStore {
     if (this.coreStore.notesDb) {
       // Load categories first to ensure dependent logic sees a consistent category list
       await this.coreStore.loadCategories();
+      await this.checklistStore.initDatabase(this.coreStore.notesDb);
       await this.settingsStore.loadSettings(this.coreStore.notesDb);
       // Initialize solar cycle notification store with same database
       await this.solarCycleNotificationStore.initDatabase(
@@ -97,6 +101,7 @@ export class RootStore {
   // Reset all stores
   reset() {
     this.coreStore.dispose();
+    this.checklistStore.dispose();
     this.inventoryStore.dispose();
     this.pantryStore.dispose();
     this.emergencyPlanStore.dispose();
@@ -108,6 +113,7 @@ export class RootStore {
     this.trackStore.dispose();
     this.astronomyEventStore.dispose();
     this.coreStore = new CoreStore();
+    this.checklistStore = new ChecklistStore();
     this.inventoryStore = new InventoryStore();
     this.pantryStore = new PantryStore();
     this.emergencyPlanStore = new EmergencyPlanStore();

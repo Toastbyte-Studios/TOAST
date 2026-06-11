@@ -17,8 +17,14 @@ import { HorizontalRule } from '../../components/HorizontalRule';
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore, useInventoryStore, usePantryStore } from '../../stores';
-import { Note, Checklist } from '../../stores/CoreStore';
+import {
+  useChecklistStore,
+  useCoreStore,
+  useInventoryStore,
+  usePantryStore,
+} from '../../stores';
+import { Checklist } from '../../stores/ChecklistStore';
+import { Note } from '../../stores/CoreStore';
 import { FOOTER_HEIGHT } from '../../theme';
 import ReferenceEntryType from '../../types/data-type';
 import { RagResult, ragSearch } from '../../utils/ragSearch';
@@ -82,6 +88,7 @@ const WELCOME_MESSAGE: SearchMessage = {
 export default observer(function SearchScreen(): JSX.Element {
   const navigation = useNavigation<SearchScreenNavigationProp>();
   const COLORS = useTheme();
+  const checklistStore = useChecklistStore();
   const coreStore = useCoreStore();
   const inventoryStore = useInventoryStore();
   const pantryStore = usePantryStore();
@@ -131,8 +138,8 @@ export default observer(function SearchScreen(): JSX.Element {
       const allResults = searchItems(
         trimmed,
         coreStore.notes,
-        coreStore.checklists,
-        coreStore.checklistItems,
+        checklistStore.checklists,
+        checklistStore.checklistItems,
         inventoryStore.items,
         pantryStore.items,
       );
@@ -198,7 +205,14 @@ export default observer(function SearchScreen(): JSX.Element {
       timeoutIds.current.push(scrollTimer);
     }, 0);
     timeoutIds.current.push(outerTimer);
-  }, [query, isSearching, coreStore, inventoryStore, pantryStore]);
+  }, [
+    checklistStore,
+    query,
+    isSearching,
+    coreStore,
+    inventoryStore,
+    pantryStore,
+  ]);
 
   const handleItemPress = useCallback(
     (item: SearchableItem) => {

@@ -19,13 +19,16 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
         await rootStore.coreStore.initNotesDb();
         if (rootStore.coreStore.notesDb) {
           await rootStore.coreStore.loadCategories();
+          await rootStore.checklistStore.initDatabase(
+            rootStore.coreStore.notesDb,
+          );
           // Start barometer collection now that the DB is available so pressure
           // history accumulates while the user uses the app, not just while the
           // Barometric Pressure screen is open.
           rootStore.barometerStore.start(rootStore.coreStore.notesDb);
         }
         await rootStore.coreStore.loadNotes();
-        await rootStore.coreStore.loadChecklists();
+        await rootStore.checklistStore.loadChecklists();
       } catch (e) {
         console.warn('Failed to load data on startup:', e);
       }
@@ -53,6 +56,7 @@ export const useStores = (): RootStore => {
 
 // Convenience hooks for individual stores
 export const useCoreStore = () => useStores().coreStore;
+export const useChecklistStore = () => useStores().checklistStore;
 export const useInventoryStore = () => useStores().inventoryStore;
 export const usePantryStore = () => useStores().pantryStore;
 export const useEmergencyPlanStore = () => useStores().emergencyPlanStore;

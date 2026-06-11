@@ -14,6 +14,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
 import {
+  useChecklistStore,
   useCoreStore,
   useEmergencyPlanStore,
   useInventoryStore,
@@ -102,6 +103,7 @@ export const SettingsModal = observer(
   ({ visible, onClose }: SettingsModalProps) => {
     const settingsStore = useSettingsStore();
     const coreStore = useCoreStore();
+    const checklistStore = useChecklistStore();
     const emergencyPlanStore = useEmergencyPlanStore();
     const inventoryStore = useInventoryStore();
     const pantryStore = usePantryStore();
@@ -155,8 +157,8 @@ export const SettingsModal = observer(
         const backupData = createBackupData(
           coreStore.notes,
           coreStore.categories,
-          coreStore.checklists,
-          coreStore.checklistItems,
+          checklistStore.checklists,
+          checklistStore.checklistItems,
           inventoryStore.items,
           inventoryStore.categories,
           pantryStore.items,
@@ -189,6 +191,7 @@ export const SettingsModal = observer(
         setIsExporting(false);
       }
     }, [
+      checklistStore,
       coreStore,
       emergencyPlanStore,
       inventoryStore,
@@ -247,7 +250,7 @@ export const SettingsModal = observer(
           );
 
           // Restore checklists
-          await coreStore.importChecklistsData(
+          await checklistStore.importChecklistsData(
             data.checklists,
             data.checklistItems,
             mode,
@@ -317,6 +320,7 @@ export const SettingsModal = observer(
       },
       [
         selectedBackup,
+        checklistStore,
         coreStore,
         emergencyPlanStore,
         inventoryStore,

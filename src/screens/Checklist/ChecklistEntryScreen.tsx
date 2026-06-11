@@ -15,7 +15,7 @@ import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore } from '../../stores';
+import { useChecklistStore } from '../../stores';
 import { FOOTER_HEIGHT } from '../../theme';
 
 /**
@@ -29,7 +29,7 @@ import { FOOTER_HEIGHT } from '../../theme';
 export default observer(function ChecklistEntryScreen(): React.JSX.Element {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
-  const core = useCoreStore();
+  const checklistStore = useChecklistStore();
   const COLORS = useTheme();
   const [newItemText, setNewItemText] = useState<string>('');
   const [isAddingItem, setIsAddingItem] = useState<boolean>(false);
@@ -56,11 +56,11 @@ export default observer(function ChecklistEntryScreen(): React.JSX.Element {
   }
 
   const checklistName = checklist.name || '(Untitled)';
-  const items = core.getChecklistItems(checklist.id);
+  const items = checklistStore.getChecklistItems(checklist.id);
 
   const handleAddItem = async () => {
     if (newItemText.trim()) {
-      await core.addChecklistItem(checklist.id, newItemText.trim());
+      await checklistStore.addChecklistItem(checklist.id, newItemText.trim());
       setNewItemText('');
       setIsAddingItem(false);
     }
@@ -73,7 +73,7 @@ export default observer(function ChecklistEntryScreen(): React.JSX.Element {
         text: 'Delete',
         style: 'destructive',
         onPress: async () => {
-          await core.deleteChecklistItem(itemId);
+          await checklistStore.deleteChecklistItem(itemId);
         },
       },
     ]);
@@ -89,7 +89,7 @@ export default observer(function ChecklistEntryScreen(): React.JSX.Element {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            await core.deleteChecklist(checklist.id);
+            await checklistStore.deleteChecklist(checklist.id);
             navigation.goBack();
           },
         },
@@ -212,7 +212,7 @@ export default observer(function ChecklistEntryScreen(): React.JSX.Element {
             >
               <TouchableOpacity
                 style={styles.checkbox}
-                onPress={() => core.toggleChecklistItem(item.id)}
+                onPress={() => checklistStore.toggleChecklistItem(item.id)}
                 accessibilityLabel={
                   item.checked ? 'Uncheck item' : 'Check item'
                 }

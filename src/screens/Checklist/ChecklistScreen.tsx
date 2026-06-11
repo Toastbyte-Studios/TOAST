@@ -9,7 +9,7 @@ import { HorizontalRule } from '../../components/HorizontalRule';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore } from '../../stores';
+import { useChecklistStore } from '../../stores';
 
 /**
  * Checklist landing screen.
@@ -25,7 +25,7 @@ import { useCoreStore } from '../../stores';
  */
 export default observer(function ChecklistScreen() {
   const navigation = useNavigation<any>();
-  const core = useCoreStore();
+  const checklistStore = useChecklistStore();
   const COLORS = useTheme();
 
   const checklistIcons: Record<string, string> = {
@@ -54,7 +54,7 @@ export default observer(function ChecklistScreen() {
       <HorizontalRule />
 
       <Grid>
-        {core.checklists.map((checklist) => (
+        {checklistStore.checklists.map((checklist) => (
           <CardTopic
             key={checklist.id}
             title={checklist.name}

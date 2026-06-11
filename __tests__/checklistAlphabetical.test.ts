@@ -2,7 +2,7 @@
  * @format
  */
 
-import { ChecklistItem } from '../src/stores/CoreStore';
+import { ChecklistItem } from '../src/stores/ChecklistStore';
 
 describe('Checklist Alphabetical Sorting', () => {
   describe('Checklist items sorting logic', () => {
