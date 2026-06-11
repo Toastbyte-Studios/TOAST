@@ -11,6 +11,12 @@ import Torch from 'react-native-torch';
 import { FlashlightModes } from '../../constants';
 import { FlashlightModeType } from '../types/common-types';
 import { SQLiteDatabase } from '../types/database-types';
+import {
+  Migration,
+  getTableColumns,
+  getTableDDL,
+  runMigrations,
+} from '../utils/dbMigrations';
 import { formatTime } from '../utils/timeFormat';
 
 let SQLite: any;
@@ -19,6 +25,149 @@ try {
 } catch {
   SQLite = null as any;
 }
+
+// ─── Notes / categories migrations ───────────────────────────────────────────
+
+const NOTE_MIGRATIONS: Migration[] = [
+  {
+    id: 1,
+    description: 'Create notes table with full current schema',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS notes (' +
+          'id TEXT PRIMARY KEY NOT NULL,' +
+          'createdAt INTEGER NOT NULL,' +
+          'latitude REAL,' +
+          'longitude REAL,' +
+          'category TEXT NOT NULL,' +
+          "type TEXT NOT NULL CHECK(type IN ('text','sketch','voice'))," +
+          'title TEXT,' +
+          'text TEXT,' +
+          'bookmarked INTEGER DEFAULT 0,' +
+          'sketchDataUri TEXT,' +
+          'photoUris TEXT,' +
+          'audioUri TEXT,' +
+          'transcription TEXT,' +
+          'duration REAL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 2,
+    description: 'Create categories table',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS categories (' +
+          'name TEXT PRIMARY KEY NOT NULL,' +
+          'createdAt INTEGER NOT NULL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 3,
+    description:
+      'Add missing notes columns for databases created before voice-log support',
+    run: async (db) => {
+      const columns = await getTableColumns(db, 'notes');
+      if (!columns.has('title')) {
+        await db.executeSql('ALTER TABLE notes ADD COLUMN title TEXT');
+      }
+      if (!columns.has('bookmarked')) {
+        await db.executeSql(
+          'ALTER TABLE notes ADD COLUMN bookmarked INTEGER DEFAULT 0',
+        );
+      }
+      if (!columns.has('audioUri')) {
+        await db.executeSql('ALTER TABLE notes ADD COLUMN audioUri TEXT');
+      }
+      if (!columns.has('transcription')) {
+        await db.executeSql('ALTER TABLE notes ADD COLUMN transcription TEXT');
+      }
+      if (!columns.has('duration')) {
+        await db.executeSql('ALTER TABLE notes ADD COLUMN duration REAL');
+      }
+    },
+  },
+  {
+    id: 4,
+    description:
+      "Rebuild notes table to add 'voice' to the type CHECK constraint",
+    run: async (db) => {
+      const ddl = await getTableDDL(db, 'notes');
+      // Nothing to do if the table does not exist yet or already has voice support.
+      if (!ddl || ddl.includes("'voice'")) return;
+
+      await db.executeSql('ALTER TABLE notes RENAME TO notes_old');
+      await db.executeSql(
+        'CREATE TABLE notes (' +
+          'id TEXT PRIMARY KEY NOT NULL,' +
+          'createdAt INTEGER NOT NULL,' +
+          'latitude REAL,' +
+          'longitude REAL,' +
+          'category TEXT NOT NULL,' +
+          "type TEXT NOT NULL CHECK(type IN ('text','sketch','voice'))," +
+          'title TEXT,' +
+          'text TEXT,' +
+          'bookmarked INTEGER DEFAULT 0,' +
+          'sketchDataUri TEXT,' +
+          'photoUris TEXT,' +
+          'audioUri TEXT,' +
+          'transcription TEXT,' +
+          'duration REAL' +
+          ')',
+      );
+      await db.executeSql(
+        'INSERT INTO notes (' +
+          'id,createdAt,latitude,longitude,category,type,' +
+          'title,text,bookmarked,sketchDataUri,photoUris,' +
+          'audioUri,transcription,duration' +
+          ') SELECT ' +
+          'id,createdAt,latitude,longitude,category,type,' +
+          'title,text,bookmarked,sketchDataUri,photoUris,' +
+          'NULL,NULL,NULL' +
+          ' FROM notes_old',
+      );
+      await db.executeSql('DROP TABLE notes_old');
+    },
+  },
+];
+
+// ─── Checklists migrations ────────────────────────────────────────────────────
+
+const CHECKLIST_MIGRATIONS: Migration[] = [
+  {
+    id: 1,
+    description: 'Create checklists table',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS checklists (' +
+          'id TEXT PRIMARY KEY NOT NULL,' +
+          'name TEXT NOT NULL,' +
+          'createdAt INTEGER NOT NULL,' +
+          'isDefault INTEGER DEFAULT 0' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 2,
+    description: 'Create checklist_items table',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS checklist_items (' +
+          'id TEXT PRIMARY KEY NOT NULL,' +
+          'checklistId TEXT NOT NULL,' +
+          'text TEXT NOT NULL,' +
+          'checked INTEGER DEFAULT 0,' +
+          '"order" INTEGER NOT NULL,' +
+          'FOREIGN KEY(checklistId) REFERENCES checklists(id) ON DELETE CASCADE' +
+          ')',
+      );
+    },
+  },
+];
 
 export interface Tool {
   id: string;
@@ -1281,154 +1430,7 @@ export class CoreStore {
         location: 'default',
       });
       this.notesDb = db;
-
-      await db.executeSql(
-        'CREATE TABLE IF NOT EXISTS notes (' +
-          'id TEXT PRIMARY KEY NOT NULL,' +
-          'createdAt INTEGER NOT NULL,' +
-          'latitude REAL,' +
-          'longitude REAL,' +
-          'category TEXT NOT NULL,' +
-          "type TEXT NOT NULL CHECK(type IN ('text','sketch','voice'))," +
-          'title TEXT,' +
-          'text TEXT,' +
-          'bookmarked INTEGER DEFAULT 0,' +
-          'sketchDataUri TEXT,' +
-          'photoUris TEXT' +
-          ')',
-      );
-      // Migration: Add title column if it doesn't exist
-      try {
-        await db.executeSql('ALTER TABLE notes ADD COLUMN title TEXT');
-      } catch (error: any) {
-        // Column already exists, ignore error
-        if (!error.message?.includes('duplicate column name')) {
-          console.warn('Migration warning:', error.message);
-        }
-      }
-      // Migration: Add bookmarked column if it doesn't exist
-      try {
-        await db.executeSql(
-          'ALTER TABLE notes ADD COLUMN bookmarked INTEGER DEFAULT 0',
-        );
-      } catch (error: any) {
-        // Column already exists, ignore error
-        if (!error.message?.includes('duplicate column name')) {
-          console.warn('Migration warning:', error.message);
-        }
-      }
-      // Migration: Add voice log columns if they don't exist
-      try {
-        await db.executeSql('ALTER TABLE notes ADD COLUMN audioUri TEXT');
-      } catch (error: any) {
-        if (!error.message?.includes('duplicate column name')) {
-          console.warn('Migration warning:', error.message);
-        }
-      }
-      try {
-        await db.executeSql('ALTER TABLE notes ADD COLUMN transcription TEXT');
-      } catch (error: any) {
-        if (!error.message?.includes('duplicate column name')) {
-          console.warn('Migration warning:', error.message);
-        }
-      }
-      try {
-        await db.executeSql('ALTER TABLE notes ADD COLUMN duration REAL');
-      } catch (error: any) {
-        if (!error.message?.includes('duplicate column name')) {
-          console.warn('Migration warning:', error.message);
-        }
-      }
-      // Migration: Update CHECK constraint to allow 'voice' type
-      // Since SQLite doesn't support modifying CHECK constraints directly,
-      // we recreate the table if it doesn't have the proper constraint
-      try {
-        // Test if we can insert a 'voice' type - if this fails, we need to recreate
-        await db.executeSql(
-          "INSERT INTO notes (id, createdAt, category, type) VALUES ('_test_voice_type', 0, 'Voice Logs', 'voice')",
-        );
-        // If successful, delete the test row
-        await db.executeSql("DELETE FROM notes WHERE id = '_test_voice_type'");
-      } catch (error: any) {
-        // If we get a CHECK constraint error, we need to recreate the table
-        if (error.message?.includes('CHECK constraint failed')) {
-          console.log('Migrating notes table to support voice type...');
-          try {
-            await db.executeSql('BEGIN TRANSACTION');
-            // Rename old table
-            await db.executeSql('ALTER TABLE notes RENAME TO notes_old');
-            // Create new table with correct constraint
-            await db.executeSql(
-              'CREATE TABLE notes (' +
-                'id TEXT PRIMARY KEY NOT NULL, ' +
-                'createdAt INTEGER NOT NULL, ' +
-                'latitude REAL, ' +
-                'longitude REAL, ' +
-                'category TEXT NOT NULL, ' +
-                "type TEXT NOT NULL CHECK(type IN ('text','sketch','voice')), " +
-                'title TEXT, ' +
-                'text TEXT, ' +
-                'bookmarked INTEGER DEFAULT 0, ' +
-                'sketchDataUri TEXT, ' +
-                'photoUris TEXT, ' +
-                'audioUri TEXT, ' +
-                'transcription TEXT, ' +
-                'duration REAL' +
-                ')',
-            );
-            // Copy data from old table
-            await db.executeSql(
-              'INSERT INTO notes (' +
-                'id,' +
-                'createdAt,' +
-                'latitude,' +
-                'longitude,' +
-                'category,' +
-                'type,' +
-                'title,' +
-                'text,' +
-                'bookmarked,' +
-                'sketchDataUri,' +
-                'photoUris,' +
-                'audioUri,' +
-                'transcription,' +
-                'duration' +
-                ') ' +
-                'SELECT ' +
-                'id,' +
-                'createdAt,' +
-                'latitude,' +
-                'longitude,' +
-                'category,' +
-                'type,' +
-                'title,' +
-                'text,' +
-                'bookmarked,' +
-                'sketchDataUri,' +
-                'photoUris,' +
-                'NULL AS audioUri,' +
-                'NULL AS transcription,' +
-                'NULL AS duration ' +
-                'FROM notes_old',
-            );
-            // Drop old table
-            await db.executeSql('DROP TABLE notes_old');
-            await db.executeSql('COMMIT');
-            console.log('Migration completed successfully');
-          } catch (migrationError) {
-            console.error('Migration failed:', migrationError);
-            await db.executeSql('ROLLBACK');
-            throw migrationError;
-          }
-        }
-      }
-      // Create categories table
-      await db.executeSql(
-        'CREATE TABLE IF NOT EXISTS categories (' +
-          'name TEXT PRIMARY KEY NOT NULL, ' +
-          'createdAt INTEGER NOT NULL' +
-          ')',
-      );
+      await runMigrations(db, 'notes', NOTE_MIGRATIONS);
     } catch (error) {
       console.error('Failed to initialize notes database:', error);
       this.notesDb = null;
@@ -1755,26 +1757,7 @@ export class CoreStore {
     await this.initNotesDb(); // Reuse the same database
     if (!this.notesDb) return;
     try {
-      // Create checklists table
-      await this.notesDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS checklists (' +
-          'id TEXT PRIMARY KEY NOT NULL,' +
-          'name TEXT NOT NULL,' +
-          'createdAt INTEGER NOT NULL,' +
-          'isDefault INTEGER DEFAULT 0' +
-          ')',
-      );
-      // Create checklist_items table
-      await this.notesDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS checklist_items (' +
-          'id TEXT PRIMARY KEY NOT NULL,' +
-          'checklistId TEXT NOT NULL,' +
-          'text TEXT NOT NULL,' +
-          'checked INTEGER DEFAULT 0,' +
-          '"order" INTEGER NOT NULL,' +
-          'FOREIGN KEY(checklistId) REFERENCES checklists(id) ON DELETE CASCADE' +
-          ')',
-      );
+      await runMigrations(this.notesDb, 'checklists', CHECKLIST_MIGRATIONS);
     } catch (error) {
       console.error('Failed to initialize checklists database:', error);
     }

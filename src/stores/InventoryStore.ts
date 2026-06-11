@@ -1,5 +1,10 @@
 import { makeAutoObservable, runInAction, computed } from 'mobx';
 import { SQLiteDatabase } from '../types/database-types';
+import {
+  Migration,
+  getTableColumns,
+  runMigrations,
+} from '../utils/dbMigrations';
 
 let SQLite: any;
 try {
@@ -7,6 +12,61 @@ try {
 } catch {
   SQLite = null as any;
 }
+
+// ─── Inventory migrations ────────────────────────────────────────────────────
+
+const INVENTORY_MIGRATIONS: Migration[] = [
+  {
+    id: 1,
+    description: 'Create inventory_categories table',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS inventory_categories (' +
+          'name TEXT PRIMARY KEY,' +
+          'createdAt INTEGER NOT NULL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 2,
+    description: 'Create inventory_items table with full current schema',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS inventory_items (' +
+          'id TEXT PRIMARY KEY,' +
+          'name TEXT NOT NULL,' +
+          'category TEXT NOT NULL,' +
+          'quantity REAL NOT NULL,' +
+          'unit TEXT,' +
+          'notes TEXT,' +
+          'expirationMonth INTEGER,' +
+          'expirationYear INTEGER,' +
+          'createdAt INTEGER NOT NULL,' +
+          'updatedAt INTEGER NOT NULL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 3,
+    description:
+      'Add missing expiration columns for legacy inventory_items tables',
+    run: async (db) => {
+      const columns = await getTableColumns(db, 'inventory_items');
+      if (!columns.has('expirationMonth')) {
+        await db.executeSql(
+          'ALTER TABLE inventory_items ADD COLUMN expirationMonth INTEGER',
+        );
+      }
+      if (!columns.has('expirationYear')) {
+        await db.executeSql(
+          'ALTER TABLE inventory_items ADD COLUMN expirationYear INTEGER',
+        );
+      }
+    },
+  },
+];
 
 /**
  * Represents a single inventory item.
@@ -104,77 +164,11 @@ export class InventoryStore {
         name: 'toast.db',
         location: 'default',
       });
-      await this.createTables();
+      await runMigrations(this.inventoryDb, 'inventory', INVENTORY_MIGRATIONS);
       await this.loadCategories();
       await this.loadItems();
     } catch (error) {
       console.error('Failed to initialize inventory database:', error);
-    }
-  }
-
-  /**
-   * Creates the necessary database tables for inventory.
-   */
-  private async createTables(): Promise<void> {
-    if (!this.inventoryDb) return;
-
-    try {
-      await this.inventoryDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS inventory_categories (' +
-          'name TEXT PRIMARY KEY, ' +
-          'createdAt INTEGER NOT NULL' +
-          ')',
-      );
-
-      await this.inventoryDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS inventory_items (' +
-          'id TEXT PRIMARY KEY, ' +
-          'name TEXT NOT NULL, ' +
-          'category TEXT NOT NULL, ' +
-          'quantity REAL NOT NULL, ' +
-          'unit TEXT, ' +
-          'notes TEXT, ' +
-          'expirationMonth INTEGER, ' +
-          'expirationYear INTEGER, ' +
-          'createdAt INTEGER NOT NULL, ' +
-          'updatedAt INTEGER NOT NULL' +
-          ')',
-      );
-
-      await this.migrateDatabase();
-    } catch (error) {
-      console.error('Failed to create inventory tables:', error);
-    }
-  }
-
-  /**
-   * Migrates existing database schema to support new columns.
-   */
-  private async migrateDatabase(): Promise<void> {
-    if (!this.inventoryDb) return;
-
-    try {
-      const [results] = await this.inventoryDb.executeSql(
-        "SELECT sql FROM sqlite_master WHERE type='table' AND name='inventory_items'",
-      );
-
-      if (results.rows.length > 0) {
-        const tableSchema = results.rows.item(0).sql as string;
-
-        if (!tableSchema.includes('expirationMonth')) {
-          await this.inventoryDb.executeSql(
-            'ALTER TABLE inventory_items ADD COLUMN expirationMonth INTEGER',
-          );
-        }
-
-        if (!tableSchema.includes('expirationYear')) {
-          await this.inventoryDb.executeSql(
-            'ALTER TABLE inventory_items ADD COLUMN expirationYear INTEGER',
-          );
-        }
-      }
-    } catch (error) {
-      console.log('Database migration completed or not needed', error);
     }
   }
 

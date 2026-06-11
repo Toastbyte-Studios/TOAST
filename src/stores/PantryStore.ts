@@ -1,5 +1,10 @@
 import { makeAutoObservable, runInAction, computed } from 'mobx';
 import { SQLiteDatabase } from '../types/database-types';
+import {
+  Migration,
+  getTableColumns,
+  runMigrations,
+} from '../utils/dbMigrations';
 
 /** Expiration status based on days remaining until end of the expiration month. */
 export type ExpirationStatus = 'green' | 'yellow' | 'red' | 'none';
@@ -16,6 +21,61 @@ try {
 } catch {
   SQLite = null as any;
 }
+
+// ─── Pantry migrations ────────────────────────────────────────────────────────
+
+const PANTRY_MIGRATIONS: Migration[] = [
+  {
+    id: 1,
+    description: 'Create pantry_categories table',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS pantry_categories (' +
+          'name TEXT PRIMARY KEY,' +
+          'createdAt INTEGER NOT NULL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 2,
+    description: 'Create pantry_items table with full current schema',
+    run: async (db) => {
+      await db.executeSql(
+        'CREATE TABLE IF NOT EXISTS pantry_items (' +
+          'id TEXT PRIMARY KEY,' +
+          'name TEXT NOT NULL,' +
+          'category TEXT NOT NULL,' +
+          'quantity REAL NOT NULL,' +
+          'unit TEXT,' +
+          'notes TEXT,' +
+          'expirationMonth INTEGER,' +
+          'expirationYear INTEGER,' +
+          'createdAt INTEGER NOT NULL,' +
+          'updatedAt INTEGER NOT NULL' +
+          ')',
+      );
+    },
+  },
+  {
+    id: 3,
+    description:
+      'Add missing expiration columns for legacy pantry_items tables',
+    run: async (db) => {
+      const columns = await getTableColumns(db, 'pantry_items');
+      if (!columns.has('expirationMonth')) {
+        await db.executeSql(
+          'ALTER TABLE pantry_items ADD COLUMN expirationMonth INTEGER',
+        );
+      }
+      if (!columns.has('expirationYear')) {
+        await db.executeSql(
+          'ALTER TABLE pantry_items ADD COLUMN expirationYear INTEGER',
+        );
+      }
+    },
+  },
+];
 
 /**
  * Represents a single pantry item (food item).
@@ -212,77 +272,11 @@ export class PantryStore {
         name: 'toast.db',
         location: 'default',
       });
-      await this.createTables();
+      await runMigrations(this.pantryDb, 'pantry', PANTRY_MIGRATIONS);
       await this.loadCategories();
       await this.loadItems();
     } catch (error) {
       console.error('Failed to initialize pantry database:', error);
-    }
-  }
-
-  /**
-   * Creates the necessary database tables for pantry.
-   */
-  private async createTables(): Promise<void> {
-    if (!this.pantryDb) return;
-
-    try {
-      await this.pantryDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS pantry_categories (' +
-          'name TEXT PRIMARY KEY, ' +
-          'createdAt INTEGER NOT NULL' +
-          ')',
-      );
-
-      await this.pantryDb.executeSql(
-        'CREATE TABLE IF NOT EXISTS pantry_items (' +
-          'id TEXT PRIMARY KEY, ' +
-          'name TEXT NOT NULL, ' +
-          'category TEXT NOT NULL, ' +
-          'quantity REAL NOT NULL, ' +
-          'unit TEXT, ' +
-          'notes TEXT, ' +
-          'expirationMonth INTEGER, ' +
-          'expirationYear INTEGER, ' +
-          'createdAt INTEGER NOT NULL, ' +
-          'updatedAt INTEGER NOT NULL' +
-          ')',
-      );
-
-      await this.migrateDatabase();
-    } catch (error) {
-      console.error('Failed to create pantry tables:', error);
-    }
-  }
-
-  /**
-   * Migrates existing database schema to support new columns.
-   */
-  private async migrateDatabase(): Promise<void> {
-    if (!this.pantryDb) return;
-
-    try {
-      const [results] = await this.pantryDb.executeSql(
-        "SELECT sql FROM sqlite_master WHERE type='table' AND name='pantry_items'",
-      );
-
-      if (results.rows.length > 0) {
-        const tableSchema = results.rows.item(0).sql as string;
-
-        if (!tableSchema.includes('expirationMonth')) {
-          await this.pantryDb.executeSql(
-            'ALTER TABLE pantry_items ADD COLUMN expirationMonth INTEGER',
-          );
-        }
-
-        if (!tableSchema.includes('expirationYear')) {
-          await this.pantryDb.executeSql(
-            'ALTER TABLE pantry_items ADD COLUMN expirationYear INTEGER',
-          );
-        }
-      }
-    } catch (error) {
-      console.log('Database migration completed or not needed', error);
     }
   }
 
