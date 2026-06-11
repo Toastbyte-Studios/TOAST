@@ -169,6 +169,11 @@ export class ChecklistStore {
   async loadChecklists(): Promise<void> {
     if (!this.checklistDb) return;
 
+    if (!this.databaseInitialized) {
+      await this.initDatabase(this.checklistDb);
+    }
+    if (!this.databaseInitialized) return;
+
     try {
       const checklistsRes = await this.checklistDb.executeSql(
         'SELECT * FROM checklists ORDER BY createdAt ASC',
@@ -286,7 +291,7 @@ export class ChecklistStore {
 
   /**
    * Adds a new item to a checklist.
-   * New items are added to the top of the list (order = 0).
+   * New items are appended to the end of the list (order = maxOrder + 1).
    */
   async addChecklistItem(checklistId: string, text: string): Promise<void> {
     const existingItems = this.checklistItems.filter(
