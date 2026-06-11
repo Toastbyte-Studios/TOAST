@@ -60,6 +60,10 @@ function formatBackupDate(timestamp: number): string {
   return new Date(timestamp).toLocaleString();
 }
 
+function hasCommunicationPlan(plan: BackupData['data']['communicationPlan']) {
+  return Boolean(plan && plan.updatedAt > 0);
+}
+
 function makeStyles(COLORS: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
     primaryText: { color: COLORS.PRIMARY_DARK },
@@ -166,7 +170,7 @@ export const SettingsModal = observer(
           trackStore.tracks,
           emergencyPlanStore.contacts,
           emergencyPlanStore.rallyPoints,
-          emergencyPlanStore.communicationPlan.updatedAt > 0
+          hasCommunicationPlan(emergencyPlanStore.communicationPlan)
             ? emergencyPlanStore.communicationPlan
             : null,
           repeaterBookStore.customRepeaters,

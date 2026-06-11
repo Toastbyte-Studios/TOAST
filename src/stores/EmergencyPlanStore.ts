@@ -52,6 +52,12 @@ const EMPTY_COMMUNICATION_PLAN: CommunicationPlan = {
   updatedAt: 0,
 };
 
+function hasCommunicationPlan(
+  plan: CommunicationPlan | null | undefined,
+): plan is CommunicationPlan {
+  return Boolean(plan && plan.updatedAt > 0);
+}
+
 /**
  * Store for managing emergency contacts, rally points, and a communication plan.
  * Follows the same pattern as InventoryStore.
@@ -587,9 +593,11 @@ export class EmergencyPlanStore {
       if (mode === 'replace') {
         this.contacts = contacts;
         this.rallyPoints = rallyPoints;
-        this.communicationPlan = communicationPlan ?? {
-          ...EMPTY_COMMUNICATION_PLAN,
-        };
+        this.communicationPlan = hasCommunicationPlan(communicationPlan)
+          ? communicationPlan
+          : {
+              ...EMPTY_COMMUNICATION_PLAN,
+            };
       } else {
         const existingContactIds = new Set(this.contacts.map((c) => c.id));
         const newContacts = contacts.filter(
@@ -607,7 +615,10 @@ export class EmergencyPlanStore {
           (a, b) => a.name.localeCompare(b.name),
         );
 
-        if (communicationPlan && this.communicationPlan.updatedAt === 0) {
+        if (
+          hasCommunicationPlan(communicationPlan) &&
+          this.communicationPlan.updatedAt === 0
+        ) {
           this.communicationPlan = communicationPlan;
         }
       }
