@@ -442,9 +442,13 @@ describe('runMigrations', () => {
     expect(db.tables.has('partial_table')).toBe(false);
   });
 
-  it('throws when a migration id is not a positive integer', async () => {
+  it.each([
+    { id: 0, label: 'zero' },
+    { id: -1, label: 'negative' },
+    { id: 1.5, label: 'non-integer' },
+  ])('throws when migration id is $label ($id)', async ({ id }) => {
     const migrations: Migration[] = [
-      { id: 0, description: 'zero id', run: async () => {} },
+      { id, description: 'invalid id', run: async () => {} },
     ];
     await expect(runMigrations(db, 'test', migrations)).rejects.toThrow(
       /positive integer/,
