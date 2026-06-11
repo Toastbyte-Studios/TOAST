@@ -169,12 +169,16 @@ export class WaypointStore {
     }
     runInAction(() => {
       if (mode === 'replace') {
-        this.waypoints = waypoints;
+        this.waypoints = [...waypoints].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        );
         this.activeWaypointId = null;
       } else {
         const existingIds = new Set(this.waypoints.map((w) => w.id));
         const incoming = waypoints.filter((w) => !existingIds.has(w.id));
-        this.waypoints = [...this.waypoints, ...incoming];
+        this.waypoints = [...this.waypoints, ...incoming].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        );
       }
     });
   }

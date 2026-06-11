@@ -571,7 +571,7 @@ export class EmergencyPlanStore {
             r.updatedAt,
           ]);
         }
-        if (communicationPlan) {
+        if (hasCommunicationPlan(communicationPlan)) {
           await this.db.executeSql(
             'INSERT OR REPLACE INTO communication_plan (id, whoCallsWhom, ifPhonesDown, outOfAreaContact, checkInSchedule, updatedAt) VALUES (1, ?, ?, ?, ?, ?)',
             [

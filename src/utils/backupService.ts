@@ -116,12 +116,87 @@ const BackupDataSchema = z.object({
       measurementSystem: z.string().optional(),
     }),
     // v2.0 fields – optional with defaults so v1.0 files pass validation
-    waypoints: z.array(z.any()).default([]),
-    tracks: z.array(z.any()).default([]),
-    emergencyContacts: z.array(z.any()).default([]),
-    rallyPoints: z.array(z.any()).default([]),
-    communicationPlan: z.any().nullable().default(null),
-    customRepeaters: z.array(z.any()).default([]),
+    waypoints: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          latitude: z.number(),
+          longitude: z.number(),
+          createdAt: z.string(),
+        }),
+      )
+      .default([]),
+    tracks: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          createdAt: z.string(),
+          durationSeconds: z.number(),
+          distanceMeters: z.number(),
+          points: z.array(z.any()),
+        }),
+      )
+      .default([]),
+    emergencyContacts: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          relationship: z.string(),
+          phone: z.string(),
+          notes: z.string().optional(),
+          createdAt: z.number(),
+          updatedAt: z.number(),
+        }),
+      )
+      .default([]),
+    rallyPoints: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          description: z.string(),
+          coordinates: z.string().optional(),
+          createdAt: z.number(),
+          updatedAt: z.number(),
+        }),
+      )
+      .default([]),
+    communicationPlan: z
+      .object({
+        whoCallsWhom: z.string(),
+        ifPhonesDown: z.string(),
+        outOfAreaContact: z.string(),
+        checkInSchedule: z.string(),
+        updatedAt: z.number(),
+      })
+      .nullable()
+      .default(null),
+    customRepeaters: z
+      .array(
+        z.object({
+          id: z.string(),
+          callSign: z.string(),
+          frequency: z.string(),
+          offset: z.string(),
+          tone: z.string(),
+          mode: z.string(),
+          city: z.string(),
+          state: z.string(),
+          lat: z.number(),
+          lng: z.number(),
+          operationalStatus: z.string(),
+          use: z.string(),
+          notes: z.string(),
+          lastEdited: z.string(),
+          distance: z.number(),
+          emcomm: z.string(),
+          isCustom: z.boolean().optional(),
+        }),
+      )
+      .default([]),
   }),
 });
 

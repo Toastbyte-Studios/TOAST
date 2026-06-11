@@ -171,12 +171,15 @@ export class TrackStore {
     }
     runInAction(() => {
       if (mode === 'replace') {
-        this.tracks = tracks;
+        this.tracks = [...tracks].sort((a, b) =>
+          b.createdAt.localeCompare(a.createdAt),
+        );
       } else {
         const existingIds = new Set(this.tracks.map((t) => t.id));
         const incoming = tracks.filter((t) => !existingIds.has(t.id));
-        // tracks are sorted newest-first; prepend the restored ones
-        this.tracks = [...incoming, ...this.tracks];
+        this.tracks = [...incoming, ...this.tracks].sort((a, b) =>
+          b.createdAt.localeCompare(a.createdAt),
+        );
       }
     });
   }
