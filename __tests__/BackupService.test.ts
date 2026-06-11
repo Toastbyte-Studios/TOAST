@@ -81,6 +81,81 @@ const SAMPLE_BACKUP: BackupData = {
       noteSortOrder: 'newest-oldest',
       measurementSystem: 'metric',
     },
+    waypoints: [
+      {
+        id: 'wp-1',
+        name: 'Home Base',
+        latitude: 35.123,
+        longitude: -115.456,
+        createdAt: '2026-03-03T12:00:00.000Z',
+      },
+    ],
+    tracks: [
+      {
+        id: 'track-1',
+        name: 'Supply Run',
+        createdAt: '2026-03-03T13:00:00.000Z',
+        durationSeconds: 900,
+        distanceMeters: 1200,
+        points: [
+          {
+            latitude: 35.123,
+            longitude: -115.456,
+            altitude: null,
+            timestamp: 1741046400000,
+          },
+        ],
+      },
+    ],
+    emergencyContacts: [
+      {
+        id: 'contact-1',
+        name: 'Sam',
+        relationship: 'Neighbor',
+        phone: '555-1111',
+        notes: 'Has generator',
+        createdAt: 1741046400000,
+        updatedAt: 1741046400000,
+      },
+    ],
+    rallyPoints: [
+      {
+        id: 'rally-1',
+        name: 'Creek Trailhead',
+        description: 'Meet here if evac route A is blocked',
+        coordinates: '35.123,-115.456',
+        createdAt: 1741046400000,
+        updatedAt: 1741046400000,
+      },
+    ],
+    communicationPlan: {
+      whoCallsWhom: 'Sam calls Alex',
+      ifPhonesDown: 'Use channel 3',
+      outOfAreaContact: 'Pat',
+      checkInSchedule: '08:00 and 20:00',
+      updatedAt: 1741046400000,
+    },
+    customRepeaters: [
+      {
+        id: 'custom-1',
+        callSign: 'KTOAST',
+        frequency: '146.520',
+        offset: '',
+        tone: '88.5',
+        mode: 'FM',
+        city: 'Baker',
+        state: 'CA',
+        lat: 35.266,
+        lng: -116.073,
+        operationalStatus: 'On-air',
+        use: '',
+        notes: 'Local simplex fallback',
+        lastEdited: '2026-03-03',
+        distance: 0,
+        emcomm: 'Yes',
+        isCustom: true,
+      },
+    ],
   },
 };
 
@@ -106,9 +181,38 @@ describe('BackupService', () => {
       expect(validateBackup(noVersion)).toBe(false);
     });
 
-    it('should return false when version does not match BACKUP_VERSION', () => {
-      const bad = { ...SAMPLE_BACKUP, version: '2.0' };
+    it('should return false when version is unsupported', () => {
+      const bad = { ...SAMPLE_BACKUP, version: '9.9' };
       expect(validateBackup(bad)).toBe(false);
+    });
+
+    it('should accept a v1.0 backup and backfill v2 fields', () => {
+      const legacyBackup = {
+        ...SAMPLE_BACKUP,
+        version: '1.0',
+        data: {
+          ...SAMPLE_BACKUP.data,
+        },
+      };
+
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>).waypoints;
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>).tracks;
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>)
+        .emergencyContacts;
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>)
+        .rallyPoints;
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>)
+        .communicationPlan;
+      delete (legacyBackup.data as Partial<typeof legacyBackup.data>)
+        .customRepeaters;
+
+      expect(validateBackup(legacyBackup)).toBe(true);
+      expect(legacyBackup.data.waypoints).toEqual([]);
+      expect(legacyBackup.data.tracks).toEqual([]);
+      expect(legacyBackup.data.emergencyContacts).toEqual([]);
+      expect(legacyBackup.data.rallyPoints).toEqual([]);
+      expect(legacyBackup.data.communicationPlan).toBeNull();
+      expect(legacyBackup.data.customRepeaters).toEqual([]);
     });
 
     it('should return false when backupDate is missing', () => {
@@ -162,6 +266,12 @@ describe('BackupService', () => {
       expect(preview.inventoryItemCount).toBe(1);
       expect(preview.pantryItemCount).toBe(1);
       expect(preview.bookmarkCount).toBe(1);
+      expect(preview.waypointCount).toBe(1);
+      expect(preview.trackCount).toBe(1);
+      expect(preview.emergencyContactCount).toBe(1);
+      expect(preview.rallyPointCount).toBe(1);
+      expect(preview.communicationPlanCount).toBe(1);
+      expect(preview.customRepeaterCount).toBe(1);
     });
 
     it('should return zero counts for empty data', () => {
@@ -175,6 +285,12 @@ describe('BackupService', () => {
           inventoryItems: [],
           pantryItems: [],
           bookmarks: [],
+          waypoints: [],
+          tracks: [],
+          emergencyContacts: [],
+          rallyPoints: [],
+          communicationPlan: null,
+          customRepeaters: [],
         },
       };
       const preview = createBackupPreview(emptyBackup);
@@ -183,6 +299,12 @@ describe('BackupService', () => {
       expect(preview.inventoryItemCount).toBe(0);
       expect(preview.pantryItemCount).toBe(0);
       expect(preview.bookmarkCount).toBe(0);
+      expect(preview.waypointCount).toBe(0);
+      expect(preview.trackCount).toBe(0);
+      expect(preview.emergencyContactCount).toBe(0);
+      expect(preview.rallyPointCount).toBe(0);
+      expect(preview.communicationPlanCount).toBe(0);
+      expect(preview.customRepeaterCount).toBe(0);
     });
   });
 
@@ -199,6 +321,12 @@ describe('BackupService', () => {
         SAMPLE_BACKUP.data.pantryCategories,
         SAMPLE_BACKUP.data.bookmarks,
         SAMPLE_BACKUP.data.settings,
+        SAMPLE_BACKUP.data.waypoints,
+        SAMPLE_BACKUP.data.tracks,
+        SAMPLE_BACKUP.data.emergencyContacts,
+        SAMPLE_BACKUP.data.rallyPoints,
+        SAMPLE_BACKUP.data.communicationPlan,
+        SAMPLE_BACKUP.data.customRepeaters,
       );
 
       expect(validateBackup(backup)).toBe(true);
@@ -220,6 +348,12 @@ describe('BackupService', () => {
         SAMPLE_BACKUP.data.pantryCategories,
         SAMPLE_BACKUP.data.bookmarks,
         SAMPLE_BACKUP.data.settings,
+        SAMPLE_BACKUP.data.waypoints,
+        SAMPLE_BACKUP.data.tracks,
+        SAMPLE_BACKUP.data.emergencyContacts,
+        SAMPLE_BACKUP.data.rallyPoints,
+        SAMPLE_BACKUP.data.communicationPlan,
+        SAMPLE_BACKUP.data.customRepeaters,
       );
 
       expect(backup.data.notes).toHaveLength(1);
@@ -227,6 +361,14 @@ describe('BackupService', () => {
       expect(backup.data.inventoryItems).toHaveLength(1);
       expect(backup.data.pantryItems).toHaveLength(1);
       expect(backup.data.bookmarks).toHaveLength(1);
+      expect(backup.data.waypoints).toHaveLength(1);
+      expect(backup.data.tracks).toHaveLength(1);
+      expect(backup.data.emergencyContacts).toHaveLength(1);
+      expect(backup.data.rallyPoints).toHaveLength(1);
+      expect(backup.data.communicationPlan?.whoCallsWhom).toBe(
+        'Sam calls Alex',
+      );
+      expect(backup.data.customRepeaters).toHaveLength(1);
       expect(backup.data.settings.fontSize).toBe('medium');
       expect(backup.data.settings.measurementSystem).toBe('metric');
     });

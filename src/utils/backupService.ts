@@ -76,6 +76,8 @@ export interface BackupPreview {
   waypointCount: number;
   trackCount: number;
   emergencyContactCount: number;
+  rallyPointCount: number;
+  communicationPlanCount: number;
   customRepeaterCount: number;
 }
 
@@ -210,6 +212,8 @@ export function createBackupPreview(backupData: BackupData): BackupPreview {
     waypointCount: backupData.data.waypoints.length,
     trackCount: backupData.data.tracks.length,
     emergencyContactCount: backupData.data.emergencyContacts.length,
+    rallyPointCount: backupData.data.rallyPoints.length,
+    communicationPlanCount: backupData.data.communicationPlan ? 1 : 0,
     customRepeaterCount: backupData.data.customRepeaters.length,
   };
 }

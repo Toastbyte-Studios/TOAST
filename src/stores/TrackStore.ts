@@ -142,10 +142,7 @@ export class TrackStore {
    * In replace mode all existing tracks are removed first.
    * In merge mode only tracks whose IDs do not already exist are inserted.
    */
-  async importData(
-    tracks: Track[],
-    mode: 'replace' | 'merge',
-  ): Promise<void> {
+  async importData(tracks: Track[], mode: 'replace' | 'merge'): Promise<void> {
     if (this.trackDb) {
       try {
         await this.trackDb.executeSql('BEGIN TRANSACTION');

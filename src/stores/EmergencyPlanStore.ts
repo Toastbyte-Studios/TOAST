@@ -44,6 +44,14 @@ export interface CommunicationPlan {
   updatedAt: number;
 }
 
+const EMPTY_COMMUNICATION_PLAN: CommunicationPlan = {
+  whoCallsWhom: '',
+  ifPhonesDown: '',
+  outOfAreaContact: '',
+  checkInSchedule: '',
+  updatedAt: 0,
+};
+
 /**
  * Store for managing emergency contacts, rally points, and a communication plan.
  * Follows the same pattern as InventoryStore.
@@ -52,13 +60,7 @@ export class EmergencyPlanStore {
   db: SQLiteDatabase | null = null;
   contacts: EmergencyContact[] = [];
   rallyPoints: RallyPoint[] = [];
-  communicationPlan: CommunicationPlan = {
-    whoCallsWhom: '',
-    ifPhonesDown: '',
-    outOfAreaContact: '',
-    checkInSchedule: '',
-    updatedAt: 0,
-  };
+  communicationPlan: CommunicationPlan = { ...EMPTY_COMMUNICATION_PLAN };
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -585,9 +587,9 @@ export class EmergencyPlanStore {
       if (mode === 'replace') {
         this.contacts = contacts;
         this.rallyPoints = rallyPoints;
-        if (communicationPlan) {
-          this.communicationPlan = communicationPlan;
-        }
+        this.communicationPlan = communicationPlan ?? {
+          ...EMPTY_COMMUNICATION_PLAN,
+        };
       } else {
         const existingContactIds = new Set(this.contacts.map((c) => c.id));
         const newContacts = contacts.filter(

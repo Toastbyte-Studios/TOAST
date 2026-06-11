@@ -96,10 +96,14 @@ export const SettingsModal = observer(
   ({ visible, onClose }: SettingsModalProps) => {
     const settingsStore = useSettingsStore();
     const coreStore = useCoreStore();
+    const emergencyPlanStore = useEmergencyPlanStore();
     const inventoryStore = useInventoryStore();
     const pantryStore = usePantryStore();
+    const repeaterBookStore = useRepeaterBookStore();
     const COLORS = useTheme();
+    const trackStore = useTrackStore();
     const t = useMemo(() => makeStyles(COLORS), [COLORS]);
+    const waypointStore = useWaypointStore();
 
     // Backup UI state
     const [isExporting, setIsExporting] = useState(false);
@@ -158,6 +162,14 @@ export const SettingsModal = observer(
             noteSortOrder: settingsStore.noteSortOrder,
             measurementSystem: settingsStore.measurementSystem,
           },
+          waypointStore.waypoints,
+          trackStore.tracks,
+          emergencyPlanStore.contacts,
+          emergencyPlanStore.rallyPoints,
+          emergencyPlanStore.communicationPlan.updatedAt > 0
+            ? emergencyPlanStore.communicationPlan
+            : null,
+          repeaterBookStore.customRepeaters,
         );
         await exportBackup(backupData);
         await settingsStore.setLastBackupAt(Date.now());
@@ -170,7 +182,16 @@ export const SettingsModal = observer(
       } finally {
         setIsExporting(false);
       }
-    }, [coreStore, inventoryStore, pantryStore, settingsStore]);
+    }, [
+      coreStore,
+      emergencyPlanStore,
+      inventoryStore,
+      pantryStore,
+      repeaterBookStore,
+      settingsStore,
+      trackStore,
+      waypointStore,
+    ]);
 
     const handleOpenRestorePanel = useCallback(async () => {
       const files = await listBackupFiles();
@@ -240,6 +261,19 @@ export const SettingsModal = observer(
             mode,
           );
 
+          await waypointStore.importData(data.waypoints, mode);
+          await trackStore.importData(data.tracks, mode);
+          await emergencyPlanStore.importData(
+            data.emergencyContacts,
+            data.rallyPoints,
+            data.communicationPlan,
+            mode,
+          );
+          await repeaterBookStore.importCustomRepeaters(
+            data.customRepeaters,
+            mode,
+          );
+
           // Restore settings — only applied in replace mode, overwriting current preferences
           if (mode === 'replace' && data.settings) {
             if (data.settings.fontSize) {
@@ -275,7 +309,17 @@ export const SettingsModal = observer(
           setIsRestoring(false);
         }
       },
-      [selectedBackup, coreStore, inventoryStore, pantryStore, settingsStore],
+      [
+        selectedBackup,
+        coreStore,
+        emergencyPlanStore,
+        inventoryStore,
+        pantryStore,
+        repeaterBookStore,
+        settingsStore,
+        trackStore,
+        waypointStore,
+      ],
     );
 
     const confirmRestore = useCallback(
@@ -558,7 +602,14 @@ export const SettingsModal = observer(
                           {backupPreview.inventoryItemCount} inventory items,{' '}
                           {backupPreview.noteCount} notes,{' '}
                           {backupPreview.checklistCount} checklists,{' '}
-                          {backupPreview.bookmarkCount} bookmarks
+                          {backupPreview.bookmarkCount} bookmarks,{' '}
+                          {backupPreview.waypointCount} waypoints,{' '}
+                          {backupPreview.trackCount} tracks,{' '}
+                          {backupPreview.emergencyContactCount} emergency
+                          contacts, {backupPreview.rallyPointCount} rally
+                          points, {backupPreview.communicationPlanCount}{' '}
+                          communication plans,{' '}
+                          {backupPreview.customRepeaterCount} custom repeaters
                         </RNText>
                         <View style={styles.restoreButtons}>
                           <TouchableOpacity
