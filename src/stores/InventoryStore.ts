@@ -160,11 +160,12 @@ export class InventoryStore {
     }
 
     try {
-      this.inventoryDb = await SQLite.openDatabase({
+      const db = await SQLite.openDatabase({
         name: 'toast.db',
         location: 'default',
       });
-      await runMigrations(this.inventoryDb, 'inventory', INVENTORY_MIGRATIONS);
+      this.inventoryDb = db;
+      await runMigrations(db, 'inventory', INVENTORY_MIGRATIONS);
       await this.loadCategories();
       await this.loadItems();
     } catch (error) {

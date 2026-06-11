@@ -8,7 +8,7 @@ import Grid from './Grid';
 import SectionSubHeader from './SectionSubHeader';
 
 type CategoryListProps = {
-  categories: CategoryType[];
+  categories: CategoryType<unknown>[];
   disclaimer?: string;
   categoryScreen?: string;
 };

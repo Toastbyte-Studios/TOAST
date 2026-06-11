@@ -7,12 +7,12 @@ export type ToolType = {
   icon: string;
 };
 
-export type CategoryType = {
+export type CategoryType<T = ReferenceEntryType> = {
   id: string;
   title: string;
   icon: string;
   category: string;
-  data: ReferenceEntryType[];
+  data: T[];
 };
 
 export type FlashlightModeType = {

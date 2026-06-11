@@ -268,11 +268,12 @@ export class PantryStore {
     }
 
     try {
-      this.pantryDb = await SQLite.openDatabase({
+      const db = await SQLite.openDatabase({
         name: 'toast.db',
         location: 'default',
       });
-      await runMigrations(this.pantryDb, 'pantry', PANTRY_MIGRATIONS);
+      this.pantryDb = db;
+      await runMigrations(db, 'pantry', PANTRY_MIGRATIONS);
       await this.loadCategories();
       await this.loadItems();
     } catch (error) {

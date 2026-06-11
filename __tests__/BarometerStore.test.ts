@@ -165,7 +165,7 @@ describe('BarometerStore', () => {
       db.executeSql.mockClear();
 
       capturedNext!({ pressure: 1014.0 });
-      await new Promise((r) => setTimeout(r, 0));
+      await new Promise<void>((r) => setTimeout(() => r(), 0));
 
       const calls = db.executeSql.mock.calls.map((c: [string]) => c[0]);
       expect(calls).toContain('BEGIN TRANSACTION');
