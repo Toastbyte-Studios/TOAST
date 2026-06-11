@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
+    "typecheck": "tsc --noEmit",
     "postinstall": "patch-package && node scripts/patch-rn-codegen.js"
   },
   "dependencies": {
