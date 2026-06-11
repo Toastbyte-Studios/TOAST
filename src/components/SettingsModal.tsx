@@ -60,7 +60,9 @@ function formatBackupDate(timestamp: number): string {
   return new Date(timestamp).toLocaleString();
 }
 
-function hasCommunicationPlan(plan: BackupData['data']['communicationPlan']) {
+function hasPersistedCommunicationPlan(
+  plan: BackupData['data']['communicationPlan'],
+) {
   return Boolean(plan && plan.updatedAt > 0);
 }
 
@@ -170,7 +172,7 @@ export const SettingsModal = observer(
           trackStore.tracks,
           emergencyPlanStore.contacts,
           emergencyPlanStore.rallyPoints,
-          hasCommunicationPlan(emergencyPlanStore.communicationPlan)
+          hasPersistedCommunicationPlan(emergencyPlanStore.communicationPlan)
             ? emergencyPlanStore.communicationPlan
             : null,
           repeaterBookStore.customRepeaters,

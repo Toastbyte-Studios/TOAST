@@ -95,7 +95,7 @@ const BackupDataSchema = z.object({
     .string()
     .refine(
       (v) => (SUPPORTED_BACKUP_VERSIONS as readonly string[]).includes(v),
-      { message: 'Unrecognised backup version' },
+      { message: 'Unrecognized backup version' },
     ),
   backupDate: z.string(),
   createdAt: z.number(),
