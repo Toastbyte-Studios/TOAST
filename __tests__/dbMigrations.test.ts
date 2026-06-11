@@ -104,8 +104,7 @@ class InMemoryDb implements SQLiteDatabase {
       const tableName = createMatch[1];
       if (!this.tables.has(tableName)) {
         // Parse column names from the DDL
-        const colDefs = createMatch[2]
-          .split(',')
+        const colDefs = splitTopLevelCommas(createMatch[2])
           .map((c) => c.trim())
           .filter(
             (c) =>
@@ -144,8 +143,7 @@ class InMemoryDb implements SQLiteDatabase {
     const createNoGuardMatch = s.match(/^CREATE TABLE (\w+)\s*\((.+)\)$/is);
     if (createNoGuardMatch) {
       const tableName = createNoGuardMatch[1];
-      const colDefs = createNoGuardMatch[2]
-        .split(',')
+      const colDefs = splitTopLevelCommas(createNoGuardMatch[2])
         .map((c) => c.trim())
         .filter(
           (c) =>
@@ -238,6 +236,27 @@ class InMemoryDb implements SQLiteDatabase {
 
 function emptyResult() {
   return [{ rows: { length: 0, item: () => null } }];
+}
+
+/**
+ * Splits `s` on commas that are not inside parentheses, so that
+ * compound constraint clauses like `PRIMARY KEY (namespace, id)` are
+ * treated as a single token instead of being broken at the inner comma.
+ */
+function splitTopLevelCommas(s: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '(') depth++;
+    else if (s[i] === ')') depth--;
+    else if (s[i] === ',' && depth === 0) {
+      parts.push(s.slice(start, i));
+      start = i + 1;
+    }
+  }
+  parts.push(s.slice(start));
+  return parts;
 }
 
 // ─── Tests ────────────────────────────────────────────────────────────────────
@@ -421,6 +440,25 @@ describe('runMigrations', () => {
     // The table created inside the failed transaction should be rolled back.
     // (Our in-memory db simulates rollback via the snapshot mechanism.)
     expect(db.tables.has('partial_table')).toBe(false);
+  });
+
+  it('throws when a migration id is not a positive integer', async () => {
+    const migrations: Migration[] = [
+      { id: 0, description: 'zero id', run: async () => {} },
+    ];
+    await expect(runMigrations(db, 'test', migrations)).rejects.toThrow(
+      /positive integer/,
+    );
+  });
+
+  it('throws when two migrations share the same id within a namespace', async () => {
+    const migrations: Migration[] = [
+      { id: 1, description: 'first', run: async () => {} },
+      { id: 1, description: 'duplicate', run: async () => {} },
+    ];
+    await expect(runMigrations(db, 'test', migrations)).rejects.toThrow(
+      /Duplicate migration id/,
+    );
   });
 });
 

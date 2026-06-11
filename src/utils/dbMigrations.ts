@@ -120,6 +120,22 @@ export async function runMigrations(
   // Sort by id to guarantee execution order regardless of array ordering.
   const sorted = [...migrations].sort((a, b) => a.id - b.id);
 
+  // Validate that every id is a positive integer and unique within the array.
+  const seenIds = new Set<number>();
+  for (const m of sorted) {
+    if (!Number.isInteger(m.id) || m.id < 1) {
+      throw new Error(
+        `Migration id must be a positive integer, got ${m.id} ("${m.description}") in namespace "${namespace}".`,
+      );
+    }
+    if (seenIds.has(m.id)) {
+      throw new Error(
+        `Duplicate migration id ${m.id} in namespace "${namespace}".`,
+      );
+    }
+    seenIds.add(m.id);
+  }
+
   for (const migration of sorted) {
     if (applied.has(migration.id)) continue;
 
@@ -131,6 +147,7 @@ export async function runMigrations(
         [namespace, migration.id],
       );
       await db.executeSql('COMMIT');
+      applied.add(migration.id);
     } catch (error) {
       await db.executeSql('ROLLBACK');
       throw new Error(

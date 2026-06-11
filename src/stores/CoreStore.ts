@@ -126,7 +126,7 @@ const NOTE_MIGRATIONS: Migration[] = [
           ') SELECT ' +
           'id,createdAt,latitude,longitude,category,type,' +
           'title,text,bookmarked,sketchDataUri,photoUris,' +
-          'NULL,NULL,NULL' +
+          'audioUri,transcription,duration' +
           ' FROM notes_old',
       );
       await db.executeSql('DROP TABLE notes_old');
