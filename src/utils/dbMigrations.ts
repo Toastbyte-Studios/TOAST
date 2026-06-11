@@ -32,6 +32,22 @@ export interface Migration {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// ─── Internal helpers ─────────────────────────────────────────────────────────
+
+/**
+ * Asserts that `name` is a safe SQL identifier (letters, digits, underscores).
+ * Throws when the name contains anything that could be used for SQL injection.
+ */
+function assertSafeIdentifier(name: string): void {
+  if (!/^\w+$/.test(name)) {
+    throw new Error(
+      `Unsafe SQL identifier: "${name}". Only word characters (A-Z, a-z, 0-9, _) are allowed.`,
+    );
+  }
+}
+
+// ─── Public helpers ───────────────────────────────────────────────────────────
+
 /**
  * Returns the set of column names that currently exist in `tableName`.
  * Returns an empty set when the table does not exist.
@@ -40,6 +56,7 @@ export async function getTableColumns(
   db: SQLiteDatabase,
   tableName: string,
 ): Promise<Set<string>> {
+  assertSafeIdentifier(tableName);
   const [result] = await db.executeSql(`PRAGMA table_info(${tableName})`);
   const columns = new Set<string>();
   for (let i = 0; i < result.rows.length; i++) {

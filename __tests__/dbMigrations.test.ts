@@ -447,6 +447,12 @@ describe('getTableColumns', () => {
     const cols = await getTableColumns(db as SQLiteDatabase, 'nonexistent');
     expect(cols.size).toBe(0);
   });
+
+  it('throws for an unsafe table name (SQL injection guard)', async () => {
+    await expect(
+      getTableColumns(db as SQLiteDatabase, "bad'; DROP TABLE notes;--"),
+    ).rejects.toThrow(/Unsafe SQL identifier/);
+  });
 });
 
 describe('getTableDDL', () => {
