@@ -138,6 +138,53 @@ export class TrackStore {
   }
 
   /**
+   * Replaces or merges a list of tracks imported from a backup.
+   * In replace mode all existing tracks are removed first.
+   * In merge mode only tracks whose IDs do not already exist are inserted.
+   */
+  async importData(tracks: Track[], mode: 'replace' | 'merge'): Promise<void> {
+    if (this.trackDb) {
+      try {
+        await this.trackDb.executeSql('BEGIN TRANSACTION');
+        if (mode === 'replace') {
+          await this.trackDb.executeSql('DELETE FROM tracks');
+        }
+        const sql =
+          mode === 'replace'
+            ? 'INSERT OR REPLACE INTO tracks (id, name, createdAt, durationSeconds, distanceMeters, points) VALUES (?, ?, ?, ?, ?, ?)'
+            : 'INSERT OR IGNORE INTO tracks (id, name, createdAt, durationSeconds, distanceMeters, points) VALUES (?, ?, ?, ?, ?, ?)';
+        for (const t of tracks) {
+          await this.trackDb.executeSql(sql, [
+            t.id,
+            t.name,
+            t.createdAt,
+            t.durationSeconds,
+            t.distanceMeters,
+            JSON.stringify(t.points),
+          ]);
+        }
+        await this.trackDb.executeSql('COMMIT');
+      } catch (error) {
+        await this.trackDb.executeSql('ROLLBACK');
+        throw error;
+      }
+    }
+    runInAction(() => {
+      if (mode === 'replace') {
+        this.tracks = [...tracks].sort((a, b) =>
+          b.createdAt.localeCompare(a.createdAt),
+        );
+      } else {
+        const existingIds = new Set(this.tracks.map((t) => t.id));
+        const incoming = tracks.filter((t) => !existingIds.has(t.id));
+        this.tracks = [...incoming, ...this.tracks].sort((a, b) =>
+          b.createdAt.localeCompare(a.createdAt),
+        );
+      }
+    });
+  }
+
+  /**
    * Deletes a track by ID from both memory and SQLite.
    */
   async deleteTrack(id: string): Promise<void> {

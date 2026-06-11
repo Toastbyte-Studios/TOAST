@@ -351,6 +351,27 @@ export class RepeaterBookStore {
   }
 
   /**
+   * Replaces or merges custom repeaters imported from a backup.
+   * In replace mode all existing custom repeaters are removed first.
+   * In merge mode only repeaters whose IDs do not already exist are added.
+   */
+  async importCustomRepeaters(
+    repeaters: Repeater[],
+    mode: 'replace' | 'merge',
+  ): Promise<void> {
+    runInAction(() => {
+      if (mode === 'replace') {
+        this.customRepeaters = repeaters;
+      } else {
+        const existingIds = new Set(this.customRepeaters.map((r) => r.id));
+        const incoming = repeaters.filter((r) => !existingIds.has(r.id));
+        this.customRepeaters = [...incoming, ...this.customRepeaters];
+      }
+    });
+    await this.saveCustomRepeaters();
+  }
+
+  /**
    * Compare current location against the cached query location and trigger a
    * fetch when the user has moved more than REFETCH_THRESHOLD_MILES, or when
    * there is no cached data at all.

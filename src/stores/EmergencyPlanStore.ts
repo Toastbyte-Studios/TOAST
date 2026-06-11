@@ -44,6 +44,20 @@ export interface CommunicationPlan {
   updatedAt: number;
 }
 
+const EMPTY_COMMUNICATION_PLAN: CommunicationPlan = {
+  whoCallsWhom: '',
+  ifPhonesDown: '',
+  outOfAreaContact: '',
+  checkInSchedule: '',
+  updatedAt: 0,
+};
+
+function hasCommunicationPlan(
+  plan: CommunicationPlan | null | undefined,
+): plan is CommunicationPlan {
+  return Boolean(plan && plan.updatedAt > 0);
+}
+
 /**
  * Store for managing emergency contacts, rally points, and a communication plan.
  * Follows the same pattern as InventoryStore.
@@ -52,13 +66,7 @@ export class EmergencyPlanStore {
   db: SQLiteDatabase | null = null;
   contacts: EmergencyContact[] = [];
   rallyPoints: RallyPoint[] = [];
-  communicationPlan: CommunicationPlan = {
-    whoCallsWhom: '',
-    ifPhonesDown: '',
-    outOfAreaContact: '',
-    checkInSchedule: '',
-    updatedAt: 0,
-  };
+  communicationPlan: CommunicationPlan = { ...EMPTY_COMMUNICATION_PLAN };
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -511,6 +519,109 @@ export class EmergencyPlanStore {
 
     runInAction(() => {
       this.communicationPlan = updated;
+    });
+  }
+
+  /**
+   * Replaces or merges emergency plan data imported from a backup.
+   * In replace mode all existing contacts, rally points, and communication
+   * plan are removed before inserting the backup data.
+   * In merge mode only records whose IDs do not already exist are inserted.
+   */
+  async importData(
+    contacts: EmergencyContact[],
+    rallyPoints: RallyPoint[],
+    communicationPlan: CommunicationPlan | null,
+    mode: 'replace' | 'merge',
+  ): Promise<void> {
+    if (this.db) {
+      try {
+        await this.db.executeSql('BEGIN TRANSACTION');
+        if (mode === 'replace') {
+          await this.db.executeSql('DELETE FROM emergency_contacts');
+          await this.db.executeSql('DELETE FROM rally_points');
+          await this.db.executeSql('DELETE FROM communication_plan');
+        }
+        const contactSql =
+          mode === 'replace'
+            ? 'INSERT OR REPLACE INTO emergency_contacts (id, name, relationship, phone, notes, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            : 'INSERT OR IGNORE INTO emergency_contacts (id, name, relationship, phone, notes, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        for (const c of contacts) {
+          await this.db.executeSql(contactSql, [
+            c.id,
+            c.name,
+            c.relationship,
+            c.phone,
+            c.notes ?? null,
+            c.createdAt,
+            c.updatedAt,
+          ]);
+        }
+        const rallyPointSql =
+          mode === 'replace'
+            ? 'INSERT OR REPLACE INTO rally_points (id, name, description, coordinates, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)'
+            : 'INSERT OR IGNORE INTO rally_points (id, name, description, coordinates, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?)';
+        for (const r of rallyPoints) {
+          await this.db.executeSql(rallyPointSql, [
+            r.id,
+            r.name,
+            r.description,
+            r.coordinates ?? null,
+            r.createdAt,
+            r.updatedAt,
+          ]);
+        }
+        if (hasCommunicationPlan(communicationPlan)) {
+          await this.db.executeSql(
+            'INSERT OR REPLACE INTO communication_plan (id, whoCallsWhom, ifPhonesDown, outOfAreaContact, checkInSchedule, updatedAt) VALUES (1, ?, ?, ?, ?, ?)',
+            [
+              communicationPlan.whoCallsWhom,
+              communicationPlan.ifPhonesDown,
+              communicationPlan.outOfAreaContact,
+              communicationPlan.checkInSchedule,
+              communicationPlan.updatedAt,
+            ],
+          );
+        }
+        await this.db.executeSql('COMMIT');
+      } catch (error) {
+        await this.db.executeSql('ROLLBACK');
+        throw error;
+      }
+    }
+    runInAction(() => {
+      if (mode === 'replace') {
+        this.contacts = contacts;
+        this.rallyPoints = rallyPoints;
+        this.communicationPlan = hasCommunicationPlan(communicationPlan)
+          ? communicationPlan
+          : {
+              ...EMPTY_COMMUNICATION_PLAN,
+            };
+      } else {
+        const existingContactIds = new Set(this.contacts.map((c) => c.id));
+        const newContacts = contacts.filter(
+          (c) => !existingContactIds.has(c.id),
+        );
+        this.contacts = [...this.contacts, ...newContacts].sort((a, b) =>
+          a.name.localeCompare(b.name),
+        );
+
+        const existingRallyIds = new Set(this.rallyPoints.map((r) => r.id));
+        const newRallyPoints = rallyPoints.filter(
+          (r) => !existingRallyIds.has(r.id),
+        );
+        this.rallyPoints = [...this.rallyPoints, ...newRallyPoints].sort(
+          (a, b) => a.name.localeCompare(b.name),
+        );
+
+        if (
+          hasCommunicationPlan(communicationPlan) &&
+          this.communicationPlan.updatedAt === 0
+        ) {
+          this.communicationPlan = communicationPlan;
+        }
+      }
     });
   }
 

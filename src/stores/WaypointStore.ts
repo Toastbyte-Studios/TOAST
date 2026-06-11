@@ -134,6 +134,56 @@ export class WaypointStore {
   }
 
   /**
+   * Replaces or merges a list of waypoints imported from a backup.
+   * In replace mode all existing waypoints are removed first.
+   * In merge mode only waypoints whose IDs do not already exist are inserted.
+   */
+  async importData(
+    waypoints: Waypoint[],
+    mode: 'replace' | 'merge',
+  ): Promise<void> {
+    if (this.waypointDb) {
+      try {
+        await this.waypointDb.executeSql('BEGIN TRANSACTION');
+        if (mode === 'replace') {
+          await this.waypointDb.executeSql('DELETE FROM waypoints');
+        }
+        const sql =
+          mode === 'replace'
+            ? 'INSERT OR REPLACE INTO waypoints (id, name, latitude, longitude, createdAt) VALUES (?, ?, ?, ?, ?)'
+            : 'INSERT OR IGNORE INTO waypoints (id, name, latitude, longitude, createdAt) VALUES (?, ?, ?, ?, ?)';
+        for (const w of waypoints) {
+          await this.waypointDb.executeSql(sql, [
+            w.id,
+            w.name,
+            w.latitude,
+            w.longitude,
+            w.createdAt,
+          ]);
+        }
+        await this.waypointDb.executeSql('COMMIT');
+      } catch (error) {
+        await this.waypointDb.executeSql('ROLLBACK');
+        throw error;
+      }
+    }
+    runInAction(() => {
+      if (mode === 'replace') {
+        this.waypoints = [...waypoints].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        );
+        this.activeWaypointId = null;
+      } else {
+        const existingIds = new Set(this.waypoints.map((w) => w.id));
+        const incoming = waypoints.filter((w) => !existingIds.has(w.id));
+        this.waypoints = [...this.waypoints, ...incoming].sort((a, b) =>
+          a.createdAt.localeCompare(b.createdAt),
+        );
+      }
+    });
+  }
+
+  /**
    * Deletes a waypoint by ID from both memory and SQLite.
    * If the deleted waypoint was active, clears the active selection.
    */
