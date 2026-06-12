@@ -12,6 +12,7 @@ import { PantryStore } from './PantryStore';
 import { ReferenceStore } from './ReferenceStore';
 import { RepeaterBookStore } from './RepeaterBookStore';
 import { SettingsStore } from './SettingsStore';
+import { SignalingStore } from './SignalingStore';
 import { SignalsStore } from './SignalsStore';
 import { SolarCycleNotificationStore } from './SolarCycleNotificationStore';
 import { TrackStore } from './TrackStore';
@@ -29,6 +30,7 @@ export class RootStore {
   navigationStore: NavigationStore;
   referenceStore: ReferenceStore;
   settingsStore: SettingsStore;
+  signalingStore: SignalingStore;
   signalsStore: SignalsStore;
   solarCycleNotificationStore: SolarCycleNotificationStore;
   notificationsStore: NotificationsStore;
@@ -50,6 +52,7 @@ export class RootStore {
     this.navigationStore = new NavigationStore();
     this.referenceStore = new ReferenceStore();
     this.settingsStore = new SettingsStore();
+    this.signalingStore = new SignalingStore();
     this.signalsStore = new SignalsStore();
     this.solarCycleNotificationStore = new SolarCycleNotificationStore();
     this.notificationsStore = new NotificationsStore();
@@ -105,6 +108,7 @@ export class RootStore {
   // Reset all stores
   reset() {
     this.coreStore.dispose();
+    this.signalingStore.dispose();
     this.notesStore.dispose();
     this.checklistStore.dispose();
     this.inventoryStore.dispose();
@@ -126,6 +130,7 @@ export class RootStore {
     this.navigationStore = new NavigationStore();
     this.referenceStore = new ReferenceStore();
     this.settingsStore = new SettingsStore();
+    this.signalingStore = new SignalingStore();
     this.signalsStore = new SignalsStore();
     this.solarCycleNotificationStore = new SolarCycleNotificationStore();
     this.notificationsStore = new NotificationsStore();

@@ -3,7 +3,10 @@ import React, { useRef, useState, useCallback } from 'react';
 import { StyleSheet, TouchableOpacity, View, Animated } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore, useNotificationsStore } from '../../stores/StoreContext';
+import {
+  useNotificationsStore,
+  useSignalingStore,
+} from '../../stores/StoreContext';
 import { FOOTER_HEIGHT } from '../../theme';
 import { Text } from '../ScaledText';
 import ActiveItemButton from './components/ActiveItemButton';
@@ -44,7 +47,7 @@ function useVisibleNotificationCount(): number {
  * @returns A React element rendering the footer with three sections.
  */
 const FooterImpl = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const COLORS = useTheme();
   const { bottom } = useSafeAreaInsets();
   const [isSOSPressing, setIsSOSPressing] = useState(false);

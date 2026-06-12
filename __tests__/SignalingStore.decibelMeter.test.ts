@@ -2,7 +2,7 @@
  * @format
  */
 
-import { CoreStore } from '../src/stores/CoreStore';
+import { SignalingStore } from '../src/stores/SignalingStore';
 
 // Mock react-native-geolocation-service
 jest.mock('react-native-geolocation-service', () => ({
@@ -51,11 +51,11 @@ jest.mock('react-native', () => ({
   Platform: { OS: 'ios' },
 }));
 
-describe('CoreStore - Decibel Meter', () => {
-  let store: CoreStore;
+describe('SignalingStore - Decibel Meter', () => {
+  let store: SignalingStore;
 
   beforeEach(() => {
-    store = new CoreStore();
+    store = new SignalingStore();
   });
 
   afterEach(() => {

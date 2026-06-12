@@ -1,5 +1,6 @@
 export { RootStore } from './RootStore';
 export { CoreStore } from './CoreStore';
+export { SignalingStore } from './SignalingStore';
 export {
   NotesStore,
   type Note,
@@ -51,6 +52,7 @@ export {
   StoreProvider,
   useStores,
   useCoreStore,
+  useSignalingStore,
   useNotesStore,
   useChecklistStore,
   useInventoryStore,

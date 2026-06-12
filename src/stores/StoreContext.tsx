@@ -51,6 +51,7 @@ export const useStores = (): RootStore => {
 
 // Convenience hooks for individual stores
 export const useCoreStore = () => useStores().coreStore;
+export const useSignalingStore = () => useStores().signalingStore;
 export const useNotesStore = () => useStores().notesStore;
 export const useChecklistStore = () => useStores().checklistStore;
 export const useInventoryStore = () => useStores().inventoryStore;

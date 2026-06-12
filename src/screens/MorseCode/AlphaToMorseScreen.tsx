@@ -10,7 +10,7 @@ import {
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
-import { useCoreStore } from '../../stores/StoreContext';
+import { useSignalingStore } from '../../stores/StoreContext';
 import { COLORS } from '../../theme';
 import { textToMorse } from '../../utils/morseCodeMapping';
 
@@ -27,7 +27,7 @@ const MAX_CHARACTERS = 300;
  * - References SOS implementation for morse code transmission
  */
 const AlphaToMorseScreenImpl = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const [message, setMessage] = useState('');
   const [morseWithTone, setMorseWithTone] = useState(true);
 

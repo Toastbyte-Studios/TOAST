@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useCoreStore } from '../../stores/StoreContext';
+import { useSignalingStore } from '../../stores/StoreContext';
 
 /**
  * Full-screen Nightvision mode with red light at 100% brightness.
@@ -16,7 +16,7 @@ import { useCoreStore } from '../../stores/StoreContext';
  * @returns A React element that renders the full-screen nightvision mode.
  */
 const NightvisionScreenImpl = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
 
   return (
     <View style={styles.container}>
