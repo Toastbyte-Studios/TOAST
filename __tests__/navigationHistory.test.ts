@@ -3,11 +3,18 @@
  */
 
 import { NavigationHistory } from '../src/navigation/navigationHistory';
+import type {
+  NavigationContainerRefWithCurrent,
+  ParamListBase,
+} from '@react-navigation/native';
 
 // Mock the @react-navigation/native module
 jest.mock('@react-navigation/native', () => ({
   CommonActions: {
-    navigate: (params: any) => ({ type: 'NAVIGATE', payload: params }),
+    navigate: (params: Record<string, unknown>) => ({
+      type: 'NAVIGATE',
+      payload: params,
+    }),
   },
 }));
 
@@ -17,7 +24,11 @@ const createMockNavigationRef = () => {
     routes: [{ key: 'route1', name: 'Home' }],
   };
 
-  const mockCurrentRoute = {
+  const mockCurrentRoute: {
+    key: string;
+    name: string;
+    params: Record<string, unknown> | undefined;
+  } = {
     key: 'route1',
     name: 'Home',
     params: undefined,
@@ -30,7 +41,7 @@ const createMockNavigationRef = () => {
     dispatch: jest.fn(),
     mockState,
     mockCurrentRoute,
-  } as any;
+  };
 };
 
 describe('NavigationHistory', () => {
@@ -40,20 +51,28 @@ describe('NavigationHistory', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     navigationRef = createMockNavigationRef();
-    navigationHistory = new NavigationHistory(navigationRef as any);
+    navigationHistory = new NavigationHistory(
+      navigationRef as unknown as NavigationContainerRefWithCurrent<ParamListBase>,
+    );
   });
 
   describe('constructor', () => {
     it('should throw error if navigationRef is null', () => {
-      expect(() => new NavigationHistory(null as any)).toThrow(
-        'NavigationHistory requires a valid navigationRef',
-      );
+      expect(
+        () =>
+          new NavigationHistory(
+            null as unknown as NavigationContainerRefWithCurrent<ParamListBase>,
+          ),
+      ).toThrow('NavigationHistory requires a valid navigationRef');
     });
 
     it('should throw error if navigationRef is undefined', () => {
-      expect(() => new NavigationHistory(undefined as any)).toThrow(
-        'NavigationHistory requires a valid navigationRef',
-      );
+      expect(
+        () =>
+          new NavigationHistory(
+            undefined as unknown as NavigationContainerRefWithCurrent<ParamListBase>,
+          ),
+      ).toThrow('NavigationHistory requires a valid navigationRef');
     });
   });
 

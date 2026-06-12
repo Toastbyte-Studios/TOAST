@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, ParamListBase } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import React, { useState, useEffect, useMemo, useRef } from 'react';
@@ -30,7 +30,7 @@ import { COLORS, FOOTER_HEIGHT } from '../../theme';
 import { pickPhoto } from '../../utils/photoPicker';
 import { MAX_TITLE_LENGTH } from './constants';
 
-type NewNoteScreenNavigationProp = NativeStackNavigationProp<any>;
+type NewNoteScreenNavigationProp = NativeStackNavigationProp<ParamListBase>;
 
 /**
  * Screen for composing and saving a new note.

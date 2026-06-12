@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import {
@@ -27,7 +31,7 @@ import { parseSharedRallyPoints, shareRallyPoints } from './shareUtils';
  * @returns The rally points list screen.
  */
 export default observer(function RallyPointsScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
   const [importVisible, setImportVisible] = useState(false);

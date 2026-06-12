@@ -84,11 +84,11 @@ export class WaypointStore {
     for (let i = 0; i < results.rows.length; i++) {
       const row = results.rows.item(i);
       loaded.push({
-        id: row.id,
-        name: row.name,
-        latitude: row.latitude,
-        longitude: row.longitude,
-        createdAt: row.createdAt,
+        id: row.id as string,
+        name: row.name as string,
+        latitude: row.latitude as number,
+        longitude: row.longitude as number,
+        createdAt: row.createdAt as string,
       });
     }
     runInAction(() => {

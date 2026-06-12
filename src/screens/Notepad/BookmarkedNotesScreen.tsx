@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
@@ -28,7 +32,7 @@ import { sortNotes } from '../../utils/noteSorting';
  * - Notes are sorted by creation date (most recent first).
  */
 export default observer(function BookmarkedNotesScreen(): React.JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const core = useNotesStore();
   const settings = useSettingsStore();
 

@@ -183,9 +183,9 @@ export class ChecklistStore {
       for (let i = 0; i < checklistRows.length; i++) {
         const row = checklistRows.item(i);
         loadedChecklists.push({
-          id: row.id,
-          name: row.name,
-          createdAt: row.createdAt,
+          id: row.id as string,
+          name: row.name as string,
+          createdAt: row.createdAt as number,
           isDefault: row.isDefault === 1,
         });
       }
@@ -198,11 +198,11 @@ export class ChecklistStore {
       for (let i = 0; i < itemRows.length; i++) {
         const row = itemRows.item(i);
         loadedItems.push({
-          id: row.id,
-          checklistId: row.checklistId,
-          text: row.text,
+          id: row.id as string,
+          checklistId: row.checklistId as string,
+          text: row.text as string,
           checked: row.checked === 1,
-          order: row.order,
+          order: row.order as number,
         });
       }
 

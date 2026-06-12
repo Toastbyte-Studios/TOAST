@@ -12,6 +12,7 @@ jest.mock('react-native-sqlite-storage', () => {
 jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 import { WaypointStore } from '../src/stores/WaypointStore';
+import { SQLiteDatabase } from '../src/types/database-types';
 
 describe('WaypointStore', () => {
   let store: WaypointStore;
@@ -141,7 +142,9 @@ describe('WaypointStore', () => {
     it('should initialise without error when no db is provided', async () => {
       // initDatabase with null db (SQLite not available)
       // The store should work in in-memory mode
-      await expect(store.initDatabase(null as any)).resolves.not.toThrow();
+      await expect(
+        store.initDatabase(null as unknown as SQLiteDatabase),
+      ).resolves.not.toThrow();
     });
   });
 });

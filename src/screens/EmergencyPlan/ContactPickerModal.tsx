@@ -14,7 +14,20 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Text } from '../../components/ScaledText';
 import { useTheme } from '../../hooks/useTheme';
 
-let Contacts: any = null;
+interface RawContact {
+  recordID?: string;
+  givenName?: string;
+  familyName?: string;
+  company?: string;
+  phoneNumbers: Array<{ number: string }>;
+}
+
+interface ContactsModule {
+  getAll(): Promise<RawContact[]>;
+  requestPermission(): Promise<string>;
+}
+
+let Contacts: ContactsModule | null = null;
 try {
   Contacts = require('react-native-contacts').default;
 } catch {
@@ -79,12 +92,12 @@ export function ContactPickerModal({
       }
 
       const all = await Contacts.getAll();
-      const withPhones: DeviceContact[] = (all as any[])
+      const withPhones: DeviceContact[] = all
         .filter(
-          (c: any) =>
+          (c: RawContact) =>
             Array.isArray(c.phoneNumbers) && c.phoneNumbers.length > 0,
         )
-        .map((c: any) => ({
+        .map((c: RawContact) => ({
           id:
             c.recordID ??
             `${c.givenName ?? ''}-${c.familyName ?? ''}-${c.phoneNumbers[0].number}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,

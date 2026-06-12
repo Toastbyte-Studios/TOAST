@@ -6,6 +6,7 @@ import {
   SolarCycleNotificationStore,
   SolarNotification,
 } from '../src/stores/SolarCycleNotificationStore';
+import { SQLiteDatabase } from '../src/types/database-types';
 import { getLunarPhaseName } from '../src/utils/lunarPhase';
 
 // Mock SQLite
@@ -61,13 +62,13 @@ describe('SolarCycleNotificationStore', () => {
     });
 
     test('can initialize database', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
       // Database is initialized but no transaction is called for always-on settings
       expect(store.enabled).toBe(true);
     });
 
     test('can load settings from database', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
       await store.loadSettings();
       expect(store.enabled).toBe(true);
       expect(store.sunriseEnabled).toBe(true);
@@ -90,11 +91,13 @@ describe('SolarCycleNotificationStore', () => {
     });
 
     test('initDatabase completes without error', async () => {
-      await expect(store.initDatabase(mockDb as any)).resolves.not.toThrow();
+      await expect(
+        store.initDatabase(mockDb as unknown as SQLiteDatabase),
+      ).resolves.not.toThrow();
     });
 
     test('loadSettings completes without error', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
       await expect(store.loadSettings()).resolves.not.toThrow();
     });
   });
@@ -145,7 +148,7 @@ describe('SolarCycleNotificationStore', () => {
 
   describe('Notification Management', () => {
     beforeEach(async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
       // Store is always enabled by design, no setEnabled needed
     });
 
@@ -191,7 +194,7 @@ describe('SolarCycleNotificationStore', () => {
 
   describe('Location Tracking', () => {
     beforeEach(async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
     });
 
     test('tracks last calculation date and location', () => {
@@ -234,7 +237,7 @@ describe('SolarCycleNotificationStore', () => {
 
   describe('Notification Messages', () => {
     test('static notification messages use default buffer time', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       const latitude = 40.7128;
       const longitude = -74.006;
@@ -249,7 +252,7 @@ describe('SolarCycleNotificationStore', () => {
     });
 
     test('generates dynamic notification messages based on time remaining', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       const latitude = 40.7128;
       const longitude = -74.006;
@@ -320,7 +323,7 @@ describe('SolarCycleNotificationStore', () => {
         -Infinity,
         -100,
         100,
-        'invalid' as any,
+        'invalid' as unknown as number,
       ];
 
       invalidLatitudes.forEach((lat) => {
@@ -336,7 +339,7 @@ describe('SolarCycleNotificationStore', () => {
         -Infinity,
         -200,
         200,
-        'invalid' as any,
+        'invalid' as unknown as number,
       ];
 
       invalidLongitudes.forEach((lon) => {
@@ -346,7 +349,7 @@ describe('SolarCycleNotificationStore', () => {
     });
 
     test('updateNotifications handles invalid coordinates gracefully', async () => {
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       // Should not throw and not create notifications
       store.updateNotifications(NaN, 0);
@@ -375,7 +378,7 @@ describe('SolarCycleNotificationStore', () => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2025-06-15T00:00:00Z'));
 
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       // This simulates the case where user opens app after notification time
       // but before the actual event
@@ -414,7 +417,7 @@ describe('SolarCycleNotificationStore', () => {
       jest.useFakeTimers();
       jest.setSystemTime(new Date('2025-06-15T00:00:00Z')); // Midnight
 
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       const latitude = 40.7128;
       const longitude = -74.006;
@@ -433,7 +436,7 @@ describe('SolarCycleNotificationStore', () => {
       // For New York (UTC-4 in summer), this is midnight local time
       jest.setSystemTime(new Date('2025-06-16T04:00:00Z'));
 
-      await store.initDatabase(mockDb as any);
+      await store.initDatabase(mockDb as unknown as SQLiteDatabase);
 
       const latitude = 40.7128;
       const longitude = -74.006;

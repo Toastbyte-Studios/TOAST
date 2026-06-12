@@ -1,4 +1,10 @@
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import React, { JSX, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -36,7 +42,7 @@ type EntryScreenRouteProp = RouteProp<
  */
 export default function EntryScreen(): JSX.Element {
   const route = useRoute<EntryScreenRouteProp>();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { entry: routeEntry } = route.params || {};
 
   const resolvedEntry: ReferenceEntryType | null = useMemo(() => {

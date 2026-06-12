@@ -32,7 +32,7 @@ export type SearchableItem = {
   icon: string;
   searchText: string; // Combined text for searching
   category?: string;
-  data?: any; // Additional data for navigation
+  data?: Record<string, unknown>; // Additional data for navigation
 };
 
 // Cache for static searchable items (tools, modules, reference) to improve performance

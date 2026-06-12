@@ -74,7 +74,11 @@ jest.mock('react-native-sqlite-storage', () => {
         executeSql: mockExecuteSql,
         transaction: jest.fn((callback) => {
           const tx = {
-            executeSql: (query: string, params?: any[], success?: Function) => {
+            executeSql: (
+              query: string,
+              params?: Array<string | number | boolean | null>,
+              success?: (tx: unknown, result: unknown) => void,
+            ) => {
               if (success)
                 success(tx, { rows: { length: 0, item: () => null } });
             },
@@ -233,11 +237,11 @@ describe('NotesStore - Note Editing', () => {
       });
 
       // Verify database was called with updated values
-      const insertCalls = mockExecuteSql.mock.calls.filter((call: any[]) =>
-        call[0]?.includes('INSERT OR REPLACE INTO notes'),
+      const insertCalls = mockExecuteSql.mock.calls.filter((call: unknown[]) =>
+        (call[0] as string)?.includes('INSERT OR REPLACE INTO notes'),
       );
       expect(insertCalls.length).toBeGreaterThan(0);
-      const lastInsertCall = insertCalls[insertCalls.length - 1] as any[];
+      const lastInsertCall = insertCalls[insertCalls.length - 1] as unknown[];
       expect(lastInsertCall[1]).toContain('Updated Title');
       expect(lastInsertCall[1]).toContain('Updated text');
     });

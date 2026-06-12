@@ -1,11 +1,13 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/database-types';
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 /**
@@ -169,13 +171,13 @@ export class EmergencyPlanStore {
         for (let i = 0; i < results.rows.length; i++) {
           const row = results.rows.item(i);
           loaded.push({
-            id: row.id,
-            name: row.name,
-            relationship: row.relationship,
-            phone: row.phone,
-            notes: row.notes || undefined,
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
+            id: row.id as string,
+            name: row.name as string,
+            relationship: row.relationship as string,
+            phone: row.phone as string,
+            notes: (row.notes as string | undefined) || undefined,
+            createdAt: row.createdAt as number,
+            updatedAt: row.updatedAt as number,
           });
         }
         runInAction(() => {
@@ -203,12 +205,12 @@ export class EmergencyPlanStore {
         for (let i = 0; i < results.rows.length; i++) {
           const row = results.rows.item(i);
           loaded.push({
-            id: row.id,
-            name: row.name,
-            description: row.description,
-            coordinates: row.coordinates || undefined,
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
+            id: row.id as string,
+            name: row.name as string,
+            description: row.description as string,
+            coordinates: (row.coordinates as string | undefined) || undefined,
+            createdAt: row.createdAt as number,
+            updatedAt: row.updatedAt as number,
           });
         }
         runInAction(() => {
@@ -235,11 +237,11 @@ export class EmergencyPlanStore {
         const row = results.rows.item(0);
         runInAction(() => {
           this.communicationPlan = {
-            whoCallsWhom: row.whoCallsWhom,
-            ifPhonesDown: row.ifPhonesDown,
-            outOfAreaContact: row.outOfAreaContact,
-            checkInSchedule: row.checkInSchedule,
-            updatedAt: row.updatedAt,
+            whoCallsWhom: row.whoCallsWhom as string,
+            ifPhonesDown: row.ifPhonesDown as string,
+            outOfAreaContact: row.outOfAreaContact as string,
+            checkInSchedule: row.checkInSchedule as string,
+            updatedAt: row.updatedAt as number,
           };
         });
       }

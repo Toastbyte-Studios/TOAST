@@ -127,7 +127,7 @@ export class CoreStore {
         this.lastBatterySample = { level, at: Date.now() };
       });
     } catch {
-      // ignore
+      // intentionally ignored: battery API may be unavailable on some devices
     }
   };
 
@@ -200,7 +200,7 @@ export class CoreStore {
         this.storageFree = free ?? null;
       });
     } catch {
-      // ignore
+      // intentionally ignored: disk storage API may be unavailable on some devices
     }
   };
 

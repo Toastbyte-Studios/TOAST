@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
+import { SQLiteDatabase } from '../types/database-types';
 
 export type FontSize = 'small' | 'medium' | 'large';
 export type ThemeMode = 'light' | 'dark' | 'system';
@@ -22,7 +23,7 @@ export class SettingsStore {
   noteSortOrder: NoteSortOrder = 'newest-oldest';
   measurementSystem: MeasurementSystem = 'imperial';
   lastBackupAt: number | null = null;
-  private settingsDb: any | null = null;
+  private settingsDb: SQLiteDatabase | null = null;
 
   constructor() {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -104,7 +105,7 @@ export class SettingsStore {
    * Initializes the settings database table if it doesn't exist.
    * Requires the main database to be initialized first.
    */
-  async initSettingsDb(db: any): Promise<void> {
+  async initSettingsDb(db: SQLiteDatabase): Promise<void> {
     if (!db) return;
     this.settingsDb = db;
     try {
@@ -122,35 +123,42 @@ export class SettingsStore {
   /**
    * Validates if a value is a valid FontSize
    */
-  private isValidFontSize(value: any): value is FontSize {
-    return ['small', 'medium', 'large'].includes(value);
+  private isValidFontSize(value: unknown): value is FontSize {
+    return (
+      typeof value === 'string' && ['small', 'medium', 'large'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid ThemeMode
    */
-  private isValidThemeMode(value: any): value is ThemeMode {
-    return ['light', 'dark', 'system'].includes(value);
+  private isValidThemeMode(value: unknown): value is ThemeMode {
+    return (
+      typeof value === 'string' && ['light', 'dark', 'system'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid NoteSortOrder
    */
-  private isValidNoteSortOrder(value: any): value is NoteSortOrder {
-    return ['newest-oldest', 'oldest-newest', 'a-z', 'z-a'].includes(value);
+  private isValidNoteSortOrder(value: unknown): value is NoteSortOrder {
+    return (
+      typeof value === 'string' &&
+      ['newest-oldest', 'oldest-newest', 'a-z', 'z-a'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid MeasurementSystem
    */
-  private isValidMeasurementSystem(value: any): value is MeasurementSystem {
-    return ['imperial', 'metric'].includes(value);
+  private isValidMeasurementSystem(value: unknown): value is MeasurementSystem {
+    return typeof value === 'string' && ['imperial', 'metric'].includes(value);
   }
 
   /**
    * Loads settings from the database.
    */
-  async loadSettings(db: any): Promise<void> {
+  async loadSettings(db: SQLiteDatabase): Promise<void> {
     await this.initSettingsDb(db);
     if (!this.settingsDb) return;
 

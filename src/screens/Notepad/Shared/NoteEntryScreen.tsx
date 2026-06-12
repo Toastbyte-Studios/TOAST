@@ -1,4 +1,10 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useRoute,
+  useNavigation,
+  RouteProp,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import {
@@ -15,9 +21,12 @@ import { Text } from '../../../components/ScaledText';
 import ScreenBody from '../../../components/ScreenBody';
 import SectionHeader from '../../../components/SectionHeader';
 import { useNotesStore } from '../../../stores';
+import { Note } from '../../../stores/NotesStore';
 import { COLORS, FOOTER_HEIGHT } from '../../../theme';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { noteListSharedStyles as shared } from '../noteListStyles';
+
+type NoteEntryRouteProp = RouteProp<{ NoteEntry: { note: Note } }, 'NoteEntry'>;
 
 /**
  * Displays a single note in fully expanded state.
@@ -36,8 +45,8 @@ import { noteListSharedStyles as shared } from '../noteListStyles';
  * - Voice logs should be accessed through the Voice Log feature instead
  */
 export default observer(function NoteEntryScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<NoteEntryRouteProp>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const core = useNotesStore();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
     route.params?.note?.bookmarked ?? false,

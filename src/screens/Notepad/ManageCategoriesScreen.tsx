@@ -45,8 +45,11 @@ export default observer(function ManageCategoriesScreen(): React.JSX.Element {
       setNewCategoryName('');
       setIsAdding(false);
       Alert.alert('Success', `Category "${trimmedName}" added successfully`);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to add category');
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to add category',
+      );
     }
   };
 
@@ -66,10 +69,10 @@ export default observer(function ManageCategoriesScreen(): React.JSX.Element {
             onPress: async () => {
               try {
                 await core.deleteCategory(categoryName);
-              } catch (error: any) {
+              } catch (error) {
                 Alert.alert(
                   'Error',
-                  error.message || 'Failed to delete category',
+                  (error as Error).message || 'Failed to delete category',
                 );
               }
             },
@@ -114,10 +117,11 @@ export default observer(function ManageCategoriesScreen(): React.JSX.Element {
                           'Success',
                           `Category deleted. ${movedNoteCount} note${movedNoteCount > 1 ? 's' : ''} moved to "${fallbackCategory}"`,
                         );
-                      } catch (error: any) {
+                      } catch (error) {
                         Alert.alert(
                           'Error',
-                          error.message || 'Failed to delete category',
+                          (error as Error).message ||
+                            'Failed to delete category',
                         );
                       }
                     },

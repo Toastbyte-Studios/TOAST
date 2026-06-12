@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { JSX, useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { ToolType } from '../types/common-types';
@@ -20,7 +24,7 @@ type ToolListProps = {
  * @returns A JSX element containing a scrollable grid of tool/feature cards.
  */
 export default function ToolList({ tools }: ToolListProps): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   // Sort tools alphabetically by name
   const sortedTools = useMemo(

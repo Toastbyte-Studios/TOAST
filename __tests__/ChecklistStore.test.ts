@@ -6,7 +6,7 @@ import { ChecklistStore } from '../src/stores/ChecklistStore';
 import { SQLiteDatabase } from '../src/types/database-types';
 
 function emptyRows() {
-  return { length: 0, item: () => null };
+  return { length: 0, item: (_index: number): Record<string, unknown> => ({}) };
 }
 
 describe('ChecklistStore', () => {

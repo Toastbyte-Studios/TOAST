@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction, computed } from 'mobx';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/database-types';
 import {
   Migration,
   getTableColumns,
@@ -15,11 +16,12 @@ export interface ExpirationAlert {
   alertType: '30day' | 'expired';
 }
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 // ─── Pantry migrations ────────────────────────────────────────────────────────
@@ -299,7 +301,7 @@ export class PantryStore {
         const loadedCategories: string[] = [];
         for (let i = 0; i < results.rows.length; i++) {
           const row = results.rows.item(i);
-          loadedCategories.push(row.name);
+          loadedCategories.push(row.name as string);
         }
         runInAction(() => {
           this.categories = loadedCategories;
@@ -430,16 +432,18 @@ export class PantryStore {
         for (let i = 0; i < results.rows.length; i++) {
           const row = results.rows.item(i);
           loadedItems.push({
-            id: row.id,
-            name: row.name,
-            category: row.category,
-            quantity: row.quantity,
-            unit: row.unit || undefined,
-            notes: row.notes || undefined,
-            expirationMonth: row.expirationMonth || undefined,
-            expirationYear: row.expirationYear || undefined,
-            createdAt: row.createdAt,
-            updatedAt: row.updatedAt,
+            id: row.id as string,
+            name: row.name as string,
+            category: row.category as string,
+            quantity: row.quantity as number,
+            unit: (row.unit as string | undefined) || undefined,
+            notes: (row.notes as string | undefined) || undefined,
+            expirationMonth:
+              (row.expirationMonth as number | undefined) || undefined,
+            expirationYear:
+              (row.expirationYear as number | undefined) || undefined,
+            createdAt: row.createdAt as number,
+            updatedAt: row.updatedAt as number,
           });
         }
         runInAction(() => {

@@ -1,3 +1,5 @@
+import { SQLiteDatabase, SQLiteStatic } from '../types/database-types';
+
 export type BookmarkItem = {
   id: string;
   title: string;
@@ -5,14 +7,15 @@ export type BookmarkItem = {
   createdAt?: number;
 };
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
-let db: any | null = null;
+let db: SQLiteDatabase | null = null;
 
 /**
  * Initializes the bookmarks SQLite database if it has not already been initialized.
@@ -70,10 +73,10 @@ export async function getBookmarks(): Promise<BookmarkItem[]> {
     for (let i = 0; i < rows.length; i++) {
       const r = rows.item(i);
       list.push({
-        id: r.id,
-        title: r.title,
-        category: r.category ?? undefined,
-        createdAt: r.createdAt,
+        id: r.id as string,
+        title: r.title as string,
+        category: (r.category as string | undefined) ?? undefined,
+        createdAt: r.createdAt as number,
       });
     }
     return list;
