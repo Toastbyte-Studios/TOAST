@@ -25,7 +25,7 @@ import SketchCanvas, {
   SketchCanvasHandle,
 } from '../../components/SketchCanvas';
 import { useKeyboardStatus } from '../../hooks/useKeyboardStatus';
-import { useCoreStore } from '../../stores';
+import { useNotesStore } from '../../stores';
 import { COLORS, FOOTER_HEIGHT } from '../../theme';
 import { pickPhoto } from '../../utils/photoPicker';
 import { MAX_TITLE_LENGTH } from './constants';
@@ -60,7 +60,7 @@ type NewNoteScreenNavigationProp = NativeStackNavigationProp<ParamListBase>;
  * @returns A React element rendering the “New Note” creation screen.
  */
 export default observer(function NewNoteScreen() {
-  const core = useCoreStore();
+  const core = useNotesStore();
   const navigation = useNavigation<NewNoteScreenNavigationProp>();
   const sketchCanvasRef = useRef<SketchCanvasHandle>(null);
   const sketchSaveResolveRef = useRef<((dataUri: string) => void) | null>(null);

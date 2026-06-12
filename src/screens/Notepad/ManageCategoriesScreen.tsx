@@ -12,7 +12,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
-import { useCoreStore } from '../../stores';
+import { useNotesStore } from '../../stores';
 import { COLORS, FOOTER_HEIGHT } from '../../theme';
 
 /**
@@ -26,7 +26,7 @@ import { COLORS, FOOTER_HEIGHT } from '../../theme';
  * @returns {React.JSX.Element} The rendered manage categories screen component.
  */
 export default observer(function ManageCategoriesScreen(): React.JSX.Element {
-  const core = useCoreStore();
+  const core = useNotesStore();
   const [newCategoryName, setNewCategoryName] = useState<string>('');
   const [isAdding, setIsAdding] = useState<boolean>(false);
 

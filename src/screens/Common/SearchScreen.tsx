@@ -18,13 +18,13 @@ import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import { useTheme } from '../../hooks/useTheme';
 import {
+  type Checklist,
+  type Note,
   useChecklistStore,
-  useCoreStore,
   useInventoryStore,
+  useNotesStore,
   usePantryStore,
 } from '../../stores';
-import { Checklist } from '../../stores/ChecklistStore';
-import { Note } from '../../stores/CoreStore';
 import { FOOTER_HEIGHT } from '../../theme';
 import ReferenceEntryType from '../../types/data-type';
 import { RagResult, ragSearch } from '../../utils/ragSearch';
@@ -89,7 +89,7 @@ export default observer(function SearchScreen(): JSX.Element {
   const navigation = useNavigation<SearchScreenNavigationProp>();
   const COLORS = useTheme();
   const checklistStore = useChecklistStore();
-  const coreStore = useCoreStore();
+  const coreStore = useNotesStore();
   const inventoryStore = useInventoryStore();
   const pantryStore = usePantryStore();
   const [query, setQuery] = useState('');

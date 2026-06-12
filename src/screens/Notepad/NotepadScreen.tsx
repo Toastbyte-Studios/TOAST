@@ -9,7 +9,7 @@ import { HorizontalRule } from '../../components/HorizontalRule';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore } from '../../stores';
+import { useNotesStore } from '../../stores';
 
 /**
  * Notepad landing screen.
@@ -26,8 +26,13 @@ import { useCoreStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function NotepadScreen() {
+<<<<<<< HEAD
   const navigation = useNavigation();
   const core = useCoreStore();
+=======
+  const navigation = useNavigation<any>();
+  const core = useNotesStore();
+>>>>>>> origin/main
   const COLORS = useTheme();
 
   const categoryIcons: Record<string, string> = {

@@ -6,6 +6,7 @@ import { CoreStore } from './CoreStore';
 import { EmergencyPlanStore } from './EmergencyPlanStore';
 import { InventoryStore } from './InventoryStore';
 import { NavigationStore } from './NavigationStore';
+import { NotesStore } from './NotesStore';
 import { NotificationsStore } from './NotificationsStore';
 import { PantryStore } from './PantryStore';
 import { ReferenceStore } from './ReferenceStore';
@@ -18,7 +19,9 @@ import { WaypointStore } from './WaypointStore';
 import { WeatherOutlookStore } from './WeatherOutlookStore';
 
 export class RootStore {
+  startupPromise: Promise<void>;
   coreStore: CoreStore;
+  notesStore: NotesStore;
   checklistStore: ChecklistStore;
   inventoryStore: InventoryStore;
   pantryStore: PantryStore;
@@ -39,6 +42,7 @@ export class RootStore {
   constructor() {
     makeAutoObservable(this);
     this.coreStore = new CoreStore();
+    this.notesStore = new NotesStore();
     this.checklistStore = new ChecklistStore();
     this.inventoryStore = new InventoryStore();
     this.pantryStore = new PantryStore();
@@ -55,7 +59,7 @@ export class RootStore {
     this.waypointStore = new WaypointStore();
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
-    this.initializeSettings();
+    this.startupPromise = this.initializeSettings();
   }
 
   /**
@@ -66,24 +70,24 @@ export class RootStore {
     // and has no dependency on the SQLite database, so it can run immediately
     // and avoids a brief window where dismissed notifications appear in the UI.
     await this.notificationsStore.loadHiddenKeys();
-    // Wait for CoreStore to initialize the database, then load categories and settings
-    await this.coreStore.initNotesDb();
-    if (this.coreStore.notesDb) {
+    // Wait for NotesStore to initialize the database, then load categories and settings
+    await this.notesStore.initNotesDb();
+    if (this.notesStore.notesDb) {
       // Load categories first to ensure dependent logic sees a consistent category list
-      await this.coreStore.loadCategories();
-      await this.checklistStore.initDatabase(this.coreStore.notesDb);
-      await this.settingsStore.loadSettings(this.coreStore.notesDb);
+      await this.notesStore.loadCategories();
+      await this.checklistStore.initDatabase(this.notesStore.notesDb);
+      await this.settingsStore.loadSettings(this.notesStore.notesDb);
       // Initialize solar cycle notification store with same database
       await this.solarCycleNotificationStore.initDatabase(
-        this.coreStore.notesDb,
+        this.notesStore.notesDb,
       );
       await this.solarCycleNotificationStore.loadSettings();
       // Initialize weather outlook cache table
-      await this.weatherOutlookStore.initDatabase(this.coreStore.notesDb);
+      await this.weatherOutlookStore.initDatabase(this.notesStore.notesDb);
       // Initialize waypoint store with same database
-      await this.waypointStore.initDatabase(this.coreStore.notesDb);
+      await this.waypointStore.initDatabase(this.notesStore.notesDb);
       // Initialize track store with same database
-      await this.trackStore.initDatabase(this.coreStore.notesDb);
+      await this.trackStore.initDatabase(this.notesStore.notesDb);
     }
     // Initialize inventory and pantry databases
     await this.inventoryStore.initDatabase();
@@ -101,6 +105,7 @@ export class RootStore {
   // Reset all stores
   reset() {
     this.coreStore.dispose();
+    this.notesStore.dispose();
     this.checklistStore.dispose();
     this.inventoryStore.dispose();
     this.pantryStore.dispose();
@@ -113,6 +118,7 @@ export class RootStore {
     this.trackStore.dispose();
     this.astronomyEventStore.dispose();
     this.coreStore = new CoreStore();
+    this.notesStore = new NotesStore();
     this.checklistStore = new ChecklistStore();
     this.inventoryStore = new InventoryStore();
     this.pantryStore = new PantryStore();
@@ -132,6 +138,6 @@ export class RootStore {
     this.isOfflineMode = true;
     // initializeSettings is intentionally not awaited - settings have sensible
     // defaults and components will re-render when settings finish loading from DB
-    this.initializeSettings();
+    this.startupPromise = this.initializeSettings();
   }
 }

@@ -25,7 +25,7 @@ import SketchCanvas, {
   SketchCanvasHandle,
 } from '../../components/SketchCanvas';
 import { useKeyboardStatus } from '../../hooks/useKeyboardStatus';
-import { useCoreStore, Note } from '../../stores';
+import { useNotesStore, Note } from '../../stores';
 import { COLORS, FOOTER_HEIGHT } from '../../theme';
 import { pickPhoto } from '../../utils/photoPicker';
 import { MAX_TITLE_LENGTH } from './constants';
@@ -60,7 +60,7 @@ type EditNoteScreenNavigationProp = NativeStackNavigationProp<
  * @returns A React element rendering the "Edit Note" screen.
  */
 export default observer(function EditNoteScreen() {
-  const core = useCoreStore();
+  const core = useNotesStore();
   const navigation = useNavigation<EditNoteScreenNavigationProp>();
   const route = useRoute<EditNoteScreenRouteProp>();
   const sketchCanvasRef = useRef<SketchCanvasHandle>(null);

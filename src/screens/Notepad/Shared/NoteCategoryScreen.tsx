@@ -9,7 +9,7 @@ import { NoteSortSelector } from '../../../components/NoteSortSelector';
 import { Text } from '../../../components/ScaledText';
 import ScreenBody from '../../../components/ScreenBody';
 import SectionHeader from '../../../components/SectionHeader';
-import { useCoreStore, useSettingsStore } from '../../../stores';
+import { useNotesStore, useSettingsStore } from '../../../stores';
 import { FOOTER_HEIGHT } from '../../../theme';
 import { sortNotes } from '../../../utils/noteSorting';
 
@@ -33,9 +33,15 @@ type NoteCategoryRouteProp = RouteProp<
  * - Similar UI/UX pattern to the Reference module's CategoryScreen.
  */
 export default observer(function NoteCategoryScreen(): React.JSX.Element {
+<<<<<<< HEAD
   const route = useRoute<NoteCategoryRouteProp>();
   const navigation = useNavigation();
   const core = useCoreStore();
+=======
+  const route = useRoute<any>();
+  const navigation = useNavigation<any>();
+  const core = useNotesStore();
+>>>>>>> origin/main
   const settings = useSettingsStore();
 
   const { category } = route.params || {};
