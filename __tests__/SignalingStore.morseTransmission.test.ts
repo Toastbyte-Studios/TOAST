@@ -266,7 +266,13 @@ describe('SignalingStore - Morse Code Transmission', () => {
       coreStore.dispose();
 
       expect(coreStore.isMorseTransmitting).toBe(false);
-      expect((coreStore as any).morseTimer).toBeNull();
+      expect(
+        (
+          coreStore as unknown as {
+            morseTimer: ReturnType<typeof setTimeout> | null;
+          }
+        ).morseTimer,
+      ).toBeNull();
 
       jest.runAllTimers();
       expect(coreStore.isMorseTransmitting).toBe(false);
