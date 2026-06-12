@@ -15,9 +15,9 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
 import {
   useChecklistStore,
-  useCoreStore,
   useEmergencyPlanStore,
   useInventoryStore,
+  useNotesStore,
   usePantryStore,
   useRepeaterBookStore,
   useSettingsStore,
@@ -102,7 +102,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
 export const SettingsModal = observer(
   ({ visible, onClose }: SettingsModalProps) => {
     const settingsStore = useSettingsStore();
-    const coreStore = useCoreStore();
+    const coreStore = useNotesStore();
     const checklistStore = useChecklistStore();
     const emergencyPlanStore = useEmergencyPlanStore();
     const inventoryStore = useInventoryStore();

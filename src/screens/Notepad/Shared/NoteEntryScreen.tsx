@@ -14,7 +14,7 @@ import { HorizontalRule } from '../../../components/HorizontalRule';
 import { Text } from '../../../components/ScaledText';
 import ScreenBody from '../../../components/ScreenBody';
 import SectionHeader from '../../../components/SectionHeader';
-import { useCoreStore } from '../../../stores';
+import { useNotesStore } from '../../../stores';
 import { COLORS, FOOTER_HEIGHT } from '../../../theme';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { noteListSharedStyles as shared } from '../noteListStyles';
@@ -38,7 +38,7 @@ import { noteListSharedStyles as shared } from '../noteListStyles';
 export default observer(function NoteEntryScreen(): React.JSX.Element {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
-  const core = useCoreStore();
+  const core = useNotesStore();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
     route.params?.note?.bookmarked ?? false,
   );

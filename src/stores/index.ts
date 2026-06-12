@@ -1,5 +1,11 @@
 export { RootStore } from './RootStore';
-export { CoreStore, type Note } from './CoreStore';
+export { CoreStore } from './CoreStore';
+export {
+  NotesStore,
+  type Note,
+  type NoteInputType,
+  type NoteCategory,
+} from './NotesStore';
 export {
   ChecklistStore,
   type Checklist,
@@ -45,6 +51,7 @@ export {
   StoreProvider,
   useStores,
   useCoreStore,
+  useNotesStore,
   useChecklistStore,
   useInventoryStore,
   usePantryStore,

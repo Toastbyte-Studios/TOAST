@@ -9,7 +9,7 @@ import { NoteSortSelector } from '../../../components/NoteSortSelector';
 import { Text } from '../../../components/ScaledText';
 import ScreenBody from '../../../components/ScreenBody';
 import SectionHeader from '../../../components/SectionHeader';
-import { useCoreStore, useSettingsStore } from '../../../stores';
+import { useNotesStore, useSettingsStore } from '../../../stores';
 import { FOOTER_HEIGHT } from '../../../theme';
 import { sortNotes } from '../../../utils/noteSorting';
 
@@ -30,7 +30,7 @@ import { sortNotes } from '../../../utils/noteSorting';
 export default observer(function NoteCategoryScreen(): React.JSX.Element {
   const route = useRoute<any>();
   const navigation = useNavigation<any>();
-  const core = useCoreStore();
+  const core = useNotesStore();
   const settings = useSettingsStore();
 
   const { category } = route.params || {};
