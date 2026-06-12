@@ -1,5 +1,6 @@
 import { makeAutoObservable, runInAction, computed } from 'mobx';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/react-native-sqlite-storage';
 import {
   Migration,
   getTableColumns,
@@ -15,11 +16,12 @@ export interface ExpirationAlert {
   alertType: '30day' | 'expired';
 }
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 // ─── Pantry migrations ────────────────────────────────────────────────────────

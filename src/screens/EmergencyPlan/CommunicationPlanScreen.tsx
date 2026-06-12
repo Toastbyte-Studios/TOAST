@@ -37,7 +37,7 @@ import {
  * @returns The communication plan screen.
  */
 export default observer(function CommunicationPlanScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 
@@ -78,7 +78,7 @@ export default observer(function CommunicationPlanScreen() {
       });
       setIsDirty(false);
       Alert.alert('Saved', 'Communication plan saved.');
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert('Error', error.message || 'Failed to save plan');
     }
   };

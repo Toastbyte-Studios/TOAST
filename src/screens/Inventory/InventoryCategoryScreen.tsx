@@ -1,4 +1,5 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
@@ -9,7 +10,21 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { useInventoryStore } from '../../stores';
+import { InventoryItem } from '../../stores/InventoryStore';
 import { FOOTER_HEIGHT } from '../../theme';
+
+type InventoryCategoryParamList = {
+  InventoryCategory: { category: string };
+  EditInventoryItem: { item: InventoryItem };
+};
+type InventoryCategoryRouteProp = RouteProp<
+  InventoryCategoryParamList,
+  'InventoryCategory'
+>;
+type InventoryCategoryNavigationProp = NativeStackNavigationProp<
+  InventoryCategoryParamList,
+  'InventoryCategory'
+>;
 
 /**
  * Displays all inventory items for a specific category.
@@ -21,8 +36,8 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns {JSX.Element} The rendered inventory category screen component.
  */
 export default observer(function InventoryCategoryScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<InventoryCategoryRouteProp>();
+  const navigation = useNavigation<InventoryCategoryNavigationProp>();
   const inventory = useInventoryStore();
   const COLORS = useTheme();
 
@@ -45,7 +60,7 @@ export default observer(function InventoryCategoryScreen(): React.JSX.Element {
     navigation.navigate('NewInventoryItem', { category });
   };
 
-  const handleItemPress = (item: any) => {
+  const handleItemPress = (item: InventoryItem) => {
     navigation.navigate('EditInventoryItem', { item });
   };
 

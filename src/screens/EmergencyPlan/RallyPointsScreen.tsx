@@ -27,7 +27,7 @@ import { parseSharedRallyPoints, shareRallyPoints } from './shareUtils';
  * @returns The rally points list screen.
  */
 export default observer(function RallyPointsScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
   const [importVisible, setImportVisible] = useState(false);

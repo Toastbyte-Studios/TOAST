@@ -41,11 +41,15 @@ declare module 'react-native-sqlite-storage' {
     readOnly?: boolean;
   }
 
-  export type { SQLiteDatabase, Transaction, ResultSet };
-
-  const SQLite: {
+  /** Static API of the react-native-sqlite-storage module. */
+  interface SQLiteStatic {
+    enablePromise?(enabled: boolean): void;
     openDatabase(params: OpenDatabaseParams): Promise<SQLiteDatabase>;
-  };
+  }
+
+  export type { SQLiteDatabase, SQLiteStatic, Transaction, ResultSet };
+
+  const SQLite: SQLiteStatic;
 
   export default SQLite;
 }

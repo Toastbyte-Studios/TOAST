@@ -18,7 +18,7 @@ import { useTheme } from '../../hooks/useTheme';
  * @returns A React element containing the Reference screen layout.
  */
 export default function ReferenceModule() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const COLORS = useTheme();
 
   return (

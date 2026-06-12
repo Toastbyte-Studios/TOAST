@@ -16,7 +16,7 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns The emergency contacts list screen.
  */
 export default observer(function EmergencyContactsScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 

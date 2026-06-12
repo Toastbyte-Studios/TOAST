@@ -17,7 +17,7 @@ export const Text = observer((props: TextProps) => {
   if (style != null) {
     const scale = settingsStore.fontScale;
 
-    const scaleFontInStyleObject = (styleObj: any) => {
+    const scaleFontInStyleObject = (styleObj: Record<string, unknown>) => {
       if (!styleObj || typeof styleObj !== 'object') {
         return styleObj;
       }

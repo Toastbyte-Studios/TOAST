@@ -20,7 +20,7 @@ type ToolListProps = {
  * @returns A JSX element containing a scrollable grid of tool/feature cards.
  */
 export default function ToolList({ tools }: ToolListProps): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
   // Sort tools alphabetically by name
   const sortedTools = useMemo(

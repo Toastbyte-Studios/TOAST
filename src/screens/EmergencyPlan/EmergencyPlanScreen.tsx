@@ -21,7 +21,7 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns A screen layout with navigation cards for each section.
  */
 export default observer(function EmergencyPlanScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 

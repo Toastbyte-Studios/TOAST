@@ -11,6 +11,7 @@ import Torch from 'react-native-torch';
 import { FlashlightModes } from '../../constants';
 import { FlashlightModeType } from '../types/common-types';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/react-native-sqlite-storage';
 import {
   Migration,
   getTableColumns,
@@ -19,11 +20,12 @@ import {
 } from '../utils/dbMigrations';
 import { formatTime } from '../utils/timeFormat';
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 // ─── Notes / categories migrations ───────────────────────────────────────────
@@ -793,7 +795,7 @@ export class CoreStore {
         this.lastBatterySample = { level, at: Date.now() };
       });
     } catch {
-      // ignore
+      // intentionally ignored: battery API may be unavailable on some devices
     }
   };
 
@@ -866,7 +868,7 @@ export class CoreStore {
         this.storageFree = free ?? null;
       });
     } catch {
-      // ignore
+      // intentionally ignored: disk storage API may be unavailable on some devices
     }
   };
 
@@ -1538,7 +1540,7 @@ export class CoreStore {
     for (const category of defaultCategories) {
       try {
         await this.addCategory(category);
-      } catch (error: any) {
+      } catch (error) {
         // If the category already exists, skip and continue with the remaining defaults.
         if (
           error instanceof Error &&

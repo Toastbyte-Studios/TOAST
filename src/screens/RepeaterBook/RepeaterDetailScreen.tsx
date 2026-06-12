@@ -31,7 +31,7 @@ type DetailRow = { label: string; value: string };
  */
 export default function RepeaterDetailScreen(): JSX.Element {
   const COLORS = useTheme();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const route = useRoute<RepeaterDetailRouteProp>();
   const store = useRepeaterBookStore();
   const { repeater } = route.params ?? {};

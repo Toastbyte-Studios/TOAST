@@ -17,6 +17,12 @@ import type {
 import type { InventoryItem } from '../stores/InventoryStore';
 import type { PantryItem } from '../stores/PantryStore';
 import type { Repeater } from '../stores/RepeaterBookStore';
+import type {
+  FontSize,
+  MeasurementSystem,
+  NoteSortOrder,
+  ThemeMode,
+} from '../stores/SettingsStore';
 import type { Track } from '../stores/TrackStore';
 import type { Waypoint } from '../stores/WaypointStore';
 
@@ -29,10 +35,10 @@ const SUPPORTED_BACKUP_VERSIONS = ['1.0', '2.0'] as const;
 export type RestoreMode = 'replace' | 'merge';
 
 export interface BackupSettings {
-  fontSize: string;
-  themeMode: string;
-  noteSortOrder: string;
-  measurementSystem?: string;
+  fontSize: FontSize;
+  themeMode: ThemeMode;
+  noteSortOrder: NoteSortOrder;
+  measurementSystem?: MeasurementSystem;
 }
 
 /**
@@ -111,10 +117,19 @@ const BackupDataSchema = z.object({
     pantryCategories: z.array(z.string()),
     bookmarks: z.array(z.any()),
     settings: z.object({
-      fontSize: z.string(),
-      themeMode: z.string(),
-      noteSortOrder: z.string(),
-      measurementSystem: z.string().optional(),
+      fontSize: z
+        .enum(['small', 'medium', 'large'])
+        .catch('small' satisfies FontSize),
+      themeMode: z
+        .enum(['light', 'dark', 'system'])
+        .catch('system' satisfies ThemeMode),
+      noteSortOrder: z
+        .enum(['newest-oldest', 'oldest-newest', 'a-z', 'z-a'])
+        .catch('newest-oldest' satisfies NoteSortOrder),
+      measurementSystem: z
+        .enum(['imperial', 'metric'])
+        .catch('imperial' satisfies MeasurementSystem)
+        .optional(),
     }),
     // v2.0 fields – optional with defaults so v1.0 files pass validation
     waypoints: z
@@ -269,7 +284,7 @@ export function createBackupData(
  * v1.0 backup files are backfilled with their zero-value defaults so that
  * callers always see a fully-populated BackupData object.
  */
-export function validateBackup(json: any): json is BackupData {
+export function validateBackup(json: unknown): json is BackupData {
   const result = BackupDataSchema.safeParse(json);
   if (!result.success) {
     return false;

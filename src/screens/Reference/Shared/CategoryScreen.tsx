@@ -1,4 +1,4 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import React, { JSX, useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import CardTopic from '../../../components/CardTopic';
@@ -9,6 +9,17 @@ import SectionHeader from '../../../components/SectionHeader';
 import SectionSubHeader from '../../../components/SectionSubHeader';
 import { FOOTER_HEIGHT } from '../../../theme';
 import ReferenceEntryType from '../../../types/data-type';
+
+type CategoryScreenRouteProp = RouteProp<
+  {
+    Category: {
+      title: string;
+      data: ReferenceEntryType[];
+      disclaimer?: string;
+    };
+  },
+  'Category'
+>;
 
 /**
  * Displays a list of reference entries filtered by category.
@@ -24,8 +35,8 @@ import ReferenceEntryType from '../../../types/data-type';
  * - Expects `route.params` to contain `title` (category name) and `data` (ReferenceEntryType[]).
  */
 export default function CategoryScreen(): JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<CategoryScreenRouteProp>();
+  const navigation = useNavigation();
   const { title, data, disclaimer } = route.params || {};
 
   const entries = useMemo(() => {

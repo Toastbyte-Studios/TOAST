@@ -36,7 +36,7 @@ type EntryScreenRouteProp = RouteProp<
  */
 export default function EntryScreen(): JSX.Element {
   const route = useRoute<EntryScreenRouteProp>();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const { entry: routeEntry } = route.params || {};
 
   const resolvedEntry: ReferenceEntryType | null = useMemo(() => {

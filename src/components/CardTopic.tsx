@@ -20,7 +20,7 @@ export type CardTopicProps = {
   onPress?: () => void;
   containerStyle?: ViewStyle;
   titleStyle?: TextStyle;
-  IconComponent?: React.ComponentType<any>;
+  IconComponent?: React.ComponentType<Record<string, unknown>>;
 };
 
 /**

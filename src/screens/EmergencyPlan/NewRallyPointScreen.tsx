@@ -14,7 +14,7 @@ import { formStyles as styles } from '../Shared/Prepper/formStyles';
  * @returns The new rally point form screen.
  */
 export default observer(function NewRallyPointScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
 
   const [name, setName] = useState('');
@@ -34,7 +34,7 @@ export default observer(function NewRallyPointScreen() {
     try {
       await store.createRallyPoint(name, description, coordinates || undefined);
       navigation.goBack();
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert('Error', error.message || 'Failed to save rally point');
     }
   };

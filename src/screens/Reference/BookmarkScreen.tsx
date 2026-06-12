@@ -31,7 +31,7 @@ import ReferenceEntryType from '../../types/data-type';
  * @returns {JSX.Element} The rendered bookmark screen.
  */
 export default function BookmarkScreen(): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const [items, setItems] = useState<BookmarkItem[]>([]);
 
   // Create a Map for O(1) lookup performance instead of O(n) for each find operation

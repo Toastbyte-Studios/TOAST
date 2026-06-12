@@ -26,7 +26,7 @@ import { useCoreStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function NotepadScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const core = useCoreStore();
   const COLORS = useTheme();
 

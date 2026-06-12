@@ -1,10 +1,11 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useEmergencyPlanStore } from '../../stores';
+import { RallyPoint } from '../../stores/EmergencyPlanStore';
 import {
   DeleteButton,
   FormButtonRow,
@@ -13,14 +14,19 @@ import {
 } from '../Shared/Prepper';
 import { formStyles as styles } from '../Shared/Prepper/formStyles';
 
+type EditRallyPointRouteProp = RouteProp<
+  { EditRallyPoint: { rallyPoint: RallyPoint } },
+  'EditRallyPoint'
+>;
+
 /**
  * Screen for editing an existing rally point.
  *
  * @returns The edit rally point form screen.
  */
 export default observer(function EditRallyPointScreen() {
-  const navigation = useNavigation<any>();
-  const route = useRoute<any>();
+  const navigation = useNavigation();
+  const route = useRoute<EditRallyPointRouteProp>();
   const store = useEmergencyPlanStore();
 
   const { rallyPoint } = route.params || {};
@@ -51,7 +57,7 @@ export default observer(function EditRallyPointScreen() {
         coordinates: coordinates.trim() || undefined,
       });
       navigation.goBack();
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert('Error', error.message || 'Failed to update rally point');
     }
   };
@@ -69,7 +75,7 @@ export default observer(function EditRallyPointScreen() {
             try {
               await store.deleteRallyPoint(rallyPoint.id);
               navigation.goBack();
-            } catch (error: any) {
+            } catch (error) {
               Alert.alert(
                 'Error',
                 error.message || 'Failed to delete rally point',

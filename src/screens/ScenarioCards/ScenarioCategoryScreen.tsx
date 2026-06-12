@@ -1,4 +1,4 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import React, { JSX, useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import CardTopic from '../../components/CardTopic';
@@ -9,6 +9,17 @@ import SectionHeader from '../../components/SectionHeader';
 import SectionSubHeader from '../../components/SectionSubHeader';
 import { FOOTER_HEIGHT } from '../../theme';
 import { ScenarioCardType } from '../../types/data-type';
+
+type ScenarioCategoryRouteProp = RouteProp<
+  {
+    ScenarioCategory: {
+      title: string;
+      data: ScenarioCardType[];
+      disclaimer?: string;
+    };
+  },
+  'ScenarioCategory'
+>;
 
 /**
  * Displays a list of scenario cards filtered by category.
@@ -24,8 +35,8 @@ import { ScenarioCardType } from '../../types/data-type';
  * - Expects `route.params` to contain `title` (category name) and `data` (ScenarioCardType[]).
  */
 export default function ScenarioCategoryScreen(): JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<ScenarioCategoryRouteProp>();
+  const navigation = useNavigation();
   const { title, data, disclaimer } = route.params || {};
 
   const entries = useMemo(() => {

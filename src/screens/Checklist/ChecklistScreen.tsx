@@ -24,7 +24,7 @@ import { useChecklistStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function ChecklistScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const checklistStore = useChecklistStore();
   const COLORS = useTheme();
 

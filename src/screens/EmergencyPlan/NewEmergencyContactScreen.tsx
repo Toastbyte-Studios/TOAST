@@ -28,7 +28,7 @@ import { ContactPickerModal, contactsAvailable } from './ContactPickerModal';
  * @returns The new emergency contact form screen.
  */
 export default observer(function NewEmergencyContactScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 
@@ -55,7 +55,7 @@ export default observer(function NewEmergencyContactScreen() {
     try {
       await store.createContact(name, relationship, phone, notes || undefined);
       navigation.goBack();
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert('Error', error.message || 'Failed to save contact');
     }
   };

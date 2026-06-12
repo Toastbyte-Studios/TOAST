@@ -25,7 +25,7 @@ import { usePantryStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function PantryScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const pantry = usePantryStore();
   const COLORS = useTheme();
 

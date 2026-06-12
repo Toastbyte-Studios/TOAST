@@ -286,19 +286,17 @@ export const SettingsModal = observer(
           // Restore settings — only applied in replace mode, overwriting current preferences
           if (mode === 'replace' && data.settings) {
             if (data.settings.fontSize) {
-              await settingsStore.setFontSize(data.settings.fontSize as any);
+              await settingsStore.setFontSize(data.settings.fontSize);
             }
             if (data.settings.themeMode) {
-              await settingsStore.setThemeMode(data.settings.themeMode as any);
+              await settingsStore.setThemeMode(data.settings.themeMode);
             }
             if (data.settings.noteSortOrder) {
-              await settingsStore.setNoteSortOrder(
-                data.settings.noteSortOrder as any,
-              );
+              await settingsStore.setNoteSortOrder(data.settings.noteSortOrder);
             }
             if (data.settings.measurementSystem) {
               await settingsStore.setMeasurementSystem(
-                data.settings.measurementSystem as any,
+                data.settings.measurementSystem,
               );
             }
           }

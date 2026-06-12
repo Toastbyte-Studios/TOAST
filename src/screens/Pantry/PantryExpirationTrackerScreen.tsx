@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import React, { useState, useCallback } from 'react';
 import {
@@ -15,8 +16,13 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { usePantryStore } from '../../stores';
-import { ExpirationStatus } from '../../stores/PantryStore';
+import { ExpirationStatus, PantryItem } from '../../stores/PantryStore';
 import { FOOTER_HEIGHT } from '../../theme';
+
+type PantryExpirationTrackerNavigationProp = NativeStackNavigationProp<
+  { EditPantryItem: { item: PantryItem } },
+  'EditPantryItem'
+>;
 
 const MONTH_NAMES = [
   '',
@@ -72,7 +78,7 @@ function formatDaysRemaining(days: number | null): string {
  */
 export default observer(
   function PantryExpirationTrackerScreen(): React.JSX.Element {
-    const navigation = useNavigation<any>();
+    const navigation = useNavigation<PantryExpirationTrackerNavigationProp>();
     const pantry = usePantryStore();
     const COLORS = useTheme();
     const [selectedCategory, setSelectedCategory] = useState<string | null>(
@@ -87,14 +93,14 @@ export default observer(
         : sortedItems.filter((item) => item.category === selectedCategory);
 
     const handleItemPress = useCallback(
-      (item: any) => {
+      (item: PantryItem) => {
         navigation.navigate('EditPantryItem', { item });
       },
       [navigation],
     );
 
     const handleMarkUsed = useCallback(
-      (item: any) => {
+      (item: PantryItem) => {
         if (item.quantity > 1) {
           Alert.alert(
             'Mark as Used',
@@ -108,7 +114,7 @@ export default observer(
                     await pantry.updateItem(item.id, {
                       quantity: item.quantity - 1,
                     });
-                  } catch (error: any) {
+                  } catch (error) {
                     Alert.alert(
                       'Error',
                       error.message || 'Failed to update item',
@@ -130,7 +136,7 @@ export default observer(
                 onPress: async () => {
                   try {
                     await pantry.deleteItem(item.id);
-                  } catch (error: any) {
+                  } catch (error) {
                     Alert.alert(
                       'Error',
                       error.message || 'Failed to delete item',

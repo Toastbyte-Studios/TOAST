@@ -1,4 +1,4 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
@@ -14,6 +14,11 @@ import {
 } from '../Shared/Prepper';
 import { inventoryFormStyles as styles } from './inventoryFormStyles';
 
+type NewInventoryItemRouteProp = RouteProp<
+  { NewInventoryItem: { category: string } },
+  'NewInventoryItem'
+>;
+
 /**
  * Screen for adding a new inventory item.
  *
@@ -27,8 +32,8 @@ import { inventoryFormStyles as styles } from './inventoryFormStyles';
  * @returns {React.JSX.Element} The rendered new inventory item screen component.
  */
 export default observer(function NewInventoryItemScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<NewInventoryItemRouteProp>();
+  const navigation = useNavigation();
   const inventory = useInventoryStore();
 
   const { category } = route.params || {};
@@ -68,7 +73,7 @@ export default observer(function NewInventoryItemScreen(): React.JSX.Element {
           onPress: () => navigation.goBack(),
         },
       ]);
-    } catch (error: any) {
+    } catch (error) {
       Alert.alert('Error', error.message || 'Failed to add item');
     }
   };

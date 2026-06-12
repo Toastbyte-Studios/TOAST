@@ -29,7 +29,7 @@ const radioCategories = [
  * @returns {JSX.Element} The rendered radio frequencies screen.
  */
 export default function RadioFrequenciesScreen(): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const disclaimer: string = radioFrequenciesData.metadata?.disclaimer ?? '';
 
   const handleCategoryPress = (categoryId: string) => {

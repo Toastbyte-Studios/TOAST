@@ -44,7 +44,7 @@ export default observer(
         setNewCategoryName('');
         setIsAdding(false);
         Alert.alert('Success', `Category "${trimmedName}" added successfully`);
-      } catch (error: any) {
+      } catch (error) {
         Alert.alert('Error', error.message || 'Failed to add category');
       }
     };
@@ -65,7 +65,7 @@ export default observer(
               onPress: async () => {
                 try {
                   await pantry.deleteCategory(categoryName);
-                } catch (error: any) {
+                } catch (error) {
                   Alert.alert(
                     'Error',
                     error.message || 'Failed to delete category',
@@ -113,7 +113,7 @@ export default observer(
                             'Success',
                             `Category deleted. ${movedItemCount} item${movedItemCount > 1 ? 's' : ''} moved to "${fallbackCategory}"`,
                           );
-                        } catch (error: any) {
+                        } catch (error) {
                           Alert.alert(
                             'Error',
                             error.message || 'Failed to delete category',

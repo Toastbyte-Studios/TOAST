@@ -28,7 +28,7 @@ export default function CategoryList({
   disclaimer = '',
   categoryScreen = 'Category',
 }: CategoryListProps): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
 
   // Sort categories alphabetically by title
   const sortedCategories = useMemo(

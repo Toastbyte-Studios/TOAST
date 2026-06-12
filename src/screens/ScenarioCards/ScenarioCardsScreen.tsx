@@ -84,7 +84,7 @@ const scenarioCategories = [
  * @returns {JSX.Element} The rendered ScenarioCardsScreen component.
  */
 export default function ScenarioCardsScreen(): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const disclaimer: string = data?.metadata?.disclaimer ?? '';
   const COLORS = useTheme();
 

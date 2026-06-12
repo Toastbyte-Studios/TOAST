@@ -25,7 +25,7 @@ import { useInventoryStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function InventoryScreen() {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const inventory = useInventoryStore();
   const COLORS = useTheme();
 

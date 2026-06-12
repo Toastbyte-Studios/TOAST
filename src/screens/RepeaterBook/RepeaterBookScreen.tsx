@@ -47,7 +47,7 @@ const gmrsData =
 const RepeaterBookScreen = observer((): JSX.Element => {
   const COLORS = useTheme();
   const styles = useMemo(() => createStyles(COLORS), [COLORS]);
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation();
   const store = useRepeaterBookStore();
   const [modePickerVisible, setModePickerVisible] = useState(false);
   const [disclaimerVisible, setDisclaimerVisible] = useState(false);
