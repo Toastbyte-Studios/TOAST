@@ -2,7 +2,7 @@
  * @format
  */
 
-import { CoreStore } from '../src/stores/CoreStore';
+import { SignalingStore } from '../src/stores/SignalingStore';
 
 // Mock react-native-geolocation-service
 jest.mock('react-native-geolocation-service', () => ({
@@ -53,13 +53,13 @@ jest.mock('react-native', () => ({
   },
 }));
 
-describe('CoreStore - Morse Code Transmission', () => {
-  let coreStore: CoreStore;
+describe('SignalingStore - Morse Code Transmission', () => {
+  let coreStore: SignalingStore;
 
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
-    coreStore = new CoreStore();
+    coreStore = new SignalingStore();
   });
 
   afterEach(() => {
@@ -248,6 +248,20 @@ describe('CoreStore - Morse Code Transmission', () => {
       expect(coreStore.isMorseTransmitting).toBe(false);
     });
 
+    it('should stop an in-flight transmission during dispose', () => {
+      coreStore.transmitMorseMessage('... --- ...', false);
+      expect(coreStore.isMorseTransmitting).toBe(true);
+
+      jest.advanceTimersByTime(500);
+      coreStore.dispose();
+
+      expect(coreStore.isMorseTransmitting).toBe(false);
+      expect((coreStore as any).morseTimer).toBeNull();
+
+      jest.runAllTimers();
+      expect(coreStore.isMorseTransmitting).toBe(false);
+    });
+
     it('should handle long complex messages', () => {
       // Simulate a longer message with mixed content
       const longMessage = '... --- ... / .... . .-.. .--. / -- .';
@@ -260,7 +274,7 @@ describe('CoreStore - Morse Code Transmission', () => {
   });
 });
 
-describe('CoreStore - SOS audio lazy loading', () => {
+describe('SignalingStore - SOS audio lazy loading', () => {
   let Sound: jest.Mock & { setCategory: jest.Mock; MAIN_BUNDLE: string };
 
   beforeEach(() => {
@@ -274,14 +288,14 @@ describe('CoreStore - SOS audio lazy loading', () => {
   });
 
   it('should NOT instantiate Sound or call setCategory on construction', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
     expect(Sound).not.toHaveBeenCalled();
     expect(Sound.setCategory).not.toHaveBeenCalled();
     store.dispose();
   });
 
   it('should instantiate Sound and call setCategory only when SOS is activated with tone enabled', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
     expect(Sound).not.toHaveBeenCalled();
 
     // Activate SOS mode (sosWithTone defaults to true)
@@ -293,7 +307,7 @@ describe('CoreStore - SOS audio lazy loading', () => {
   });
 
   it('should instantiate Sound and call setCategory when morse transmission starts with tone enabled', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
     expect(Sound).not.toHaveBeenCalled();
 
     store.transmitMorseMessage('... --- ...', true);
@@ -304,7 +318,7 @@ describe('CoreStore - SOS audio lazy loading', () => {
   });
 
   it('should NOT instantiate Sound when morse transmission starts with tone disabled', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
     expect(Sound).not.toHaveBeenCalled();
 
     store.transmitMorseMessage('... --- ...', false);
@@ -315,7 +329,7 @@ describe('CoreStore - SOS audio lazy loading', () => {
   });
 
   it('should NOT trigger a second load when ensureAudioReady is called again while loading', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
 
     // First SOS activation triggers the load
     store.setFlashlightMode('sos');
@@ -331,7 +345,7 @@ describe('CoreStore - SOS audio lazy loading', () => {
   });
 
   it('should call ensureAudioReady when setSosWithTone enables tone while SOS is active', () => {
-    const store = new CoreStore();
+    const store = new SignalingStore();
 
     // Start SOS with tone disabled so audio is NOT loaded
     store.setSosWithTone(false);

@@ -10,7 +10,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashlightModes } from '../../../../constants';
 import { useTheme } from '../../../hooks/useTheme';
-import { useCoreStore } from '../../../stores/StoreContext';
+import { useSignalingStore } from '../../../stores/StoreContext';
 import { Text } from '../../ScaledText';
 
 interface SOSTriggerProps {
@@ -43,7 +43,7 @@ const SOSTrigger = ({
   onPressingChange,
   onProgressAnimRef,
 }: SOSTriggerProps) => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const COLORS = useTheme();
   const [isSOSPressing, setIsSOSPressing] = useState(false);
   const sosTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);

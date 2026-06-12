@@ -5,7 +5,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { FlashlightModes } from '../../../../constants';
 import { useTheme } from '../../../hooks/useTheme';
-import { useCoreStore } from '../../../stores/StoreContext';
+import { useSignalingStore } from '../../../stores/StoreContext';
 
 interface ActiveItem {
   icon: string;
@@ -27,7 +27,7 @@ interface ActiveItem {
  * @returns A React element rendering the active item button
  */
 const ActiveItemButton = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const navigation = useNavigation();
   const COLORS = useTheme();
 

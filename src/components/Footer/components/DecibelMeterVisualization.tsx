@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
-import { useCoreStore } from '../../../stores/StoreContext';
+import { useSignalingStore } from '../../../stores/StoreContext';
 
 /**
  * DecibelMeterVisualization component displays a visual bar graph
@@ -17,7 +17,7 @@ import { useCoreStore } from '../../../stores/StoreContext';
  * @returns A React element rendering the decibel meter visualization
  */
 const DecibelMeterVisualization = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const COLORS = useTheme();
 
   return (
