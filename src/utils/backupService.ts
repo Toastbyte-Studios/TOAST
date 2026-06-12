@@ -117,18 +117,14 @@ const BackupDataSchema = z.object({
     pantryCategories: z.array(z.string()),
     bookmarks: z.array(z.any()),
     settings: z.object({
-      fontSize: z
-        .enum(['small', 'medium', 'large'])
-        .catch('small' satisfies FontSize),
-      themeMode: z
-        .enum(['light', 'dark', 'system'])
-        .catch('system' satisfies ThemeMode),
+      fontSize: z.enum(['small', 'medium', 'large']).catch('small'),
+      themeMode: z.enum(['light', 'dark', 'system']).catch('system'),
       noteSortOrder: z
         .enum(['newest-oldest', 'oldest-newest', 'a-z', 'z-a'])
-        .catch('newest-oldest' satisfies NoteSortOrder),
+        .catch('newest-oldest'),
       measurementSystem: z
         .enum(['imperial', 'metric'])
-        .catch('imperial' satisfies MeasurementSystem)
+        .catch('imperial')
         .optional(),
     }),
     // v2.0 fields – optional with defaults so v1.0 files pass validation
