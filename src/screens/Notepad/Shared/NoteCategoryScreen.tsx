@@ -33,15 +33,9 @@ type NoteCategoryRouteProp = RouteProp<
  * - Similar UI/UX pattern to the Reference module's CategoryScreen.
  */
 export default observer(function NoteCategoryScreen(): React.JSX.Element {
-<<<<<<< HEAD
   const route = useRoute<NoteCategoryRouteProp>();
   const navigation = useNavigation();
-  const core = useCoreStore();
-=======
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
   const core = useNotesStore();
->>>>>>> origin/main
   const settings = useSettingsStore();
 
   const { category } = route.params || {};

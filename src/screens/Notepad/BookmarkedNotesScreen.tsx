@@ -28,13 +28,8 @@ import { sortNotes } from '../../utils/noteSorting';
  * - Notes are sorted by creation date (most recent first).
  */
 export default observer(function BookmarkedNotesScreen(): React.JSX.Element {
-<<<<<<< HEAD
   const navigation = useNavigation();
-  const core = useCoreStore();
-=======
-  const navigation = useNavigation<any>();
   const core = useNotesStore();
->>>>>>> origin/main
   const settings = useSettingsStore();
 
   const bookmarkedNotes = useMemo(

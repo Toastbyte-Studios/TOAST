@@ -14,12 +14,8 @@ import { HorizontalRule } from '../../../components/HorizontalRule';
 import { Text } from '../../../components/ScaledText';
 import ScreenBody from '../../../components/ScreenBody';
 import SectionHeader from '../../../components/SectionHeader';
-<<<<<<< HEAD
-import { useCoreStore } from '../../../stores';
-import { Note } from '../../../stores/CoreStore';
-=======
 import { useNotesStore } from '../../../stores';
->>>>>>> origin/main
+import { Note } from '../../../stores/NotesStore';
 import { COLORS, FOOTER_HEIGHT } from '../../../theme';
 import { formatDateTime } from '../../../utils/timeFormat';
 import { noteListSharedStyles as shared } from '../noteListStyles';
@@ -43,15 +39,9 @@ type NoteEntryRouteProp = RouteProp<{ NoteEntry: { note: Note } }, 'NoteEntry'>;
  * - Voice logs should be accessed through the Voice Log feature instead
  */
 export default observer(function NoteEntryScreen(): React.JSX.Element {
-<<<<<<< HEAD
   const route = useRoute<NoteEntryRouteProp>();
   const navigation = useNavigation();
-  const core = useCoreStore();
-=======
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
   const core = useNotesStore();
->>>>>>> origin/main
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
     route.params?.note?.bookmarked ?? false,
   );

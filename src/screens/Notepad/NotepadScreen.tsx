@@ -26,13 +26,8 @@ import { useNotesStore } from '../../stores';
  * @returns A screen layout containing a header, action buttons, and a grid of navigation cards.
  */
 export default observer(function NotepadScreen() {
-<<<<<<< HEAD
   const navigation = useNavigation();
-  const core = useCoreStore();
-=======
-  const navigation = useNavigation<any>();
   const core = useNotesStore();
->>>>>>> origin/main
   const COLORS = useTheme();
 
   const categoryIcons: Record<string, string> = {

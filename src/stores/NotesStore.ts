@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction, computed, comparer } from 'mobx';
 import Geolocation from 'react-native-geolocation-service';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/react-native-sqlite-storage';
 import {
   Migration,
   getTableColumns,
@@ -9,11 +10,12 @@ import {
 } from '../utils/dbMigrations';
 import { formatTime } from '../utils/timeFormat';
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 // ─── Notes / categories migrations ───────────────────────────────────────────
@@ -719,7 +721,7 @@ export class NotesStore {
     for (const category of defaultCategories) {
       try {
         await this.addCategory(category);
-      } catch (error: any) {
+      } catch (error) {
         // If the category already exists, skip and continue with the remaining defaults.
         if (
           error instanceof Error &&
