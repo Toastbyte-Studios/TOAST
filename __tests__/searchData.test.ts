@@ -2,7 +2,8 @@
  * @format
  */
 
-import { Note, Checklist, ChecklistItem } from '../src/stores/CoreStore';
+import { Checklist, ChecklistItem } from '../src/stores/ChecklistStore';
+import { Note } from '../src/stores/CoreStore';
 import { InventoryItem } from '../src/stores/InventoryStore';
 import { PantryItem } from '../src/stores/PantryStore';
 import { searchItems, getAllSearchableItems } from '../src/utils/searchData';
