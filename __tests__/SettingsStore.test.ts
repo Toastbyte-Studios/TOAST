@@ -13,7 +13,14 @@ const createMockDatabase = () => {
       (query: string, params?: Array<string | number | boolean | null>) => {
         // Handle CREATE TABLE
         if (query.includes('CREATE TABLE')) {
-          return Promise.resolve([{ rows: { length: 0 } }]);
+          return Promise.resolve([
+            {
+              rows: {
+                length: 0,
+                item: (_i: number): Record<string, unknown> => ({}),
+              },
+            },
+          ]);
         }
 
         // Handle INSERT OR REPLACE
@@ -24,9 +31,16 @@ const createMockDatabase = () => {
           if (keyMatch && params && params.length > 0) {
             const key = keyMatch[1]; // e.g., 'fontSize'
             const value = params[0]; // e.g., 'medium'
-            storage[key] = value;
+            storage[key] = String(value ?? '');
           }
-          return Promise.resolve([{ rows: { length: 0 } }]);
+          return Promise.resolve([
+            {
+              rows: {
+                length: 0,
+                item: (_i: number): Record<string, unknown> => ({}),
+              },
+            },
+          ]);
         }
 
         // Handle SELECT - parse the key from the WHERE clause
@@ -46,10 +60,24 @@ const createMockDatabase = () => {
               },
             ]);
           }
-          return Promise.resolve([{ rows: { length: 0 } }]);
+          return Promise.resolve([
+            {
+              rows: {
+                length: 0,
+                item: (_i: number): Record<string, unknown> => ({}),
+              },
+            },
+          ]);
         }
 
-        return Promise.resolve([{ rows: { length: 0 } }]);
+        return Promise.resolve([
+          {
+            rows: {
+              length: 0,
+              item: (_i: number): Record<string, unknown> => ({}),
+            },
+          },
+        ]);
       },
     ),
   };
@@ -237,7 +265,9 @@ describe('SettingsStore', () => {
     });
 
     it('should not initialize if db is null', async () => {
-      await settingsStore.initSettingsDb(null);
+      await settingsStore.initSettingsDb(
+        null as unknown as import('../src/types/database-types').SQLiteDatabase,
+      );
       expect(mockDb.executeSql).not.toHaveBeenCalled();
     });
 

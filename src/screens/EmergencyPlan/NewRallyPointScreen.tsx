@@ -35,7 +35,10 @@ export default observer(function NewRallyPointScreen() {
       await store.createRallyPoint(name, description, coordinates || undefined);
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to save rally point');
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to save rally point',
+      );
     }
   };
 

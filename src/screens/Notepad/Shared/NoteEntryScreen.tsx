@@ -1,4 +1,10 @@
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useRoute,
+  useNavigation,
+  RouteProp,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import {
@@ -40,7 +46,7 @@ type NoteEntryRouteProp = RouteProp<{ NoteEntry: { note: Note } }, 'NoteEntry'>;
  */
 export default observer(function NoteEntryScreen(): React.JSX.Element {
   const route = useRoute<NoteEntryRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const core = useNotesStore();
   const [isBookmarked, setIsBookmarked] = useState<boolean>(
     route.params?.note?.bookmarked ?? false,

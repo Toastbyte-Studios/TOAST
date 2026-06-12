@@ -6,6 +6,8 @@ import {
   View,
   ViewStyle,
   TextStyle,
+  ColorValue,
+  StyleProp,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -20,7 +22,12 @@ export type CardTopicProps = {
   onPress?: () => void;
   containerStyle?: ViewStyle;
   titleStyle?: TextStyle;
-  IconComponent?: React.ComponentType<Record<string, unknown>>;
+  IconComponent?: React.ComponentType<{
+    name: string;
+    size?: number;
+    color?: ColorValue | number;
+    style?: StyleProp<TextStyle>;
+  }>;
 };
 
 /**

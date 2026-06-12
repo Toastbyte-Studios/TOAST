@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import React, { JSX } from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -84,7 +88,7 @@ const scenarioCategories = [
  * @returns {JSX.Element} The rendered ScenarioCardsScreen component.
  */
 export default function ScenarioCardsScreen(): JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const disclaimer: string = data?.metadata?.disclaimer ?? '';
   const COLORS = useTheme();
 

@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { JSX, useMemo } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { FOOTER_HEIGHT } from '../theme';
@@ -28,7 +32,7 @@ export default function CategoryList({
   disclaimer = '',
   categoryScreen = 'Category',
 }: CategoryListProps): JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   // Sort categories alphabetically by title
   const sortedCategories = useMemo(

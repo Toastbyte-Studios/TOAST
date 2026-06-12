@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import React from 'react';
-import { Text as RNText, TextProps } from 'react-native';
+import { Text as RNText, TextProps, TextStyle } from 'react-native';
 import { useSettingsStore } from '../stores';
 
 /**
@@ -17,7 +17,7 @@ export const Text = observer((props: TextProps) => {
   if (style != null) {
     const scale = settingsStore.fontScale;
 
-    const scaleFontInStyleObject = (styleObj: Record<string, unknown>) => {
+    const scaleFontInStyleObject = (styleObj: TextStyle | false | '') => {
       if (!styleObj || typeof styleObj !== 'object') {
         return styleObj;
       }
@@ -32,11 +32,11 @@ export const Text = observer((props: TextProps) => {
 
     if (Array.isArray(style)) {
       scaledStyle = style.map((item) => {
-        // Preserve registered style IDs (numbers) and non-object entries
-        if (typeof item === 'number' || item == null) {
+        // Preserve registered style IDs (numbers), nullish values, and nested arrays
+        if (typeof item === 'number' || item == null || Array.isArray(item)) {
           return item;
         }
-        return scaleFontInStyleObject(item);
+        return scaleFontInStyleObject(item as TextStyle | false | '');
       }) as TextProps['style'];
     } else if (typeof style === 'number') {
       // Registered style ID; cannot safely inspect or modify

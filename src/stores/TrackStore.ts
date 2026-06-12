@@ -86,12 +86,12 @@ export class TrackStore {
     for (let i = 0; i < results.rows.length; i++) {
       const row = results.rows.item(i);
       loaded.push({
-        id: row.id,
-        name: row.name,
-        createdAt: row.createdAt,
-        durationSeconds: row.durationSeconds,
-        distanceMeters: row.distanceMeters,
-        points: JSON.parse(row.points) as TrackPoint[],
+        id: row.id as string,
+        name: row.name as string,
+        createdAt: row.createdAt as string,
+        durationSeconds: row.durationSeconds as number,
+        distanceMeters: row.distanceMeters as number,
+        points: JSON.parse(row.points as string) as TrackPoint[],
       });
     }
     runInAction(() => {

@@ -239,7 +239,14 @@ class InMemoryDb implements SQLiteDatabase {
 }
 
 function emptyResult() {
-  return [{ rows: { length: 0, item: () => null } }];
+  return [
+    {
+      rows: {
+        length: 0,
+        item: (_index: number): Record<string, unknown> => ({}),
+      },
+    },
+  ];
 }
 
 /**

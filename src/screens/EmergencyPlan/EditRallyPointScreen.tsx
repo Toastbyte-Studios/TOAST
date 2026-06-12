@@ -58,7 +58,10 @@ export default observer(function EditRallyPointScreen() {
       });
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to update rally point');
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to update rally point',
+      );
     }
   };
 
@@ -78,7 +81,7 @@ export default observer(function EditRallyPointScreen() {
             } catch (error) {
               Alert.alert(
                 'Error',
-                error.message || 'Failed to delete rally point',
+                (error as Error).message || 'Failed to delete rally point',
               );
             }
           },

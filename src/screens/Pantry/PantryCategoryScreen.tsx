@@ -16,6 +16,7 @@ import { FOOTER_HEIGHT } from '../../theme';
 type PantryCategoryParamList = {
   PantryCategory: { category: string };
   EditPantryItem: { item: PantryItem };
+  NewPantryItem: { category: string };
 };
 type PantryCategoryRouteProp = RouteProp<
   PantryCategoryParamList,

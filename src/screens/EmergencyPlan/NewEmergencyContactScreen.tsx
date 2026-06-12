@@ -56,7 +56,10 @@ export default observer(function NewEmergencyContactScreen() {
       await store.createContact(name, relationship, phone, notes || undefined);
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to save contact');
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to save contact',
+      );
     }
   };
 

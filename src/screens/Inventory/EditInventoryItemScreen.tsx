@@ -85,7 +85,7 @@ export default observer(function EditInventoryItemScreen(): React.JSX.Element {
         },
       ]);
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to update item');
+      Alert.alert('Error', (error as Error).message || 'Failed to update item');
     }
   };
 
@@ -108,7 +108,10 @@ export default observer(function EditInventoryItemScreen(): React.JSX.Element {
                 },
               ]);
             } catch (error) {
-              Alert.alert('Error', error.message || 'Failed to delete item');
+              Alert.alert(
+                'Error',
+                (error as Error).message || 'Failed to delete item',
+              );
             }
           },
         },

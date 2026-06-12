@@ -39,7 +39,10 @@ describe('DigitalWhistleScreen', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSoundInstance = new Sound('', '');
+    mockSoundInstance = new Sound(
+      '',
+      '',
+    ) as unknown as typeof mockSoundInstance;
   });
 
   describe('Sound Initialization', () => {

@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -16,7 +20,7 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns The emergency contacts list screen.
  */
 export default observer(function EmergencyContactsScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 

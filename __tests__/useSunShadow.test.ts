@@ -80,7 +80,7 @@ describe('useSunShadow', () => {
 
   describe('Hook Integration Tests', () => {
     test('hook returns shadow object with required properties when location is available', () => {
-      let shadowResult: ReturnType<typeof useSunShadow>;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -107,7 +107,7 @@ describe('useSunShadow', () => {
 
     test('hook returns default shadow when location is unavailable', () => {
       mockCoreStore.lastFix = null;
-      let shadowResult: ReturnType<typeof useSunShadow>;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -128,8 +128,8 @@ describe('useSunShadow', () => {
     });
 
     test('hook calculates different shadows for different locations', () => {
-      let shadow1: ReturnType<typeof useSunShadow>;
-      let shadow2: ReturnType<typeof useSunShadow>;
+      let shadow1!: ReturnType<typeof useSunShadow>;
+      let shadow2!: ReturnType<typeof useSunShadow>;
 
       // First location: New York
       mockCoreStore.lastFix = {
@@ -196,7 +196,7 @@ describe('useSunShadow', () => {
         themeMode: 'dark',
       });
 
-      let shadowResult: ReturnType<typeof useSunShadow>;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -223,7 +223,7 @@ describe('useSunShadow', () => {
         themeMode: 'light',
       });
 
-      let shadowResult: ReturnType<typeof useSunShadow>;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();

@@ -124,28 +124,35 @@ export class SettingsStore {
    * Validates if a value is a valid FontSize
    */
   private isValidFontSize(value: unknown): value is FontSize {
-    return ['small', 'medium', 'large'].includes(value);
+    return (
+      typeof value === 'string' && ['small', 'medium', 'large'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid ThemeMode
    */
   private isValidThemeMode(value: unknown): value is ThemeMode {
-    return ['light', 'dark', 'system'].includes(value);
+    return (
+      typeof value === 'string' && ['light', 'dark', 'system'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid NoteSortOrder
    */
   private isValidNoteSortOrder(value: unknown): value is NoteSortOrder {
-    return ['newest-oldest', 'oldest-newest', 'a-z', 'z-a'].includes(value);
+    return (
+      typeof value === 'string' &&
+      ['newest-oldest', 'oldest-newest', 'a-z', 'z-a'].includes(value)
+    );
   }
 
   /**
    * Validates if a value is a valid MeasurementSystem
    */
   private isValidMeasurementSystem(value: unknown): value is MeasurementSystem {
-    return ['imperial', 'metric'].includes(value);
+    return typeof value === 'string' && ['imperial', 'metric'].includes(value);
   }
 
   /**

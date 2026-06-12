@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import CardTopic from '../../components/CardTopic';
@@ -27,7 +31,7 @@ import { ScenarioCardType } from '../../types/data-type';
  * @returns {JSX.Element} The rendered scenario bookmarks screen.
  */
 export default function ScenarioBookmarksScreen(): JSX.Element {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [items, setItems] = useState<BookmarkItem[]>([]);
 
   // Create a Map for O(1) lookup performance instead of O(n) for each find operation

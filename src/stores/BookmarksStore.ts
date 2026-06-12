@@ -1,7 +1,4 @@
-import {
-  SQLiteDatabase,
-  SQLiteStatic,
-} from '../types/react-native-sqlite-storage';
+import { SQLiteDatabase, SQLiteStatic } from '../types/database-types';
 
 export type BookmarkItem = {
   id: string;
@@ -76,10 +73,10 @@ export async function getBookmarks(): Promise<BookmarkItem[]> {
     for (let i = 0; i < rows.length; i++) {
       const r = rows.item(i);
       list.push({
-        id: r.id,
-        title: r.title,
-        category: r.category ?? undefined,
-        createdAt: r.createdAt,
+        id: r.id as string,
+        title: r.title as string,
+        category: (r.category as string | undefined) ?? undefined,
+        createdAt: r.createdAt as number,
       });
     }
     return list;

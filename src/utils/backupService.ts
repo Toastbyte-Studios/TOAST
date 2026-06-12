@@ -287,7 +287,7 @@ export function validateBackup(json: unknown): json is BackupData {
   }
   // Backfill any defaults that Zod may have added (e.g. v2.0 fields missing
   // from a v1.0 file) into the original object so callers get a complete value.
-  Object.assign(json, result.data);
+  Object.assign(json as object, result.data);
   return true;
 }
 

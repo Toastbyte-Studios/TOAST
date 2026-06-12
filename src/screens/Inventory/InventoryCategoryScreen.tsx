@@ -16,6 +16,7 @@ import { FOOTER_HEIGHT } from '../../theme';
 type InventoryCategoryParamList = {
   InventoryCategory: { category: string };
   EditInventoryItem: { item: InventoryItem };
+  NewInventoryItem: { category: string };
 };
 type InventoryCategoryRouteProp = RouteProp<
   InventoryCategoryParamList,

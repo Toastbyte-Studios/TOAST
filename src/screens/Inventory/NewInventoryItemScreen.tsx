@@ -74,7 +74,7 @@ export default observer(function NewInventoryItemScreen(): React.JSX.Element {
         },
       ]);
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to add item');
+      Alert.alert('Error', (error as Error).message || 'Failed to add item');
     }
   };
 

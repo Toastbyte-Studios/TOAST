@@ -87,7 +87,7 @@ export class BarometerStore {
       const rows = res[0].rows;
       const loaded: PressureSample[] = [];
       for (let i = 0; i < rows.length; i++) {
-        loaded.push(rows.item(i));
+        loaded.push(rows.item(i) as unknown as PressureSample);
       }
       runInAction(() => {
         this.history = loaded;

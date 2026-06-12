@@ -176,7 +176,9 @@ describe('BackupService', () => {
     });
 
     it('should return false when version is missing', () => {
-      const noVersion = { ...(SAMPLE_BACKUP as Record<string, unknown>) };
+      const noVersion = {
+        ...(SAMPLE_BACKUP as unknown as Record<string, unknown>),
+      };
       delete noVersion.version;
       expect(validateBackup(noVersion)).toBe(false);
     });
@@ -226,7 +228,9 @@ describe('BackupService', () => {
     });
 
     it('should return false when data is missing', () => {
-      const noData = { ...(SAMPLE_BACKUP as Record<string, unknown>) };
+      const noData = {
+        ...(SAMPLE_BACKUP as unknown as Record<string, unknown>),
+      };
       delete noData.data;
       expect(validateBackup(noData)).toBe(false);
     });

@@ -1,4 +1,10 @@
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useRoute,
+  useNavigation,
+  RouteProp,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
@@ -34,7 +40,7 @@ type NoteCategoryRouteProp = RouteProp<
  */
 export default observer(function NoteCategoryScreen(): React.JSX.Element {
   const route = useRoute<NoteCategoryRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const core = useNotesStore();
   const settings = useSettingsStore();
 

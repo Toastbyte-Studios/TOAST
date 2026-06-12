@@ -1,4 +1,10 @@
-import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useRoute,
+  useNavigation,
+  RouteProp,
+} from '@react-navigation/native';
 import React, { JSX, useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import CardTopic from '../../components/CardTopic';
@@ -36,7 +42,7 @@ type ScenarioCategoryRouteProp = RouteProp<
  */
 export default function ScenarioCategoryScreen(): JSX.Element {
   const route = useRoute<ScenarioCategoryRouteProp>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const { title, data, disclaimer } = route.params || {};
 
   const entries = useMemo(() => {

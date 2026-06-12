@@ -8,3 +8,13 @@ export interface SQLiteDatabase {
     }>
   >;
 }
+
+export interface SQLiteStatic {
+  enablePromise?(enabled: boolean): void;
+  openDatabase(params: {
+    name: string;
+    location?: string;
+    createFromLocation?: number | string;
+    readOnly?: boolean;
+  }): Promise<SQLiteDatabase>;
+}

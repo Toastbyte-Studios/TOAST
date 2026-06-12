@@ -117,7 +117,7 @@ export default observer(
                   } catch (error) {
                     Alert.alert(
                       'Error',
-                      error.message || 'Failed to update item',
+                      (error as Error).message || 'Failed to update item',
                     );
                   }
                 },
@@ -139,7 +139,7 @@ export default observer(
                   } catch (error) {
                     Alert.alert(
                       'Error',
-                      error.message || 'Failed to delete item',
+                      (error as Error).message || 'Failed to delete item',
                     );
                   }
                 },

@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
@@ -21,7 +25,7 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns A screen layout with navigation cards for each section.
  */
 export default observer(function EmergencyPlanScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const store = useEmergencyPlanStore();
   const COLORS = useTheme();
 

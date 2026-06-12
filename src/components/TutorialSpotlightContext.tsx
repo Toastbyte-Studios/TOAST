@@ -17,7 +17,7 @@ export type TutorialSpotlightContextValue = {
   target: TutorialSpotlightTarget | undefined;
   setSpotlightLayout: (layout: SpotlightLayout | null) => void;
   containerRef: { current: View | null };
-  sectionHeaderRef: React.RefObject<View>;
+  sectionHeaderRef: React.RefObject<View | null>;
 };
 
 export const TutorialSpotlightContext =

@@ -79,7 +79,7 @@ export default observer(function CommunicationPlanScreen() {
       setIsDirty(false);
       Alert.alert('Saved', 'Communication plan saved.');
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to save plan');
+      Alert.alert('Error', (error as Error).message || 'Failed to save plan');
     }
   };
 

@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import CardTopic from '../../components/CardTopic';
@@ -18,7 +22,7 @@ import { conversionCategories } from '../../utils/unitConversions';
  * @returns A React element rendering the unit conversion categories grid.
  */
 export default function UnitConversionScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const openCategory = (categoryId: string) => {
     navigation.navigate('ConversionCategory', { categoryId });

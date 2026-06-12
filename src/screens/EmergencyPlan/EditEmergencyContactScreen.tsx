@@ -64,7 +64,10 @@ export default observer(function EditEmergencyContactScreen() {
       });
       navigation.goBack();
     } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to update contact');
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to update contact',
+      );
     }
   };
 
@@ -82,7 +85,10 @@ export default observer(function EditEmergencyContactScreen() {
               await store.deleteContact(contact.id);
               navigation.goBack();
             } catch (error) {
-              Alert.alert('Error', error.message || 'Failed to delete contact');
+              Alert.alert(
+                'Error',
+                (error as Error).message || 'Failed to delete contact',
+              );
             }
           },
         },
