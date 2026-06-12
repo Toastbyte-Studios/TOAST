@@ -9,47 +9,49 @@ const createMockDatabase = () => {
   const storage: Record<string, string> = {};
 
   return {
-    executeSql: jest.fn((query: string, params?: any[]) => {
-      // Handle CREATE TABLE
-      if (query.includes('CREATE TABLE')) {
-        return Promise.resolve([{ rows: { length: 0 } }]);
-      }
-
-      // Handle INSERT OR REPLACE
-      // Query format: "INSERT OR REPLACE INTO settings (key, value) VALUES ('fontSize', ?)"
-      if (query.includes('INSERT OR REPLACE')) {
-        // Extract key from the query
-        const keyMatch = query.match(/VALUES \('([^']+)'/);
-        if (keyMatch && params && params.length > 0) {
-          const key = keyMatch[1]; // e.g., 'fontSize'
-          const value = params[0]; // e.g., 'medium'
-          storage[key] = value;
+    executeSql: jest.fn(
+      (query: string, params?: Array<string | number | boolean | null>) => {
+        // Handle CREATE TABLE
+        if (query.includes('CREATE TABLE')) {
+          return Promise.resolve([{ rows: { length: 0 } }]);
         }
-        return Promise.resolve([{ rows: { length: 0 } }]);
-      }
 
-      // Handle SELECT - parse the key from the WHERE clause
-      if (query.includes('SELECT')) {
-        // Extract key from query like "SELECT value FROM settings WHERE key = 'fontSize'"
-        const match = query.match(/key = '([^']+)'/);
-        const key = match?.[1];
+        // Handle INSERT OR REPLACE
+        // Query format: "INSERT OR REPLACE INTO settings (key, value) VALUES ('fontSize', ?)"
+        if (query.includes('INSERT OR REPLACE')) {
+          // Extract key from the query
+          const keyMatch = query.match(/VALUES \('([^']+)'/);
+          if (keyMatch && params && params.length > 0) {
+            const key = keyMatch[1]; // e.g., 'fontSize'
+            const value = params[0]; // e.g., 'medium'
+            storage[key] = value;
+          }
+          return Promise.resolve([{ rows: { length: 0 } }]);
+        }
 
-        if (key && storage[key] !== undefined) {
-          const value = storage[key];
-          return Promise.resolve([
-            {
-              rows: {
-                length: 1,
-                item: (_index: number) => ({ value }),
+        // Handle SELECT - parse the key from the WHERE clause
+        if (query.includes('SELECT')) {
+          // Extract key from query like "SELECT value FROM settings WHERE key = 'fontSize'"
+          const match = query.match(/key = '([^']+)'/);
+          const key = match?.[1];
+
+          if (key && storage[key] !== undefined) {
+            const value = storage[key];
+            return Promise.resolve([
+              {
+                rows: {
+                  length: 1,
+                  item: (_index: number) => ({ value }),
+                },
               },
-            },
-          ]);
+            ]);
+          }
+          return Promise.resolve([{ rows: { length: 0 } }]);
         }
-        return Promise.resolve([{ rows: { length: 0 } }]);
-      }
 
-      return Promise.resolve([{ rows: { length: 0 } }]);
-    }),
+        return Promise.resolve([{ rows: { length: 0 } }]);
+      },
+    ),
   };
 };
 
@@ -97,7 +99,7 @@ describe('SettingsStore', () => {
     });
 
     it('should return 1.0 for invalid font size', () => {
-      (settingsStore as any).fontSize = 'invalid';
+      (settingsStore as unknown as { fontSize: string }).fontSize = 'invalid';
       expect(settingsStore.fontScale).toBe(1.0);
     });
   });
@@ -352,7 +354,9 @@ describe('SettingsStore', () => {
       settingsStore.fontSize = 'large';
       settingsStore.themeMode = 'dark';
 
-      await (settingsStore as any).persistSettings();
+      await (
+        settingsStore as unknown as { persistSettings(): Promise<void> }
+      ).persistSettings();
 
       expect(mockDb.executeSql).toHaveBeenCalledWith(
         "INSERT OR REPLACE INTO settings (key, value) VALUES ('fontSize', ?)",
@@ -381,7 +385,9 @@ describe('SettingsStore', () => {
       };
 
       await settingsStore.initSettingsDb(errorDb);
-      await (settingsStore as any).persistSettings();
+      await (
+        settingsStore as unknown as { persistSettings(): Promise<void> }
+      ).persistSettings();
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Failed to persist settings:',

@@ -54,7 +54,11 @@ class InMemoryDb implements SQLiteDatabase {
   async executeSql(
     sql: string,
     params: Array<string | number | boolean | null> = [],
-  ): Promise<Array<{ rows: { length: number; item(index: number): any } }>> {
+  ): Promise<
+    Array<{
+      rows: { length: number; item(index: number): Record<string, unknown> };
+    }>
+  > {
     const s = sql.trim();
 
     // Simulate a forced failure for specific SQL patterns (used in tests).

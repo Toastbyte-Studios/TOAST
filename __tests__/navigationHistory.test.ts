@@ -7,7 +7,10 @@ import { NavigationHistory } from '../src/navigation/navigationHistory';
 // Mock the @react-navigation/native module
 jest.mock('@react-navigation/native', () => ({
   CommonActions: {
-    navigate: (params: any) => ({ type: 'NAVIGATE', payload: params }),
+    navigate: (params: Record<string, unknown>) => ({
+      type: 'NAVIGATE',
+      payload: params,
+    }),
   },
 }));
 
@@ -30,7 +33,7 @@ const createMockNavigationRef = () => {
     dispatch: jest.fn(),
     mockState,
     mockCurrentRoute,
-  } as any;
+  };
 };
 
 describe('NavigationHistory', () => {
@@ -40,20 +43,26 @@ describe('NavigationHistory', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     navigationRef = createMockNavigationRef();
-    navigationHistory = new NavigationHistory(navigationRef as any);
+    navigationHistory = new NavigationHistory(navigationRef);
   });
 
   describe('constructor', () => {
     it('should throw error if navigationRef is null', () => {
-      expect(() => new NavigationHistory(null as any)).toThrow(
-        'NavigationHistory requires a valid navigationRef',
-      );
+      expect(
+        () =>
+          new NavigationHistory(
+            null as unknown as ReturnType<typeof createMockNavigationRef>,
+          ),
+      ).toThrow('NavigationHistory requires a valid navigationRef');
     });
 
     it('should throw error if navigationRef is undefined', () => {
-      expect(() => new NavigationHistory(undefined as any)).toThrow(
-        'NavigationHistory requires a valid navigationRef',
-      );
+      expect(
+        () =>
+          new NavigationHistory(
+            undefined as unknown as ReturnType<typeof createMockNavigationRef>,
+          ),
+      ).toThrow('NavigationHistory requires a valid navigationRef');
     });
   });
 

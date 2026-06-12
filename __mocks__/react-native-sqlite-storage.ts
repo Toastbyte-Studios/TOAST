@@ -2,19 +2,30 @@
  * Mock for react-native-sqlite-storage
  */
 
-const mockExecuteSql = jest.fn((_query: string, _params?: any[]) => {
+type SqlParam = string | number | boolean | null;
+
+interface MockTx {
+  executeSql: (
+    query: string,
+    params?: SqlParam[],
+    success?: (tx: MockTx, result: unknown) => void,
+    error?: (tx: MockTx, err: unknown) => void,
+  ) => void;
+}
+
+const mockExecuteSql = jest.fn((_query: string, _params?: SqlParam[]) => {
   return Promise.resolve([
     { rows: { length: 0, item: () => null, raw: () => [] } },
   ]);
 });
 
-const mockTransaction = jest.fn((callback: (tx: any) => void) => {
-  const tx = {
+const mockTransaction = jest.fn((callback: (tx: MockTx) => void) => {
+  const tx: MockTx = {
     executeSql: (
-      query: string,
-      params?: any[],
-      success?: Function,
-      error?: Function,
+      _query: string,
+      _params?: SqlParam[],
+      success?: (tx: MockTx, result: unknown) => void,
+      error?: (tx: MockTx, err: unknown) => void,
     ) => {
       try {
         const result = { rows: { length: 0, item: () => null, raw: () => [] } };

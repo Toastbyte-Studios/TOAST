@@ -15,6 +15,7 @@ import {
   toYearMonth,
 } from '../src/services/weatherOutlookService';
 import { WeatherOutlookStore } from '../src/stores/WeatherOutlookStore';
+import { SQLiteDatabase } from '../src/types/database-types';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -221,7 +222,7 @@ describe('fetchSeasonalData', () => {
 describe('SQLite cache helpers', () => {
   test('initCacheTable calls executeSql with CREATE TABLE', async () => {
     const db = makeDb();
-    await initCacheTable(db as any);
+    await initCacheTable(db as SQLiteDatabase);
     expect(db.executeSql).toHaveBeenCalledWith(
       expect.stringContaining('CREATE TABLE IF NOT EXISTS'),
     );
@@ -229,7 +230,7 @@ describe('SQLite cache helpers', () => {
 
   test('getCachedOutlook queries using GLOB to find most recent row', async () => {
     const db = makeDb([]);
-    await getCachedOutlook(db as any, 36.2, -115.1);
+    await getCachedOutlook(db as SQLiteDatabase, 36.2, -115.1);
     expect(db.executeSql).toHaveBeenCalledWith(
       expect.stringContaining('GLOB'),
       expect.arrayContaining([expect.stringContaining('36.2_-115.1_')]),
@@ -238,7 +239,7 @@ describe('SQLite cache helpers', () => {
 
   test('getCachedOutlook parses and returns cached JSON', async () => {
     const db = makeDb([{ data: JSON.stringify(sampleOutlook) }]);
-    const result = await getCachedOutlook(db as any, 36.2, -115.1);
+    const result = await getCachedOutlook(db as SQLiteDatabase, 36.2, -115.1);
     expect(result).not.toBeNull();
     expect(result?.months).toHaveLength(2);
     expect(result?.lat).toBe(36.2);
@@ -249,13 +250,17 @@ describe('SQLite cache helpers', () => {
       [],
       jest.fn().mockRejectedValueOnce(new Error('DB error')),
     );
-    const result = await getCachedOutlook(failDb as any, 36.2, -115.1);
+    const result = await getCachedOutlook(
+      failDb as SQLiteDatabase,
+      36.2,
+      -115.1,
+    );
     expect(result).toBeNull();
   });
 
   test('saveOutlookToCache calls executeSql with INSERT OR REPLACE', async () => {
     const db = makeDb();
-    await saveOutlookToCache(db as any, sampleOutlook);
+    await saveOutlookToCache(db as SQLiteDatabase, sampleOutlook);
     expect(db.executeSql).toHaveBeenCalledWith(
       expect.stringContaining('INSERT OR REPLACE'),
       expect.arrayContaining([
@@ -287,7 +292,7 @@ describe('WeatherOutlookStore', () => {
   test('initDatabase creates cache table', async () => {
     const store = new WeatherOutlookStore();
     const db = makeDb();
-    await store.initDatabase(db as any);
+    await store.initDatabase(db as SQLiteDatabase);
     expect(db.executeSql).toHaveBeenCalledWith(
       expect.stringContaining('CREATE TABLE IF NOT EXISTS'),
     );
@@ -296,7 +301,7 @@ describe('WeatherOutlookStore', () => {
   test('loadOutlook uses fresh cached data without network call', async () => {
     const store = new WeatherOutlookStore();
     const db = makeDb([{ data: JSON.stringify(sampleOutlook) }]);
-    await store.initDatabase(db as any);
+    await store.initDatabase(db as SQLiteDatabase);
 
     global.fetch = jest.fn();
     await store.loadOutlook(36.2, -115.1);
@@ -315,7 +320,7 @@ describe('WeatherOutlookStore', () => {
 
     const db = makeDb([{ data: JSON.stringify(staleOutlook) }]);
     const store = new WeatherOutlookStore();
-    await store.initDatabase(db as any);
+    await store.initDatabase(db as SQLiteDatabase);
 
     global.fetch = jest.fn().mockResolvedValueOnce({
       ok: true,
@@ -347,7 +352,7 @@ describe('WeatherOutlookStore', () => {
 
     const db = makeDb([{ data: JSON.stringify(staleOutlook) }]);
     const store = new WeatherOutlookStore();
-    await store.initDatabase(db as any);
+    await store.initDatabase(db as SQLiteDatabase);
 
     global.fetch = jest
       .fn()
@@ -364,7 +369,7 @@ describe('WeatherOutlookStore', () => {
   test('loadOutlook sets error when offline with no cached data', async () => {
     const db = makeDb([]); // no rows
     const store = new WeatherOutlookStore();
-    await store.initDatabase(db as any);
+    await store.initDatabase(db as SQLiteDatabase);
 
     global.fetch = jest
       .fn()

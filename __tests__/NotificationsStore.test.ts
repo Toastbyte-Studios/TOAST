@@ -21,7 +21,7 @@ describe('NotificationsStore', () => {
     jest.clearAllMocks();
     // Default: nothing stored yet
     mockAsyncStorage.getItem.mockResolvedValue(null);
-    mockAsyncStorage.setItem.mockResolvedValue(undefined as any);
+    mockAsyncStorage.setItem.mockResolvedValue(undefined);
     store = new NotificationsStore();
   });
 

@@ -12,6 +12,7 @@ jest.mock('react-native-sqlite-storage', () => {
 jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 import { PantryStore } from '../src/stores/PantryStore';
+import { PantryItem } from '../src/stores/PantryStore';
 
 describe('PantryStore', () => {
   let store: PantryStore;
@@ -448,7 +449,9 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        expect(store.getExpirationDaysRemaining(fakeItem as any)).toBeNull();
+        expect(
+          store.getExpirationDaysRemaining(fakeItem as PantryItem),
+        ).toBeNull();
       });
 
       it('should return a positive number for a future expiration month', async () => {
@@ -481,7 +484,7 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        const days = store.getExpirationDaysRemaining(pastItem as any);
+        const days = store.getExpirationDaysRemaining(pastItem as PantryItem);
         expect(days).not.toBeNull();
         expect(days!).toBeLessThanOrEqual(0);
       });
@@ -521,7 +524,9 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        expect(store.getExpirationStatus(yellowItem as any)).toBe('yellow');
+        expect(store.getExpirationStatus(yellowItem as PantryItem)).toBe(
+          'yellow',
+        );
         jest.useRealTimers();
       });
 
@@ -536,7 +541,9 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        expect(store.getExpirationStatus(expiredItem as any)).toBe('red');
+        expect(store.getExpirationStatus(expiredItem as PantryItem)).toBe(
+          'red',
+        );
       });
     });
 
@@ -603,7 +610,7 @@ describe('PantryStore', () => {
           updatedAt: Date.now(),
         };
         // Manually push into store.items for this test
-        store.items.push(expiredItem as any);
+        store.items.push(expiredItem as PantryItem);
         const alerts = store.getExpirationAlerts();
         const expiredAlerts = alerts.filter((a) => a.alertType === 'expired');
         expect(expiredAlerts.length).toBeGreaterThan(0);
@@ -624,7 +631,7 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        store.items.push(soonItem as any);
+        store.items.push(soonItem as PantryItem);
         const alerts = store.getExpirationAlerts();
         const soonAlerts = alerts.filter((a) => a.item.name === 'Soon Item');
         expect(soonAlerts).toHaveLength(1);
@@ -660,9 +667,11 @@ describe('PantryStore', () => {
           createdAt: Date.now(),
           updatedAt: Date.now(),
         };
-        store.items.push(expiredItem as any);
+        store.items.push(expiredItem as PantryItem);
         const alerts = store.getExpirationAlerts();
-        expect(alerts.every((a) => a.alertType !== ('3day' as any))).toBe(true);
+        expect(alerts.every((a) => a.alertType !== ('3day' as never))).toBe(
+          true,
+        );
       });
     });
   });

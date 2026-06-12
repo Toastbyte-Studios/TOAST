@@ -94,7 +94,7 @@ function mockFetchSuccess(rows: Record<string, string>[] = [makeApiRow()]) {
     ok: true,
     json: async () => ({ results: rows, count: rows.length }),
   };
-  global.fetch = jest.fn().mockResolvedValue(mockResponse as any);
+  global.fetch = jest.fn().mockResolvedValue(mockResponse as Partial<Response>);
   (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 }
 
@@ -164,7 +164,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('modes includes unique modes from repeaters', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], mode: 'FM' },
       { ...mockCache.repeaters[0], id: 'x', mode: 'DMR' },
     ];
@@ -175,12 +175,12 @@ describe('RepeaterBookStore', () => {
   // ── filteredRepeaters ──────────────────────────────────────────────────────
 
   it('filteredRepeaters returns repeaters within 50 miles when selectedMode is All', () => {
-    (store as any).repeaters = mockCache.repeaters; // distance = 0
+    store.repeaters = mockCache.repeaters; // distance = 0
     expect(store.filteredRepeaters).toHaveLength(1);
   });
 
   it('filteredRepeaters excludes repeaters beyond 50 miles', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], id: 'near', distance: 10 },
       { ...mockCache.repeaters[0], id: 'far', distance: 75 },
     ];
@@ -189,7 +189,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters filters by selectedMode', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], mode: 'FM', distance: 5 },
       { ...mockCache.repeaters[0], id: 'dmr-1', mode: 'DMR', distance: 5 },
     ];
@@ -199,7 +199,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters excludes off-air repeaters when onAirOnly is true', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'on',
@@ -219,7 +219,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters includes off-air repeaters when onAirOnly is false', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'on',
@@ -238,7 +238,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters excludes non-emergency repeaters when emergencyOnly is true', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], id: 'emcomm', emcomm: 'ARES', distance: 5 },
       { ...mockCache.repeaters[0], id: 'regular', emcomm: '', distance: 5 },
     ];
@@ -248,7 +248,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters includes all repeaters when emergencyOnly is false', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'emcomm',
@@ -262,7 +262,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters sorts by distance ascending', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], id: 'far', distance: 40 },
       { ...mockCache.repeaters[0], id: 'near', distance: 5 },
     ];
@@ -315,7 +315,10 @@ describe('RepeaterBookStore', () => {
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
 
-    const calls = (global.fetch as jest.Mock).mock.calls as [string, any][];
+    const calls = (global.fetch as jest.Mock).mock.calls as [
+      string,
+      RequestInit?,
+    ][];
     const urls = calls.map(([url]) => url as string);
     expect(urls.some((u) => u.includes('state=Florida'))).toBe(true);
     expect(urls.some((u) => u.includes('state=Alabama'))).toBe(true);
@@ -330,7 +333,10 @@ describe('RepeaterBookStore', () => {
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
 
-    const calls = (global.fetch as jest.Mock).mock.calls as [string, any][];
+    const calls = (global.fetch as jest.Mock).mock.calls as [
+      string,
+      RequestInit?,
+    ][];
     calls.forEach(([, opts]) => {
       expect(opts?.headers?.['User-Agent']).toContain('TOAST');
       expect(opts?.headers?.['User-Agent']).toContain('toastbyte.studio');
@@ -357,15 +363,15 @@ describe('RepeaterBookStore', () => {
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ results: [row1] }),
-      } as any)
+      } as Partial<Response>)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ results: [row2] }),
-      } as any)
+      } as Partial<Response>)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({ results: [row3] }),
-      } as any);
+      } as Partial<Response>);
     (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
@@ -408,7 +414,7 @@ describe('RepeaterBookStore', () => {
       ok: false,
       status: 401,
       json: async () => ({}),
-    } as any);
+    } as Partial<Response>);
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
 
@@ -417,14 +423,14 @@ describe('RepeaterBookStore', () => {
   });
 
   it('fetchRepeaters keeps existing cached data when all queries fail', async () => {
-    (store as any).repeaters = mockCache.repeaters;
-    (store as any).isCachedData = true;
+    store.repeaters = mockCache.repeaters;
+    store.isCachedData = true;
 
     global.fetch = jest.fn().mockResolvedValue({
       ok: false,
       status: 500,
       json: async () => ({}),
-    } as any);
+    } as Partial<Response>);
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
 
@@ -455,7 +461,7 @@ describe('RepeaterBookStore', () => {
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
       json: async () => ({ results: [], count: 0 }),
-    } as any);
+    } as Partial<Response>);
     (AsyncStorage.setItem as jest.Mock).mockResolvedValue(undefined);
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
@@ -494,7 +500,7 @@ describe('RepeaterBookStore', () => {
 
   it('maps empty emcomm when field is absent', async () => {
     const rowWithoutEmcomm = makeApiRow();
-    delete (rowWithoutEmcomm as any).emcomm;
+    delete (rowWithoutEmcomm as Record<string, unknown>).emcomm;
     mockFetchSuccess([rowWithoutEmcomm]);
 
     await store.fetchRepeaters(TEST_LAT, TEST_LNG);
@@ -508,7 +514,12 @@ describe('RepeaterBookStore', () => {
     mockFetchSuccess();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (success: any) => {
+      (
+        success: (pos: {
+          coords: { latitude: number; longitude: number };
+          timestamp: number;
+        }) => void,
+      ) => {
         success({
           coords: { latitude: TEST_LAT, longitude: TEST_LNG },
           timestamp: Date.now(),
@@ -533,7 +544,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('checkAndFetchIfNeeded keeps cache when authorization is denied with cached data', async () => {
-    (store as any).repeaters = mockCache.repeaters;
+    store.repeaters = mockCache.repeaters;
     (Geolocation.requestAuthorization as jest.Mock).mockResolvedValueOnce(
       'denied',
     );
@@ -548,7 +559,12 @@ describe('RepeaterBookStore', () => {
     mockFetchSuccess();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (success: any) => {
+      (
+        success: (pos: {
+          coords: { latitude: number; longitude: number };
+          timestamp: number;
+        }) => void,
+      ) => {
         success({
           coords: { latitude: TEST_LAT, longitude: TEST_LNG },
           timestamp: Date.now(),
@@ -562,14 +578,19 @@ describe('RepeaterBookStore', () => {
   });
 
   it('checkAndFetchIfNeeded skips fetch when within threshold', async () => {
-    (store as any).repeaters = mockCache.repeaters;
-    (store as any).queryLat = TEST_LAT;
-    (store as any).queryLng = TEST_LNG;
+    store.repeaters = mockCache.repeaters;
+    store.queryLat = TEST_LAT;
+    store.queryLng = TEST_LNG;
 
     global.fetch = jest.fn();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (success: any) => {
+      (
+        success: (pos: {
+          coords: { latitude: number; longitude: number };
+          timestamp: number;
+        }) => void,
+      ) => {
         success({
           coords: { latitude: 27.951, longitude: -82.458 },
           timestamp: Date.now(),
@@ -583,14 +604,19 @@ describe('RepeaterBookStore', () => {
   });
 
   it('checkAndFetchIfNeeded re-fetches when user moved more than 50 miles', async () => {
-    (store as any).repeaters = mockCache.repeaters;
-    (store as any).queryLat = TEST_LAT;
-    (store as any).queryLng = TEST_LNG;
+    store.repeaters = mockCache.repeaters;
+    store.queryLat = TEST_LAT;
+    store.queryLng = TEST_LNG;
 
     mockFetchSuccess();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (success: any) => {
+      (
+        success: (pos: {
+          coords: { latitude: number; longitude: number };
+          timestamp: number;
+        }) => void,
+      ) => {
         success({
           coords: { latitude: 30.3322, longitude: -81.6557 }, // Jacksonville, FL
           timestamp: Date.now(),
@@ -607,7 +633,10 @@ describe('RepeaterBookStore', () => {
     global.fetch = jest.fn();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (_success: any, error: any) => {
+      (
+        _success: unknown,
+        error: (err: { code: number; message: string }) => void,
+      ) => {
         error({ code: 1, message: 'Position unavailable' });
       },
     );
@@ -619,11 +648,14 @@ describe('RepeaterBookStore', () => {
   });
 
   it('checkAndFetchIfNeeded keeps cache and no error when location fails with cached data', async () => {
-    (store as any).repeaters = mockCache.repeaters;
+    store.repeaters = mockCache.repeaters;
     global.fetch = jest.fn();
 
     (Geolocation.getCurrentPosition as jest.Mock).mockImplementationOnce(
-      (_success: any, error: any) => {
+      (
+        _success: unknown,
+        error: (err: { code: number; message: string }) => void,
+      ) => {
         error({ code: 1, message: 'Permission denied' });
       },
     );
@@ -772,10 +804,10 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters includes custom repeaters at the top regardless of distance', () => {
-    (store as any).repeaters = [
+    store.repeaters = [
       { ...mockCache.repeaters[0], id: 'api-near', distance: 5 },
     ];
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'custom-1',
@@ -790,7 +822,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters applies mode filter to custom repeaters', () => {
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'custom-fm',
@@ -814,7 +846,7 @@ describe('RepeaterBookStore', () => {
   });
 
   it('filteredRepeaters applies on-air filter to custom repeaters', () => {
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'custom-on',
@@ -839,7 +871,7 @@ describe('RepeaterBookStore', () => {
 
   it('filteredRepeaters does not apply distance filter to custom repeaters', () => {
     // distance=0 is outside nothing, but custom entries with any distance should show
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'custom-far',
@@ -853,14 +885,14 @@ describe('RepeaterBookStore', () => {
   });
 
   it('modes includes modes from custom repeaters', () => {
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       { ...mockCache.repeaters[0], id: 'c1', mode: 'M17', isCustom: true },
     ];
     expect(store.modes).toContain('M17');
   });
 
   it('filteredRepeaters applies emergency filter to custom repeaters with emcomm', () => {
-    (store as any).customRepeaters = [
+    store.customRepeaters = [
       {
         ...mockCache.repeaters[0],
         id: 'custom-emcomm',

@@ -30,7 +30,12 @@ jest.mock('react-native-sound', () => {
 });
 
 describe('DigitalWhistleScreen', () => {
-  let mockSoundInstance: any;
+  let mockSoundInstance: {
+    play: jest.Mock;
+    stop: jest.Mock;
+    release: jest.Mock;
+    setNumberOfLoops: jest.Mock;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();

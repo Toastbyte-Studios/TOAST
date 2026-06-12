@@ -171,11 +171,21 @@ describe('CoreStore - Morse Code Transmission', () => {
 
     it('should clear the morse timer', () => {
       coreStore.transmitMorseMessage('...', false);
-      const morseTimer = (coreStore as any).morseTimer;
+      const morseTimer = (
+        coreStore as unknown as {
+          morseTimer: ReturnType<typeof setTimeout> | null;
+        }
+      ).morseTimer;
       expect(morseTimer).not.toBeNull();
 
       coreStore.stopMorseTransmission();
-      expect((coreStore as any).morseTimer).toBeNull();
+      expect(
+        (
+          coreStore as unknown as {
+            morseTimer: ReturnType<typeof setTimeout> | null;
+          }
+        ).morseTimer,
+      ).toBeNull();
     });
 
     it('should be safe to call when no transmission is active', () => {
