@@ -226,7 +226,7 @@ export class SignalingStore {
     const repeatPause = [{ on: false, ms: 1000, type: null }];
 
     const runOnce = (index: number) => {
-      if (this.flashlightMode !== 'sos') {
+      if (this.flashlightMode !== FlashlightModes.SOS) {
         this.setTorch(false);
         return;
       }
@@ -314,7 +314,7 @@ export class SignalingStore {
   setStrobeFrequency(hz: number) {
     const clamped = Math.max(1, Math.min(15, Math.round(hz)));
     this.strobeFrequencyHz = clamped;
-    if (this.flashlightMode === 'strobe') {
+    if (this.flashlightMode === FlashlightModes.STROBE) {
       // restart strobe at new frequency
       this.startStrobe();
     }
@@ -520,6 +520,7 @@ export class SignalingStore {
   dispose() {
     this.stopSOS();
     this.stopStrobe();
+    this.stopMorseTransmission();
     this.appStateSubscription?.remove();
 
     // Release audio resources

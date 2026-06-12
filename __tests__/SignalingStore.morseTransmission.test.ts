@@ -248,6 +248,20 @@ describe('SignalingStore - Morse Code Transmission', () => {
       expect(coreStore.isMorseTransmitting).toBe(false);
     });
 
+    it('should stop an in-flight transmission during dispose', () => {
+      coreStore.transmitMorseMessage('... --- ...', false);
+      expect(coreStore.isMorseTransmitting).toBe(true);
+
+      jest.advanceTimersByTime(500);
+      coreStore.dispose();
+
+      expect(coreStore.isMorseTransmitting).toBe(false);
+      expect((coreStore as any).morseTimer).toBeNull();
+
+      jest.runAllTimers();
+      expect(coreStore.isMorseTransmitting).toBe(false);
+    });
+
     it('should handle long complex messages', () => {
       // Simulate a longer message with mixed content
       const longMessage = '... --- ... / .... . .-.. .--. / -- .';
