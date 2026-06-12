@@ -13,7 +13,7 @@ import { NoteSortSelector } from '../../components/NoteSortSelector';
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
-import { useCoreStore, useSettingsStore } from '../../stores';
+import { useNotesStore, useSettingsStore } from '../../stores';
 import { COLORS } from '../../theme';
 import { sortNotes } from '../../utils/noteSorting';
 import { formatDateTime } from '../../utils/timeFormat';
@@ -39,7 +39,7 @@ import { noteListSharedStyles as shared } from './noteListStyles';
  * @returns The Recent Notes screen content.
  */
 export default observer(function RecentNotesScreen() {
-  const core = useCoreStore();
+  const core = useNotesStore();
   const settings = useSettingsStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const data = useMemo(

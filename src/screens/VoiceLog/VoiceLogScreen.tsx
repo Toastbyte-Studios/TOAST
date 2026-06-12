@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
-import { useCoreStore } from '../../stores';
+import { useNotesStore } from '../../stores';
 import { COLORS, FOOTER_HEIGHT, SCROLL_PADDING } from '../../theme';
 import EmptyState from './components/EmptyState';
 import InfoBox from './components/InfoBox';
@@ -46,7 +46,7 @@ const MAX_DURATION_SECONDS = 12;
  * @returns A React element rendering the Voice Log screen.
  */
 export default observer(function VoiceLogScreen() {
-  const core = useCoreStore();
+  const core = useNotesStore();
   const navigation = useNavigation();
   const [mode, setMode] = useState<'select' | 'record' | 'view'>('select');
   const [isRecording, setIsRecording] = useState(false);

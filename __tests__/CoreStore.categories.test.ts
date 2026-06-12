@@ -89,14 +89,14 @@ jest.mock('react-native-sqlite-storage', () => {
   };
 });
 
-import { CoreStore } from '../src/stores/CoreStore';
+import { NotesStore } from '../src/stores/NotesStore';
 
 describe('CoreStore - Category Management', () => {
-  let coreStore: CoreStore;
+  let coreStore: NotesStore;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    coreStore = new CoreStore();
+    coreStore = new NotesStore();
   });
 
   afterEach(() => {

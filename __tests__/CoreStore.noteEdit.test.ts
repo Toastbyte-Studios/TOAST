@@ -90,10 +90,10 @@ jest.mock('react-native-sqlite-storage', () => {
   };
 });
 
-import { CoreStore } from '../src/stores/CoreStore';
+import { NotesStore } from '../src/stores/NotesStore';
 
 describe('CoreStore - Note Editing', () => {
-  let coreStore: CoreStore;
+  let coreStore: NotesStore;
 
   /**
    * Helper function to setup a custom SQLite mock with spyable executeSql.
@@ -115,7 +115,7 @@ describe('CoreStore - Note Editing', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    coreStore = new CoreStore();
+    coreStore = new NotesStore();
   });
 
   afterEach(() => {
