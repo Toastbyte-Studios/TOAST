@@ -15,13 +15,8 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     // Load persisted data asynchronously
     (async () => {
       try {
-        // Load categories first before loading notes to avoid race conditions
-        await rootStore.notesStore.initNotesDb();
+        await rootStore.startupPromise;
         if (rootStore.notesStore.notesDb) {
-          await rootStore.notesStore.loadCategories();
-          await rootStore.checklistStore.initDatabase(
-            rootStore.notesStore.notesDb,
-          );
           // Start barometer collection now that the DB is available so pressure
           // history accumulates while the user uses the app, not just while the
           // Barometric Pressure screen is open.

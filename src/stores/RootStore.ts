@@ -19,6 +19,7 @@ import { WaypointStore } from './WaypointStore';
 import { WeatherOutlookStore } from './WeatherOutlookStore';
 
 export class RootStore {
+  startupPromise: Promise<void>;
   coreStore: CoreStore;
   notesStore: NotesStore;
   checklistStore: ChecklistStore;
@@ -58,7 +59,7 @@ export class RootStore {
     this.waypointStore = new WaypointStore();
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
-    this.initializeSettings();
+    this.startupPromise = this.initializeSettings();
   }
 
   /**
@@ -137,6 +138,6 @@ export class RootStore {
     this.isOfflineMode = true;
     // initializeSettings is intentionally not awaited - settings have sensible
     // defaults and components will re-render when settings finish loading from DB
-    this.initializeSettings();
+    this.startupPromise = this.initializeSettings();
   }
 }

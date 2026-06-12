@@ -2,11 +2,10 @@
  * @format
  */
 
-import { Checklist, ChecklistItem } from '../src/stores/ChecklistStore';
-import { Note } from '../src/stores/CoreStore';
 import { InventoryItem } from '../src/stores/InventoryStore';
 import { PantryItem } from '../src/stores/PantryStore';
 import { searchItems, getAllSearchableItems } from '../src/utils/searchData';
+import type { Checklist, ChecklistItem, Note } from '../src/stores';
 
 describe('Search Functionality', () => {
   // Mock data for testing

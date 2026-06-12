@@ -388,7 +388,9 @@ export class NotesStore {
       runInAction(() => {
         this.notes[idx].category = category;
       });
-      this.updateNote(this.notes[idx]);
+      this.updateNote(this.notes[idx]).catch((error) => {
+        console.error('Failed to update note category:', noteId, error);
+      });
     }
   }
 
@@ -407,7 +409,9 @@ export class NotesStore {
       runInAction(() => {
         note.photoUris.push(uri);
       });
-      this.updateNote(note);
+      this.updateNote(note).catch((error) => {
+        console.error('Failed to attach note photo:', noteId, error);
+      });
     }
   }
 

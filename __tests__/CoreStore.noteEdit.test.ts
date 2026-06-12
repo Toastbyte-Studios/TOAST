@@ -92,7 +92,7 @@ jest.mock('react-native-sqlite-storage', () => {
 
 import { NotesStore } from '../src/stores/NotesStore';
 
-describe('CoreStore - Note Editing', () => {
+describe('NotesStore - Note Editing', () => {
   let coreStore: NotesStore;
 
   /**

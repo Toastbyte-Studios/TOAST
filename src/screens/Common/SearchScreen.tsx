@@ -18,13 +18,13 @@ import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import { useTheme } from '../../hooks/useTheme';
 import {
+  type Checklist,
+  type Note,
   useChecklistStore,
   useInventoryStore,
   useNotesStore,
   usePantryStore,
 } from '../../stores';
-import { Checklist } from '../../stores/ChecklistStore';
-import { Note } from '../../stores/NotesStore';
 import { FOOTER_HEIGHT } from '../../theme';
 import ReferenceEntryType from '../../types/data-type';
 import { RagResult, ragSearch } from '../../utils/ragSearch';

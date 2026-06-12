@@ -12,11 +12,10 @@ import healthData from '../data/health.json';
 import survivalData from '../data/survival.json';
 import toolsData from '../data/tools.json';
 import weatherData from '../data/weather.json';
-import { Checklist, ChecklistItem } from '../stores/ChecklistStore';
-import { Note } from '../stores/CoreStore';
 import { InventoryItem } from '../stores/InventoryStore';
 import { PantryItem } from '../stores/PantryStore';
 import ReferenceEntryType from '../types/data-type';
+import type { Checklist, ChecklistItem, Note } from '../stores';
 
 export type SearchableItem = {
   id: string;
