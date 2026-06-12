@@ -14,7 +14,7 @@ import AppButton from '../../components/AppButton';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
-import { useCoreStore } from '../../stores/StoreContext';
+import { useSignalingStore } from '../../stores/StoreContext';
 import { FOOTER_HEIGHT, SCROLL_PADDING } from '../../theme';
 
 // Track if recording is active globally
@@ -36,7 +36,7 @@ let isGlobalRecording = false;
  * @returns A React element rendering the decibel meter screen.
  */
 const DecibelMeterScreenImpl = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const COLORS = useTheme();
   const [isActive, setIsActive] = useState(core.decibelMeterActive);
   const [decibelLevel, setDecibelLevel] = useState(0);

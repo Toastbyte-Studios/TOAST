@@ -9,7 +9,7 @@ import Grid from '../../components/Grid';
 import { Text } from '../../components/ScaledText';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
-import { useCoreStore } from '../../stores/StoreContext';
+import { useSignalingStore } from '../../stores/StoreContext';
 import { COLORS } from '../../theme';
 import { FlashlightModeType } from '../../types/common-types';
 
@@ -18,7 +18,7 @@ import { FlashlightModeType } from '../../types/common-types';
  * mode-specific settings.
  *
  * @remarks
- * - Reads the current mode and settings from the core store (`useCoreStore`).
+ * - Reads the current mode and settings from the signaling store.
  * - Updates flashlight mode via `core.setFlashlightMode`.
  * - Provides navigation to the Nightvision screen.
  * - Conditionally renders:
@@ -29,7 +29,7 @@ import { FlashlightModeType } from '../../types/common-types';
  * @returns A React element rendering the flashlight mode grid and any applicable controls.
  */
 const FlashlightScreenImpl = () => {
-  const core = useCoreStore();
+  const core = useSignalingStore();
   const navigation = useNavigation();
   const mode = core.flashlightMode;
 
