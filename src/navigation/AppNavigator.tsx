@@ -39,6 +39,7 @@ import ManageInventoryCategoriesScreen from '../screens/Inventory/ManageInventor
 import NewInventoryItemScreen from '../screens/Inventory/NewInventoryItemScreen';
 import LunarCyclesScreen from '../screens/LunarCycles/LunarCyclesScreen';
 import MapScreen from '../screens/Map/MapScreen';
+import MapSpikeScreen from '../screens/MapSpikeScreen';
 import AlphaToMorseScreen from '../screens/MorseCode/AlphaToMorseScreen';
 import MorseCodeCheatSheet from '../screens/MorseCode/MorseCodeCheatSheet';
 import MorseCodeScreen from '../screens/MorseCode/MorseCodeScreen';
@@ -142,6 +143,10 @@ function NavigatorContent(): JSX.Element {
           <Stack.Screen name="MapScreen" component={MapScreen} />
           <Stack.Screen name="StarMap" component={StarMapScreen} />
           <Stack.Screen name="GridReference" component={GridReferenceScreen} />
+          {/* Dev-only spike screens — excluded from production builds */}
+          {__DEV__ && (
+            <Stack.Screen name="MapSpike" component={MapSpikeScreen} />
+          )}
           {/* Shared */}
           <Stack.Screen name="ComingSoon" component={ComingSoonScreen} />
           <Stack.Screen name="Search" component={SearchScreen} />

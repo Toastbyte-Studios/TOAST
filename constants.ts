@@ -177,6 +177,18 @@ export const NAVIGATION_TOOLS: ToolType[] = [
     icon: 'grid-outline',
     id: 'nav_grid_reference',
   },
+  // DEV ONLY — throwaway MapLibre v11 rendering spike (see Toastbyte-Studios/TOAST#330).
+  // Remove this entry when the production migration lands.
+  ...(__DEV__
+    ? [
+        {
+          name: 'Map Spike [DEV]',
+          screen: 'MapSpike',
+          icon: 'flask-outline',
+          id: 'nav_map_spike_dev',
+        },
+      ]
+    : []),
 ];
 
 export const REFERENCE_TOOLS: ToolType[] = [
