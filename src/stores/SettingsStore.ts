@@ -105,7 +105,7 @@ export class SettingsStore {
    * Initializes the settings database table if it doesn't exist.
    * Requires the main database to be initialized first.
    */
-  async initSettingsDb(db: SQLiteDatabase): Promise<void> {
+  async initSettingsDb(db: SQLiteDatabase | null): Promise<void> {
     if (!db) return;
     this.settingsDb = db;
     try {
@@ -158,7 +158,7 @@ export class SettingsStore {
   /**
    * Loads settings from the database.
    */
-  async loadSettings(db: SQLiteDatabase): Promise<void> {
+  async loadSettings(db: SQLiteDatabase | null): Promise<void> {
     await this.initSettingsDb(db);
     if (!this.settingsDb) return;
 
