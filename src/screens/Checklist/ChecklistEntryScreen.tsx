@@ -1,4 +1,4 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import {
@@ -16,7 +16,13 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { useChecklistStore } from '../../stores';
+import { Checklist } from '../../stores/ChecklistStore';
 import { FOOTER_HEIGHT } from '../../theme';
+
+type ChecklistEntryRouteProp = RouteProp<
+  { ChecklistEntry: { checklist: Checklist } },
+  'ChecklistEntry'
+>;
 
 /**
  * Displays a single checklist with its items.
@@ -27,8 +33,8 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns {React.JSX.Element} The rendered checklist entry screen component.
  */
 export default observer(function ChecklistEntryScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<ChecklistEntryRouteProp>();
+  const navigation = useNavigation();
   const checklistStore = useChecklistStore();
   const COLORS = useTheme();
   const [newItemText, setNewItemText] = useState<string>('');

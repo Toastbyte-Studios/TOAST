@@ -27,7 +27,20 @@ jest.mock('../src/hooks/useTheme', () => ({
 }));
 
 describe('useSunShadow', () => {
-  let mockCoreStore: any;
+  let mockCoreStore: {
+    lastFix: {
+      coords: {
+        latitude: number;
+        longitude: number;
+        accuracy: number;
+        altitude: number | null;
+        altitudeAccuracy: number | null;
+        heading: number | null;
+        speed: number | null;
+      };
+      timestamp: number;
+    } | null;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -67,7 +80,7 @@ describe('useSunShadow', () => {
 
   describe('Hook Integration Tests', () => {
     test('hook returns shadow object with required properties when location is available', () => {
-      let shadowResult: any;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -94,7 +107,7 @@ describe('useSunShadow', () => {
 
     test('hook returns default shadow when location is unavailable', () => {
       mockCoreStore.lastFix = null;
-      let shadowResult: any;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -115,8 +128,8 @@ describe('useSunShadow', () => {
     });
 
     test('hook calculates different shadows for different locations', () => {
-      let shadow1: any;
-      let shadow2: any;
+      let shadow1!: ReturnType<typeof useSunShadow>;
+      let shadow2!: ReturnType<typeof useSunShadow>;
 
       // First location: New York
       mockCoreStore.lastFix = {
@@ -183,7 +196,7 @@ describe('useSunShadow', () => {
         themeMode: 'dark',
       });
 
-      let shadowResult: any;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();
@@ -210,7 +223,7 @@ describe('useSunShadow', () => {
         themeMode: 'light',
       });
 
-      let shadowResult: any;
+      let shadowResult!: ReturnType<typeof useSunShadow>;
 
       function TestHook() {
         shadowResult = useSunShadow();

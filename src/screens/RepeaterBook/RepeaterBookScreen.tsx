@@ -1,5 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -47,7 +51,7 @@ const gmrsData =
 const RepeaterBookScreen = observer((): JSX.Element => {
   const COLORS = useTheme();
   const styles = useMemo(() => createStyles(COLORS), [COLORS]);
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const store = useRepeaterBookStore();
   const [modePickerVisible, setModePickerVisible] = useState(false);
   const [disclaimerVisible, setDisclaimerVisible] = useState(false);

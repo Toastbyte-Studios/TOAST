@@ -5,7 +5,10 @@
 import React from 'react';
 import { View } from 'react-native';
 
-const MapView = React.forwardRef<any, any>((props, ref) => {
+const MapView = React.forwardRef<
+  { animateToRegion: jest.Mock },
+  React.ComponentProps<typeof View>
+>((props, ref) => {
   React.useImperativeHandle(ref, () => ({
     animateToRegion: jest.fn(),
   }));

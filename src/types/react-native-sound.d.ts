@@ -3,7 +3,7 @@ declare module 'react-native-sound' {
     constructor(
       filename: string,
       basePath: string,
-      onError?: (error: any) => void,
+      onError?: (error: Error | null) => void,
     );
 
     static MAIN_BUNDLE: string;

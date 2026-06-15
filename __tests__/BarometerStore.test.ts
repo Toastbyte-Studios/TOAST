@@ -4,6 +4,7 @@
 
 import { barometer } from 'react-native-sensors';
 import { BarometerStore } from '../src/stores/BarometerStore';
+import { SQLiteDatabase } from '../src/types/database-types';
 
 // Helpers
 const makeDb = (rows: { pressure: number; timestamp: number }[] = []) => ({
@@ -33,7 +34,7 @@ describe('BarometerStore', () => {
       );
 
       const store = new BarometerStore();
-      await store.start(makeDb() as any);
+      await store.start(makeDb() as SQLiteDatabase);
 
       expect(store.available).toBe(false);
       expect(store.loading).toBe(false);
@@ -46,7 +47,7 @@ describe('BarometerStore', () => {
       });
 
       const store = new BarometerStore();
-      await store.start(makeDb() as any);
+      await store.start(makeDb() as SQLiteDatabase);
 
       expect(store.available).toBe(false);
       expect(store.loading).toBe(false);
@@ -59,7 +60,7 @@ describe('BarometerStore', () => {
         { pressure: 1012.5, timestamp: Date.now() - 1800_000 },
       ];
       const store = new BarometerStore();
-      await store.start(makeDb(rows) as any);
+      await store.start(makeDb(rows) as SQLiteDatabase);
 
       expect(store.history.length).toBe(2);
       expect(store.currentPressure).toBe(1012.5);
@@ -68,7 +69,7 @@ describe('BarometerStore', () => {
 
     test('subscribes to the barometer observable on start', async () => {
       const store = new BarometerStore();
-      await store.start(makeDb() as any);
+      await store.start(makeDb() as SQLiteDatabase);
 
       expect(barometer.subscribe).toHaveBeenCalledTimes(1);
     });
@@ -80,7 +81,7 @@ describe('BarometerStore', () => {
       (barometer.subscribe as jest.Mock).mockReturnValueOnce({ unsubscribe });
 
       const store = new BarometerStore();
-      await store.start(makeDb() as any);
+      await store.start(makeDb() as SQLiteDatabase);
       store.stop();
 
       expect(unsubscribe).toHaveBeenCalledTimes(1);
@@ -103,7 +104,7 @@ describe('BarometerStore', () => {
       );
 
       const store = new BarometerStore();
-      await store.start(makeDb() as any);
+      await store.start(makeDb() as SQLiteDatabase);
 
       // Simulate a sensor reading
       capturedNext!({ pressure: 1015.3 });
@@ -135,7 +136,7 @@ describe('BarometerStore', () => {
       }));
 
       const store = new BarometerStore();
-      await store.start(makeDb(rows) as any);
+      await store.start(makeDb(rows) as SQLiteDatabase);
 
       expect(store.history.length).toBe(MAX_SAMPLES);
 
@@ -160,7 +161,7 @@ describe('BarometerStore', () => {
 
       const db = makeDb();
       const store = new BarometerStore();
-      await store.start(db as any);
+      await store.start(db as SQLiteDatabase);
 
       db.executeSql.mockClear();
 

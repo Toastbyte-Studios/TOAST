@@ -1,10 +1,11 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useEmergencyPlanStore } from '../../stores';
+import { EmergencyContact } from '../../stores/EmergencyPlanStore';
 import {
   DeleteButton,
   FormButtonRow,
@@ -13,14 +14,19 @@ import {
 } from '../Shared/Prepper';
 import { formStyles as styles } from '../Shared/Prepper/formStyles';
 
+type EditEmergencyContactRouteProp = RouteProp<
+  { EditEmergencyContact: { contact: EmergencyContact } },
+  'EditEmergencyContact'
+>;
+
 /**
  * Screen for editing an existing emergency contact.
  *
  * @returns The edit emergency contact form screen.
  */
 export default observer(function EditEmergencyContactScreen() {
-  const navigation = useNavigation<any>();
-  const route = useRoute<any>();
+  const navigation = useNavigation();
+  const route = useRoute<EditEmergencyContactRouteProp>();
   const store = useEmergencyPlanStore();
 
   const { contact } = route.params || {};
@@ -57,8 +63,11 @@ export default observer(function EditEmergencyContactScreen() {
         notes: notes.trim() || undefined,
       });
       navigation.goBack();
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update contact');
+    } catch (error) {
+      Alert.alert(
+        'Error',
+        (error as Error).message || 'Failed to update contact',
+      );
     }
   };
 
@@ -75,8 +84,11 @@ export default observer(function EditEmergencyContactScreen() {
             try {
               await store.deleteContact(contact.id);
               navigation.goBack();
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete contact');
+            } catch (error) {
+              Alert.alert(
+                'Error',
+                (error as Error).message || 'Failed to delete contact',
+              );
             }
           },
         },

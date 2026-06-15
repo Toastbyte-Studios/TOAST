@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction, computed, comparer } from 'mobx';
 import Geolocation from 'react-native-geolocation-service';
 import { SQLiteDatabase } from '../types/database-types';
+import { SQLiteStatic } from '../types/database-types';
 import {
   Migration,
   getTableColumns,
@@ -9,11 +10,12 @@ import {
 } from '../utils/dbMigrations';
 import { formatTime } from '../utils/timeFormat';
 
-let SQLite: any;
+let SQLite: SQLiteStatic | null = null;
 try {
   SQLite = require('react-native-sqlite-storage');
 } catch {
-  SQLite = null as any;
+  // intentionally ignored: react-native-sqlite-storage is a native module that
+  // may be unavailable in test/non-native environments
 }
 
 // ─── Notes / categories migrations ───────────────────────────────────────────
@@ -587,28 +589,30 @@ export class NotesStore {
     for (let i = 0; i < rows.length; i++) {
       const r = rows.item(i);
       loaded.push({
-        id: r.id,
-        createdAt: r.createdAt,
-        latitude: r.latitude ?? undefined,
-        longitude: r.longitude ?? undefined,
-        category: r.category,
-        type: r.type,
-        title: r.title ?? undefined,
-        text: r.text ?? undefined,
+        id: r.id as string,
+        createdAt: r.createdAt as number,
+        latitude: (r.latitude as number | null | undefined) ?? undefined,
+        longitude: (r.longitude as number | null | undefined) ?? undefined,
+        category: r.category as string,
+        type: r.type as NoteInputType,
+        title: (r.title as string | null | undefined) ?? undefined,
+        text: (r.text as string | null | undefined) ?? undefined,
         bookmarked: r.bookmarked === 1 ? true : false,
-        sketchDataUri: r.sketchDataUri ?? undefined,
+        sketchDataUri:
+          (r.sketchDataUri as string | null | undefined) ?? undefined,
         photoUris: (() => {
           if (!r.photoUris) return [];
           try {
-            return JSON.parse(r.photoUris);
+            return JSON.parse(r.photoUris as string);
           } catch (e) {
             console.warn('Failed to parse photoUris for note:', r.id, e);
             return [];
           }
         })(),
-        audioUri: r.audioUri ?? undefined,
-        transcription: r.transcription ?? undefined,
-        duration: r.duration ?? undefined,
+        audioUri: (r.audioUri as string | null | undefined) ?? undefined,
+        transcription:
+          (r.transcription as string | null | undefined) ?? undefined,
+        duration: (r.duration as number | null | undefined) ?? undefined,
       });
     }
     runInAction(() => {
@@ -693,7 +697,7 @@ export class NotesStore {
       const loadedCategories: string[] = [];
       for (let i = 0; i < rows.length; i++) {
         const r = rows.item(i);
-        loadedCategories.push(r.name);
+        loadedCategories.push(r.name as string);
       }
       runInAction(() => {
         this.categories = loadedCategories;
@@ -719,7 +723,7 @@ export class NotesStore {
     for (const category of defaultCategories) {
       try {
         await this.addCategory(category);
-      } catch (error: any) {
+      } catch (error) {
         // If the category already exists, skip and continue with the remaining defaults.
         if (
           error instanceof Error &&

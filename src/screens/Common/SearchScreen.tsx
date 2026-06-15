@@ -222,15 +222,30 @@ export default observer(function SearchScreen(): JSX.Element {
           icon: item.icon,
         });
       } else if (item.screen === 'Entry') {
-        navigation.navigate('Entry', item.data);
+        navigation.navigate(
+          'Entry',
+          item.data as unknown as { entry: ReferenceEntryType },
+        );
       } else if (item.screen === 'NoteEntry') {
-        navigation.navigate('NoteEntry', item.data);
+        navigation.navigate(
+          'NoteEntry',
+          item.data as unknown as { note: Note },
+        );
       } else if (item.screen === 'ChecklistEntry') {
-        navigation.navigate('ChecklistEntry', item.data);
+        navigation.navigate(
+          'ChecklistEntry',
+          item.data as unknown as { checklist: Checklist },
+        );
       } else if (item.screen === 'InventoryCategory') {
-        navigation.navigate('InventoryCategory', item.data);
+        navigation.navigate(
+          'InventoryCategory',
+          item.data as unknown as { category: string },
+        );
       } else if (item.screen === 'PantryCategory') {
-        navigation.navigate('PantryCategory', item.data);
+        navigation.navigate(
+          'PantryCategory',
+          item.data as unknown as { category: string },
+        );
       } else {
         navigation.navigate(item.screen);
       }

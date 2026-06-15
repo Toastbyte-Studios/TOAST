@@ -7,7 +7,7 @@
     "preandroid": "node scripts/android-apfs-symlinks.js",
     "ios": "react-native run-ios",
     "clean:appledouble": "find . -type f -name '._*' -delete",
-    "cleanup": "npm run format && npm run lint && npm test",
+    "cleanup": "npm run format && npm run lint && npm run typecheck && npm test",
     "format": "prettier --write .",
     "lint": "eslint .",
     "start": "react-native start",

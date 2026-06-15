@@ -212,7 +212,7 @@ async function requestBackgroundLocationPermission(): Promise<void> {
     // Android 10+ requires ACCESS_BACKGROUND_LOCATION separately
     if (Platform.OS === 'android' && Number(Platform.Version) >= 29) {
       const already = await PermissionsAndroid.check(
-        'android.permission.ACCESS_BACKGROUND_LOCATION' as any,
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
       );
       if (already) {
         return;
@@ -228,7 +228,7 @@ async function requestBackgroundLocationPermission(): Promise<void> {
       }
       // Android 10 (API 29) can request at runtime
       await PermissionsAndroid.request(
-        'android.permission.ACCESS_BACKGROUND_LOCATION' as any,
+        PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
         {
           title: 'Background Location',
           message:

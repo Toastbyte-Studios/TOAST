@@ -12,6 +12,7 @@ jest.mock('react-native-sqlite-storage', () => {
 jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 import { TrackStore, TrackPoint } from '../src/stores/TrackStore';
+import { SQLiteDatabase } from '../src/types/database-types';
 
 const samplePoints: TrackPoint[] = [
   { latitude: 37.0, longitude: -122.0, altitude: 10, timestamp: 1000 },
@@ -110,11 +111,13 @@ describe('TrackStore', () => {
 
   describe('Database initialisation without SQLite', () => {
     it('should initialise without error when no db is provided', async () => {
-      await expect(store.initDatabase(null as any)).resolves.not.toThrow();
+      await expect(
+        store.initDatabase(null as unknown as SQLiteDatabase),
+      ).resolves.not.toThrow();
     });
 
     it('should operate in in-memory mode after failed db init', async () => {
-      await store.initDatabase(null as any);
+      await store.initDatabase(null as unknown as SQLiteDatabase);
       const track = await store.saveTrack('Test', 30, 100, samplePoints);
       expect(track.name).toBe('Test');
       expect(store.tracks).toHaveLength(1);

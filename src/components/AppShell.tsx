@@ -90,7 +90,7 @@ export default function AppShell({ children }: Props) {
     useState<SpotlightLayout | null>(null);
   const logoRef = useRef<React.ElementRef<typeof TouchableOpacity>>(null);
   const gestureContainerRef = useRef<View>(null);
-  const sectionHeaderRef = useRef<any>(null);
+  const sectionHeaderRef = useRef<View>(null);
   const [currentDate, setCurrentDate] = useState(() =>
     dayjs().format(DATE_FORMAT),
   );

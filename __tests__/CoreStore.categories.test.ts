@@ -73,7 +73,11 @@ jest.mock('react-native-sqlite-storage', () => {
         executeSql: mockExecuteSql,
         transaction: jest.fn((callback) => {
           const tx = {
-            executeSql: (query: string, params?: any[], success?: Function) => {
+            executeSql: (
+              query: string,
+              params?: Array<string | number | boolean | null>,
+              success?: (tx: unknown, result: unknown) => void,
+            ) => {
               if (success)
                 success(tx, { rows: { length: 0, item: () => null } });
             },

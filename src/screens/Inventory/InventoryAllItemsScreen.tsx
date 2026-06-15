@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import React from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
@@ -9,7 +10,13 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { useInventoryStore } from '../../stores';
+import { InventoryItem } from '../../stores/InventoryStore';
 import { FOOTER_HEIGHT } from '../../theme';
+
+type InventoryAllItemsNavigationProp = NativeStackNavigationProp<
+  { EditInventoryItem: { item: InventoryItem } },
+  'EditInventoryItem'
+>;
 
 /**
  * Displays all inventory items from all categories, sorted alphabetically by name.
@@ -20,13 +27,13 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns {JSX.Element} The rendered inventory all items screen component.
  */
 export default observer(function InventoryAllItemsScreen(): React.JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<InventoryAllItemsNavigationProp>();
   const inventory = useInventoryStore();
   const COLORS = useTheme();
 
   const allItems = inventory.allItemsSorted;
 
-  const handleItemPress = (item: any) => {
+  const handleItemPress = (item: InventoryItem) => {
     navigation.navigate('EditInventoryItem', { item });
   };
 

@@ -1,4 +1,8 @@
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import React, { JSX } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
 import CardTopic from '../../components/CardTopic';
@@ -29,7 +33,7 @@ const radioCategories = [
  * @returns {JSX.Element} The rendered radio frequencies screen.
  */
 export default function RadioFrequenciesScreen(): JSX.Element {
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const disclaimer: string = radioFrequenciesData.metadata?.disclaimer ?? '';
 
   const handleCategoryPress = (categoryId: string) => {

@@ -9,7 +9,7 @@ jest.mock('../App');
 import App from '../App';
 
 test('renders correctly', () => {
-  let instance: any;
+  let instance: ReactTestRenderer.ReactTestRenderer | undefined;
   ReactTestRenderer.act(() => {
     instance = ReactTestRenderer.create(<App />);
   });

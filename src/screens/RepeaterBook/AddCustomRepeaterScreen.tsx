@@ -1,4 +1,4 @@
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { JSX, useMemo, useState } from 'react';
 import {
@@ -22,6 +22,11 @@ import { FOOTER_HEIGHT } from '../../theme';
 import { ColorScheme } from '../../theme/colors';
 import { FormButtonRow, FormInput, FormTextArea } from '../Shared/Prepper';
 
+type AddCustomRepeaterRouteProp = RouteProp<
+  { AddCustomRepeater: { repeater?: Repeater } },
+  'AddCustomRepeater'
+>;
+
 const MODES = ['FM', 'DMR', 'D-STAR', 'Fusion', 'P-25', 'NXDN', 'M17', 'TETRA'];
 const STATUSES = ['On-air', 'Off-air', 'Unknown'];
 
@@ -35,8 +40,8 @@ const STATUSES = ['On-air', 'Off-air', 'Unknown'];
 const AddCustomRepeaterScreen = observer((): JSX.Element => {
   const COLORS = useTheme();
   const styles = useMemo(() => createStyles(COLORS), [COLORS]);
-  const navigation = useNavigation<any>();
-  const route = useRoute<any>();
+  const navigation = useNavigation();
+  const route = useRoute<AddCustomRepeaterRouteProp>();
   const store = useRepeaterBookStore();
 
   const existing: Repeater | undefined = route.params?.repeater;

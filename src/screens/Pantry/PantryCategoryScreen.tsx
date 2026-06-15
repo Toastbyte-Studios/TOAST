@@ -1,4 +1,5 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native';
@@ -9,7 +10,22 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { usePantryStore } from '../../stores';
+import { PantryItem } from '../../stores/PantryStore';
 import { FOOTER_HEIGHT } from '../../theme';
+
+type PantryCategoryParamList = {
+  PantryCategory: { category: string };
+  EditPantryItem: { item: PantryItem };
+  NewPantryItem: { category: string };
+};
+type PantryCategoryRouteProp = RouteProp<
+  PantryCategoryParamList,
+  'PantryCategory'
+>;
+type PantryCategoryNavigationProp = NativeStackNavigationProp<
+  PantryCategoryParamList,
+  'PantryCategory'
+>;
 
 /**
  * Displays all pantry items for a specific category.
@@ -21,8 +37,8 @@ import { FOOTER_HEIGHT } from '../../theme';
  * @returns {JSX.Element} The rendered pantry category screen component.
  */
 export default observer(function PantryCategoryScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<PantryCategoryRouteProp>();
+  const navigation = useNavigation<PantryCategoryNavigationProp>();
   const pantry = usePantryStore();
   const COLORS = useTheme();
 
@@ -61,7 +77,7 @@ export default observer(function PantryCategoryScreen(): React.JSX.Element {
     );
   }
 
-  const handleItemPress = (item: any) => {
+  const handleItemPress = (item: PantryItem) => {
     navigation.navigate('EditPantryItem', { item });
   };
 

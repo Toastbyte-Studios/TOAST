@@ -1,4 +1,4 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import { useRoute, useNavigation, RouteProp } from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useState } from 'react';
 import { View, ScrollView, Alert } from 'react-native';
@@ -7,6 +7,7 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { useInventoryStore } from '../../stores';
+import { InventoryItem } from '../../stores/InventoryStore';
 import {
   FormInput,
   FormTextArea,
@@ -16,6 +17,11 @@ import {
   ExpirationDatePicker,
 } from '../Shared/Prepper';
 import { inventoryFormStyles as styles } from './inventoryFormStyles';
+
+type EditInventoryItemRouteProp = RouteProp<
+  { EditInventoryItem: { item: InventoryItem } },
+  'EditInventoryItem'
+>;
 
 /**
  * Screen for editing an existing inventory item.
@@ -31,8 +37,8 @@ import { inventoryFormStyles as styles } from './inventoryFormStyles';
  * @returns {React.JSX.Element} The rendered edit inventory item screen component.
  */
 export default observer(function EditInventoryItemScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<EditInventoryItemRouteProp>();
+  const navigation = useNavigation();
   const inventory = useInventoryStore();
   const COLORS = useTheme();
 
@@ -78,8 +84,8 @@ export default observer(function EditInventoryItemScreen(): React.JSX.Element {
           onPress: () => navigation.goBack(),
         },
       ]);
-    } catch (error: any) {
-      Alert.alert('Error', error.message || 'Failed to update item');
+    } catch (error) {
+      Alert.alert('Error', (error as Error).message || 'Failed to update item');
     }
   };
 
@@ -101,8 +107,11 @@ export default observer(function EditInventoryItemScreen(): React.JSX.Element {
                   onPress: () => navigation.goBack(),
                 },
               ]);
-            } catch (error: any) {
-              Alert.alert('Error', error.message || 'Failed to delete item');
+            } catch (error) {
+              Alert.alert(
+                'Error',
+                (error as Error).message || 'Failed to delete item',
+              );
             }
           },
         },

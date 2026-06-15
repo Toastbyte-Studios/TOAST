@@ -1,4 +1,10 @@
-import { useRoute, useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useRoute,
+  useNavigation,
+  RouteProp,
+} from '@react-navigation/native';
 import { observer } from 'mobx-react-lite';
 import React, { useMemo } from 'react';
 import { StyleSheet, ScrollView, View } from 'react-native';
@@ -12,6 +18,11 @@ import SectionHeader from '../../../components/SectionHeader';
 import { useNotesStore, useSettingsStore } from '../../../stores';
 import { FOOTER_HEIGHT } from '../../../theme';
 import { sortNotes } from '../../../utils/noteSorting';
+
+type NoteCategoryRouteProp = RouteProp<
+  { NoteCategory: { category: string } },
+  'NoteCategory'
+>;
 
 /**
  * Displays all notes for a specific category.
@@ -28,8 +39,8 @@ import { sortNotes } from '../../../utils/noteSorting';
  * - Similar UI/UX pattern to the Reference module's CategoryScreen.
  */
 export default observer(function NoteCategoryScreen(): React.JSX.Element {
-  const route = useRoute<any>();
-  const navigation = useNavigation<any>();
+  const route = useRoute<NoteCategoryRouteProp>();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const core = useNotesStore();
   const settings = useSettingsStore();
 
