@@ -34,3 +34,49 @@ jobs:
 
       - name: Test
         run: npm test -- --ci
+
+  verify-new-arch:
+    name: Verify New Architecture flags
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Android — newArchEnabled=true
+        run: grep -E '^newArchEnabled=true' android/gradle.properties
+
+      - name: iOS — New Arch via prepare_react_native_project!
+        run: grep 'prepare_react_native_project!' ios/Podfile
+
+  smoke-build-android:
+    name: Android smoke build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Build Android debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon \
+            -PgoogleMapsApiKey=MAPS_API_KEY_NOT_SET
