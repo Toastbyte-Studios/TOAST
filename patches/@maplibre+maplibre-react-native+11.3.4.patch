@@ -1,0 +1,58 @@
+diff --git a/node_modules/@maplibre/maplibre-react-native/src/modules/log/NativeLogModule.ts b/node_modules/@maplibre/maplibre-react-native/src/modules/log/NativeLogModule.ts
+--- a/node_modules/@maplibre/maplibre-react-native/src/modules/log/NativeLogModule.ts
++++ b/node_modules/@maplibre/maplibre-react-native/src/modules/log/NativeLogModule.ts
+@@ -1,7 +1,7 @@
+ import type { TurboModule, CodegenTypes } from "react-native";
+ import { TurboModuleRegistry } from "react-native";
+
+-type NativeLogLevel = "error" | "warn" | "info" | "debug" | "verbose";
++type NativeLogLevel = string;
+
+ export interface Spec extends TurboModule {
+   setLogLevel(logLevel: NativeLogLevel): void;
+diff --git a/node_modules/@maplibre/maplibre-react-native/src/modules/offline/NativeOfflineModule.ts b/node_modules/@maplibre/maplibre-react-native/src/modules/offline/NativeOfflineModule.ts
+--- a/node_modules/@maplibre/maplibre-react-native/src/modules/offline/NativeOfflineModule.ts
++++ b/node_modules/@maplibre/maplibre-react-native/src/modules/offline/NativeOfflineModule.ts
+@@ -1,7 +1,7 @@
+ import type { CodegenTypes, TurboModule } from "react-native";
+ import { TurboModuleRegistry } from "react-native";
+
+-type NativeOfflinePackDownloadState = "inactive" | "active" | "complete";
++type NativeOfflinePackDownloadState = string;
+
+ export type NativeOfflinePack = {
+   id: string;
+diff --git a/node_modules/@maplibre/maplibre-react-native/src/modules/static-map/NativeStaticMapModule.ts b/node_modules/@maplibre/maplibre-react-native/src/modules/static-map/NativeStaticMapModule.ts
+--- a/node_modules/@maplibre/maplibre-react-native/src/modules/static-map/NativeStaticMapModule.ts
++++ b/node_modules/@maplibre/maplibre-react-native/src/modules/static-map/NativeStaticMapModule.ts
+@@ -14,7 +14,7 @@
+   width: CodegenTypes.Int32;
+   height: CodegenTypes.Int32;
+
+-  output: "base64" | "file";
++  output: string;
+
+   logo?: boolean;
+ }
+diff --git a/node_modules/@maplibre/maplibre-react-native/src/components/camera/NativeCameraModule.ts b/node_modules/@maplibre/maplibre-react-native/src/components/camera/NativeCameraModule.ts
+--- a/node_modules/@maplibre/maplibre-react-native/src/components/camera/NativeCameraModule.ts
++++ b/node_modules/@maplibre/maplibre-react-native/src/components/camera/NativeCameraModule.ts
+@@ -23,7 +23,7 @@
+   pitch?: CodegenTypes.WithDefault<CodegenTypes.Double, -1>;
+ };
+
+-type NativeEasingMode = "none" | "linear" | "ease" | "fly";
++type NativeEasingMode = string;
+
+ type NativeCameraStop = NativeViewState & {
+   duration?: CodegenTypes.WithDefault<CodegenTypes.Int32, -1>;
+diff --git a/node_modules/@maplibre/maplibre-react-native/src/components/map/NativeMapViewModule.ts b/node_modules/@maplibre/maplibre-react-native/src/components/map/NativeMapViewModule.ts
+--- a/node_modules/@maplibre/maplibre-react-native/src/components/map/NativeMapViewModule.ts
++++ b/node_modules/@maplibre/maplibre-react-native/src/components/map/NativeMapViewModule.ts
+@@ -69,7 +69,7 @@
+
+   createStaticMapImage: (
+     reactTag: CodegenTypes.Int32,
+-    output: "base64" | "file",
++    output: string,
+   ) => Promise<string>;
