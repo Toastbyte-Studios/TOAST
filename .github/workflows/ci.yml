@@ -78,9 +78,10 @@ jobs:
       - name: Install Android NDK (retry)
         run: |
           set -euo pipefail
+          ndk_version="27.1.12297006"
           sdk_root="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
           for attempt in 1 2 3; do
-            if sdkmanager --install "ndk;27.1.12297006"; then
+            if sdkmanager --install "ndk;${ndk_version}"; then
               break
             fi
             if [ "$attempt" -eq 3 ]; then
@@ -88,7 +89,7 @@ jobs:
             fi
             echo "NDK install failed on attempt ${attempt}; retrying..."
             rm -rf \
-              "$sdk_root/ndk/27.1.12297006" \
+              "$sdk_root/ndk/${ndk_version}" \
               "$sdk_root/temp" \
               "$sdk_root/.temp" \
               "$HOME/.android/cache"
