@@ -1,3 +1,11 @@
+import {
+  Camera,
+  GeoJSONSource,
+  Layer,
+  Map,
+  Marker,
+  type CameraRef,
+} from '@maplibre/maplibre-react-native';
 import React, { useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -9,7 +17,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import MapView, { Marker, Polyline, PROVIDER_DEFAULT } from 'react-native-maps';
 import { useTheme } from '../../../hooks/useTheme';
 import { Waypoint } from '../../../stores/WaypointStore';
 import { formatDistance } from './WaypointBottomSheet/waypointGeometry';
@@ -19,6 +26,14 @@ export type LocationPermissionStatus = 'undetermined' | 'granted' | 'denied';
 
 export const DELTA = { latitudeDelta: 0.05, longitudeDelta: 0.05 };
 
+/**
+ * Converts a react-native-maps-style latitudeDelta to a MapLibre zoom level.
+ * Formula: zoom = log2(360 / latitudeDelta)
+ */
+export function zoomFromDelta(latitudeDelta: number): number {
+  return Math.round(Math.log2(360 / latitudeDelta));
+}
+
 export type RecordingState = 'idle' | 'recording' | 'stopped';
 
 type LatLng = { latitude: number; longitude: number };
@@ -26,7 +41,7 @@ type LatLng = { latitude: number; longitude: number };
 type Props = {
   permissionStatus: LocationPermissionStatus;
   locationReady: boolean;
-  mapRef: React.RefObject<MapView | null>;
+  cameraRef: React.RefObject<CameraRef | null>;
   onLocateMe: () => void;
   onWaypointsPress: () => void;
   onLongPressMap?: (coordinate: {
@@ -57,10 +72,15 @@ function formatElapsed(seconds: number): string {
   return `${m}:${pad(s)}`;
 }
 
+/** MapLibre paint style for the viewed (saved) track polyline. */
+const viewedTrackLineStyle = { lineColor: '#007AFF', lineWidth: 3 };
+/** MapLibre paint style for the active recording polyline. */
+const recordingLineStyle = { lineColor: '#FF3B30', lineWidth: 3 };
+
 export default function MapPanel({
   permissionStatus,
   locationReady,
-  mapRef,
+  cameraRef,
   onLocateMe,
   onWaypointsPress,
   onLongPressMap,
@@ -142,41 +162,85 @@ export default function MapPanel({
               </Text>
             </View>
           )}
-          <MapView
-            ref={mapRef}
+          <Map
             style={styles.map}
-            provider={PROVIDER_DEFAULT}
-            showsUserLocation={permissionStatus === 'granted'}
-            showsCompass
-            showsScale
-            onMapReady={permissionStatus === 'granted' ? onLocateMe : undefined}
-            onLongPress={(e) => onLongPressMap?.(e.nativeEvent.coordinate)}
-            initialRegion={{ latitude: 0, longitude: 0, ...DELTA }}
+            mapStyle="https://tiles.openfreemap.org/styles/liberty"
+            compass
+            onDidFinishLoadingMap={
+              permissionStatus === 'granted' ? onLocateMe : undefined
+            }
+            onLongPress={(event) => {
+              const [lng, lat] = event.nativeEvent.lngLat;
+              onLongPressMap?.({ latitude: lat, longitude: lng });
+            }}
           >
+            <Camera
+              ref={cameraRef}
+              initialViewState={{
+                center: [0, 0],
+                zoom: zoomFromDelta(DELTA.latitudeDelta),
+              }}
+            />
             {waypoints.map((wp) => (
               <Marker
                 key={wp.id}
-                coordinate={{ latitude: wp.latitude, longitude: wp.longitude }}
-                title={wp.name}
-                pinColor={wp.id === activeWaypointId ? '#FF3B30' : '#007AFF'}
-                accessibilityLabel={`Waypoint: ${wp.name}`}
-              />
+                id={wp.id}
+                lngLat={[wp.longitude, wp.latitude]}
+              >
+                <View
+                  style={[
+                    styles.markerDot,
+                    wp.id === activeWaypointId && styles.markerDotActive,
+                  ]}
+                  accessibilityLabel={`Waypoint: ${wp.name}`}
+                />
+              </Marker>
             ))}
             {viewedTrackCoords.length > 1 && (
-              <Polyline
-                coordinates={viewedTrackCoords}
-                strokeColor="#007AFF"
-                strokeWidth={3}
-              />
+              <GeoJSONSource
+                id="viewed-track"
+                data={{
+                  type: 'Feature',
+                  geometry: {
+                    type: 'LineString',
+                    coordinates: viewedTrackCoords.map((c) => [
+                      c.longitude,
+                      c.latitude,
+                    ]),
+                  },
+                  properties: {},
+                }}
+              >
+                <Layer
+                  id="viewed-track-layer"
+                  type="line"
+                  style={viewedTrackLineStyle}
+                />
+              </GeoJSONSource>
             )}
             {recordingPolylineCoords.length > 1 && (
-              <Polyline
-                coordinates={recordingPolylineCoords}
-                strokeColor="#FF3B30"
-                strokeWidth={3}
-              />
+              <GeoJSONSource
+                id="recording-track"
+                data={{
+                  type: 'Feature',
+                  geometry: {
+                    type: 'LineString',
+                    coordinates: recordingPolylineCoords.map((c) => [
+                      c.longitude,
+                      c.latitude,
+                    ]),
+                  },
+                  properties: {},
+                }}
+              >
+                <Layer
+                  id="recording-track-layer"
+                  type="line"
+                  style={recordingLineStyle}
+                />
+              </GeoJSONSource>
             )}
-          </MapView>
+          </Map>
 
           {recordingState === 'recording' && (
             <View style={styles.hud}>
@@ -428,6 +492,17 @@ function makeStyles(colors: ReturnType<typeof useTheme>) {
       fontSize: 22,
       lineHeight: 26,
       color: colors.PRIMARY_LIGHT,
+    },
+    markerDot: {
+      width: 16,
+      height: 16,
+      borderRadius: 8,
+      backgroundColor: '#007AFF',
+      borderWidth: 2,
+      borderColor: '#FFFFFF',
+    },
+    markerDotActive: {
+      backgroundColor: '#FF3B30',
     },
   });
 }

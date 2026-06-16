@@ -1,10 +1,11 @@
 /**
  * MapScreen - Native map with GPS location tracking and compass
- * Uses react-native-maps (MapKit on iOS, Google Maps on Android)
- * for zero-config tile rendering with automatic OS-level tile caching.
+ * Uses MapLibre (@maplibre/maplibre-react-native) for vector tile rendering
+ * with OpenFreeMap style tiles and camera-based navigation control.
  * @format
  */
 
+import { type CameraRef } from '@maplibre/maplibre-react-native';
 import { observer } from 'mobx-react-lite';
 import React, {
   useCallback,
@@ -26,7 +27,6 @@ import {
 } from 'react-native';
 import CompassHeading from 'react-native-compass-heading';
 import Geolocation, { GeoPosition } from 'react-native-geolocation-service';
-import MapView from 'react-native-maps';
 import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
@@ -44,6 +44,7 @@ import MapPanel, {
   DELTA,
   LocationPermissionStatus,
   RecordingState,
+  zoomFromDelta,
 } from './components/MapPanel';
 import WaypointBottomSheet from './components/WaypointBottomSheet';
 import { haversineMeters } from './components/WaypointBottomSheet/waypointGeometry';
@@ -292,7 +293,7 @@ export default observer(function MapScreen() {
   const COLORS = useTheme();
   const styles = useMemo(() => makeStyles(COLORS), [COLORS]);
   const { setDisableGestureNavigation } = useGestureNavigation();
-  const mapRef = useRef<MapView>(null);
+  const cameraRef = useRef<CameraRef>(null);
   const waypointStore = useWaypointStore();
   const trackStore = useTrackStore();
   const settingsStore = useSettingsStore();
@@ -532,19 +533,17 @@ export default observer(function MapScreen() {
   }, [handleLocationUpdate]);
 
   const handleLocateMe = () => {
-    if (!mapRef.current || permissionStatus === 'denied') {
+    if (!cameraRef.current || permissionStatus === 'denied') {
       return;
     }
     Geolocation.getCurrentPosition(
       (position) => {
-        mapRef.current?.animateToRegion(
-          {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            ...DELTA,
-          },
-          300,
-        );
+        cameraRef.current?.setStop({
+          center: [position.coords.longitude, position.coords.latitude],
+          zoom: zoomFromDelta(DELTA.latitudeDelta),
+          duration: 300,
+          easing: 'fly',
+        });
       },
       () => {},
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 },
@@ -574,15 +573,13 @@ export default observer(function MapScreen() {
       setWaypointSheetOpen(false);
       // Pan the map to centre on the selected waypoint
       const waypoint = waypointStore.waypoints.find((w) => w.id === id);
-      if (waypoint && mapRef.current) {
-        mapRef.current.animateToRegion(
-          {
-            latitude: waypoint.latitude,
-            longitude: waypoint.longitude,
-            ...DELTA,
-          },
-          MAP_ANIMATE_DURATION_MS,
-        );
+      if (waypoint && cameraRef.current) {
+        cameraRef.current.setStop({
+          center: [waypoint.longitude, waypoint.latitude],
+          zoom: zoomFromDelta(DELTA.latitudeDelta),
+          duration: MAP_ANIMATE_DURATION_MS,
+          easing: 'fly',
+        });
       }
     },
     [waypointStore],
@@ -693,15 +690,13 @@ export default observer(function MapScreen() {
     setViewedTrack(track);
     setWaypointSheetOpen(false);
     // Pan map to first point of track
-    if (track.points.length > 0 && mapRef.current) {
-      mapRef.current.animateToRegion(
-        {
-          latitude: track.points[0].latitude,
-          longitude: track.points[0].longitude,
-          ...DELTA,
-        },
-        MAP_ANIMATE_DURATION_MS,
-      );
+    if (track.points.length > 0 && cameraRef.current) {
+      cameraRef.current.setStop({
+        center: [track.points[0].longitude, track.points[0].latitude],
+        zoom: zoomFromDelta(DELTA.latitudeDelta),
+        duration: MAP_ANIMATE_DURATION_MS,
+        easing: 'fly',
+      });
     }
   }, []);
 
@@ -748,7 +743,7 @@ export default observer(function MapScreen() {
             <MapPanel
               permissionStatus={permissionStatus}
               locationReady={locationReady}
-              mapRef={mapRef}
+              cameraRef={cameraRef}
               onLocateMe={handleLocateMe}
               onWaypointsPress={() => setWaypointSheetOpen(true)}
               onLongPressMap={handleLongPressMap}
