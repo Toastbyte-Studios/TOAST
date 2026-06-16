@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
 export type CameraRef = {
   setStop: (options: {
@@ -36,10 +36,10 @@ export const Map = ({
 }: {
   children?: React.ReactNode;
   testID?: string;
-  style?: object;
+  style?: ViewStyle;
   [key: string]: unknown;
 }) => (
-  <View testID={testID ?? 'map-view'} style={style as never}>
+  <View testID={testID ?? 'map-view'} style={style}>
     {children}
   </View>
 );

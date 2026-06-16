@@ -1,7 +1,8 @@
 /**
  * MapScreen - Native map with GPS location tracking and compass
  * Uses MapLibre (@maplibre/maplibre-react-native) for vector tile rendering
- * with OpenFreeMap style tiles and camera-based navigation control.
+ * with OpenFreeMap style tiles, GPS tracking, compass, and camera-based
+ * map navigation control.
  * @format
  */
 

@@ -26,6 +26,9 @@ export type LocationPermissionStatus = 'undetermined' | 'granted' | 'denied';
 
 export const DELTA = { latitudeDelta: 0.05, longitudeDelta: 0.05 };
 
+/** MapLibre vector tile style URL (OpenFreeMap Liberty). */
+const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
+
 /**
  * Converts a react-native-maps-style latitudeDelta to a MapLibre zoom level.
  * Formula: zoom = log2(360 / latitudeDelta)
@@ -159,7 +162,7 @@ export default function MapPanel({
           )}
           <Map
             style={styles.map}
-            mapStyle="https://tiles.openfreemap.org/styles/liberty"
+            mapStyle={MAP_STYLE_URL}
             compass
             onDidFinishLoadingMap={
               permissionStatus === 'granted' ? onLocateMe : undefined
@@ -183,6 +186,7 @@ export default function MapPanel({
                 lngLat={[wp.longitude, wp.latitude]}
               >
                 <View
+                  accessible
                   style={[
                     styles.markerDot,
                     wp.id === activeWaypointId && styles.markerDotActive,
