@@ -29,6 +29,11 @@ export type CameraRef = {
   }) => void;
 };
 
+/**
+ * Minimal mock for the MapLibre Map component.
+ * Supported props: mapStyle, compass, accessible, accessibilityLabel,
+ * onDidFinishLoadingMap, onLongPress, style, testID, children.
+ */
 export const Map = ({
   children,
   testID,
@@ -37,6 +42,13 @@ export const Map = ({
   children?: React.ReactNode;
   testID?: string;
   style?: ViewStyle;
+  /** MapLibre tile style URL. */
+  mapStyle?: string;
+  compass?: boolean;
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  onDidFinishLoadingMap?: () => void;
+  onLongPress?: (event: unknown) => void;
   [key: string]: unknown;
 }) => (
   <View testID={testID ?? 'map-view'} style={style}>

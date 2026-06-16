@@ -161,6 +161,8 @@ export default function MapPanel({
             </View>
           )}
           <Map
+            accessible
+            accessibilityLabel="Map"
             style={styles.map}
             mapStyle={MAP_STYLE_URL}
             compass
