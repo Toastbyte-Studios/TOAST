@@ -72,11 +72,6 @@ function formatElapsed(seconds: number): string {
   return `${m}:${pad(s)}`;
 }
 
-/** MapLibre paint style for the viewed (saved) track polyline. */
-const viewedTrackLineStyle = { lineColor: '#007AFF', lineWidth: 3 };
-/** MapLibre paint style for the active recording polyline. */
-const recordingLineStyle = { lineColor: '#FF3B30', lineWidth: 3 };
-
 export default function MapPanel({
   permissionStatus,
   locationReady,
@@ -214,7 +209,7 @@ export default function MapPanel({
                 <Layer
                   id="viewed-track-layer"
                   type="line"
-                  style={viewedTrackLineStyle}
+                  style={styles.viewedTrackLineStyle}
                 />
               </GeoJSONSource>
             )}
@@ -236,7 +231,7 @@ export default function MapPanel({
                 <Layer
                   id="recording-track-layer"
                   type="line"
-                  style={recordingLineStyle}
+                  style={styles.recordingLineStyle}
                 />
               </GeoJSONSource>
             )}
@@ -338,7 +333,7 @@ export default function MapPanel({
 }
 
 function makeStyles(colors: ReturnType<typeof useTheme>) {
-  return StyleSheet.create({
+  const rnStyles = StyleSheet.create({
     mapContainer: {
       width: '100%',
       flex: 1,
@@ -497,12 +492,19 @@ function makeStyles(colors: ReturnType<typeof useTheme>) {
       width: 16,
       height: 16,
       borderRadius: 8,
-      backgroundColor: '#007AFF',
+      backgroundColor: colors.SECONDARY_ACCENT,
       borderWidth: 2,
-      borderColor: '#FFFFFF',
+      borderColor: colors.PRIMARY_LIGHT,
     },
     markerDotActive: {
-      backgroundColor: '#FF3B30',
+      backgroundColor: colors.ERROR,
     },
   });
+  return {
+    ...rnStyles,
+    /** MapLibre paint style for the viewed (saved) track polyline. */
+    viewedTrackLineStyle: { lineColor: colors.SECONDARY_ACCENT, lineWidth: 3 },
+    /** MapLibre paint style for the active recording polyline. */
+    recordingLineStyle: { lineColor: colors.ERROR, lineWidth: 3 },
+  };
 }
