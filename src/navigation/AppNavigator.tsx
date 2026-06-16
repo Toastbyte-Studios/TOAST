@@ -143,7 +143,7 @@ function NavigatorContent(): JSX.Element {
           <Stack.Screen name="MapScreen" component={MapScreen} />
           <Stack.Screen name="StarMap" component={StarMapScreen} />
           <Stack.Screen name="GridReference" component={GridReferenceScreen} />
-          {/* Dev-only spike screens — excluded from production builds */}
+          {/* Dev-only spike screens — route excluded from production builds; import remains in bundle */}
           {__DEV__ && (
             <Stack.Screen name="MapSpike" component={MapSpikeScreen} />
           )}
