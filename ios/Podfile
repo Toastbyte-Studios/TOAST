@@ -4,7 +4,7 @@ require Pod::Executable.execute_command('node', ['-p',
     "react-native/scripts/react_native_pods.rb",
     {paths: [process.argv[1]]},
   )', __dir__]).strip
-require_relative '../node_modules/@maplibre/maplibre-react-native/MapLibreReactNative.podspec'
+load "#{__dir__}/../node_modules/@maplibre/maplibre-react-native/MapLibreReactNative.podspec"
 
 platform :ios, min_ios_version_supported
 project 'TOAST.xcodeproj'

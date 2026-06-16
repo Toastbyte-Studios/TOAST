@@ -5,6 +5,20 @@
 import React from 'react';
 import { View } from 'react-native';
 
+/** v11 API: Map is the renamed MapView. */
+export const Map = ({
+  children,
+  ...props
+}: {
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <View testID="maplibre-map" {...(props as object)}>
+    {children}
+  </View>
+);
+
+/** Legacy alias kept for tests that still reference MapView. */
 export const MapView = React.forwardRef<
   unknown,
   React.ComponentProps<typeof View>
@@ -83,6 +97,10 @@ export const PointAnnotation = ({
     {children}
   </View>
 );
+
+export const TransformRequestManager = {
+  addHeader: jest.fn(),
+};
 
 export const MapLibreRN = {
   setAccessToken: jest.fn(),
