@@ -454,7 +454,7 @@ export default observer(function MapScreen() {
   }, []);
 
   const handleLocateMe = () => {
-    if (!cameraRef.current || permissionStatus === 'denied' || !mlPosition) {
+    if (!cameraRef.current || !mlPosition) {
       return;
     }
     cameraRef.current.setStop({

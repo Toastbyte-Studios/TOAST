@@ -199,9 +199,9 @@ export const LocationManager = {
 };
 
 /**
- * useCurrentPosition mock — returns a static position for tests.
- * Override LocationManager.requestPermissions or mock the returned value
- * in individual tests as needed.
+ * useCurrentPosition mock — returns a static San Francisco position by default.
+ * Override per-test via `useCurrentPosition.mockReturnValue(...)` when different
+ * coordinates are needed.
  */
 export const useCurrentPosition = jest.fn(() => ({
   coords: {
