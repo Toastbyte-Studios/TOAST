@@ -16,6 +16,7 @@
     "postinstall": "patch-package && node scripts/patch-rn-codegen.js"
   },
   "dependencies": {
+    "@maplibre/maplibre-react-native": "^11.3.4",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-clipboard/clipboard": "^1.16.3",
     "@react-native-community/netinfo": "^11.3.1",
@@ -39,6 +40,7 @@
     "react-native-image-picker": "^8.2.1",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-localize": "^3.6.1",
+    "@maplibre/maplibre-react-native": "^11.0.0",
     "react-native-maps": "^1.27.1",
     "react-native-nitro-modules": "^0.32.0",
     "react-native-nitro-sound": "^0.2.10",
