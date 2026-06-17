@@ -167,6 +167,10 @@ export default function MapPanel({
             style={styles.map}
             mapStyle={MAP_STYLE_URL}
             compass
+            compassPosition={{ top: 16, right: 16 }}
+            attribution
+            attributionPosition={{ bottom: 8, right: 8 }}
+            logo={false}
             onDidFinishLoadingMap={
               permissionStatus === 'granted' ? onLocateMe : undefined
             }
@@ -175,14 +179,21 @@ export default function MapPanel({
               onLongPressMap?.({ latitude: lat, longitude: lng });
             }}
           >
+            {/* TODO: Scale bar — MapLibre RN v11 does not expose a built-in
+                scaleBar prop on Map. Implement as a React Native overlay that
+                calculates scale from zoom + center latitude using the Web
+                Mercator meters-per-pixel formula, or defer to a follow-up issue. */}
             <Camera
               ref={cameraRef}
               initialViewState={{
                 center: [0, 0],
                 zoom: zoomFromDelta(DELTA.latitudeDelta),
               }}
+              trackUserLocation={
+                permissionStatus === 'granted' ? 'default' : undefined
+              }
             />
-            {permissionStatus === 'granted' && <UserLocation />}
+            {permissionStatus === 'granted' && <UserLocation accuracy />}
             {waypoints.map((wp) => (
               <Marker
                 key={wp.id}

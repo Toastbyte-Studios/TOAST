@@ -31,7 +31,8 @@ export type CameraRef = {
 
 /**
  * Minimal mock for the MapLibre Map component.
- * Supported props: mapStyle, compass, accessible, accessibilityLabel,
+ * Supported props: mapStyle, compass, compassPosition, attribution,
+ * attributionPosition, logo, accessible, accessibilityLabel,
  * onDidFinishLoadingMap, onLongPress, style, testID, children.
  */
 export const Map = ({
@@ -46,6 +47,20 @@ export const Map = ({
   /** MapLibre tile style URL. */
   mapStyle?: string;
   compass?: boolean;
+  compassPosition?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  attribution?: boolean;
+  attributionPosition?: {
+    top?: number;
+    bottom?: number;
+    left?: number;
+    right?: number;
+  };
+  logo?: boolean;
   accessible?: boolean;
   accessibilityLabel?: string;
   onDidFinishLoadingMap?: () => void;
@@ -67,7 +82,12 @@ MapView.displayName = 'MapView';
 
 export const Camera = React.forwardRef<
   CameraRef,
-  { initialViewState?: object; testID?: string; [key: string]: unknown }
+  {
+    initialViewState?: object;
+    trackUserLocation?: 'default' | 'heading' | 'course';
+    testID?: string;
+    [key: string]: unknown;
+  }
 >((_props, ref) => {
   React.useImperativeHandle(ref, () => ({
     setStop: jest.fn().mockResolvedValue(undefined),
@@ -82,6 +102,8 @@ export const UserLocation = ({
   testID,
   ...props
 }: {
+  /** Show accuracy circle around the user dot. */
+  accuracy?: boolean;
   testID?: string;
   [key: string]: unknown;
 }) => (
@@ -166,6 +188,33 @@ export const PointAnnotation = ({
 export const TransformRequestManager = {
   addHeader: jest.fn(),
 };
+
+/**
+ * LocationManager mock — provides unified permission request for iOS + Android.
+ */
+export const LocationManager = {
+  requestPermissions: jest.fn().mockResolvedValue(true),
+  start: jest.fn(),
+  stop: jest.fn(),
+};
+
+/**
+ * useCurrentPosition mock — returns a static position for tests.
+ * Override LocationManager.requestPermissions or mock the returned value
+ * in individual tests as needed.
+ */
+export const useCurrentPosition = jest.fn(() => ({
+  coords: {
+    latitude: 37.7749,
+    longitude: -122.4194,
+    altitude: null,
+    accuracy: 5,
+    altitudeAccuracy: null,
+    heading: null,
+    speed: null,
+  },
+  timestamp: Date.now(),
+}));
 
 export const MapLibreRN = {
   setAccessToken: jest.fn(),
