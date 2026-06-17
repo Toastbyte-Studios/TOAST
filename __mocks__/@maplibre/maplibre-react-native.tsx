@@ -38,6 +38,7 @@ export const Map = ({
   children,
   testID,
   style,
+  ...props
 }: {
   children?: React.ReactNode;
   testID?: string;
@@ -51,7 +52,7 @@ export const Map = ({
   onLongPress?: (event: unknown) => void;
   [key: string]: unknown;
 }) => (
-  <View testID={testID ?? 'map-view'} style={style}>
+  <View testID={testID ?? 'map-view'} style={style} {...(props as object)}>
     {children}
   </View>
 );

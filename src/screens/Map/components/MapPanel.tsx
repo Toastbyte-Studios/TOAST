@@ -4,6 +4,7 @@ import {
   Layer,
   Map,
   Marker,
+  UserLocation,
   type CameraRef,
 } from '@maplibre/maplibre-react-native';
 import React, { useMemo, useRef, useState } from 'react';
@@ -181,6 +182,7 @@ export default function MapPanel({
                 zoom: zoomFromDelta(DELTA.latitudeDelta),
               }}
             />
+            {permissionStatus === 'granted' && <UserLocation />}
             {waypoints.map((wp) => (
               <Marker
                 key={wp.id}
