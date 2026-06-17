@@ -3,17 +3,56 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 
-/** v11 API: Map is the renamed MapView. */
+export type CameraRef = {
+  setStop: (options: {
+    center?: [number, number];
+    zoom?: number;
+    bearing?: number;
+    pitch?: number;
+    duration?: number;
+    easing?: string;
+  }) => Promise<void>;
+  jumpTo: (options: {
+    center?: [number, number];
+    zoom?: number;
+    bearing?: number;
+    pitch?: number;
+  }) => void;
+  easeTo: (options: {
+    center?: [number, number];
+    zoom?: number;
+    bearing?: number;
+    pitch?: number;
+    duration?: number;
+  }) => void;
+};
+
+/**
+ * Minimal mock for the MapLibre Map component.
+ * Supported props: mapStyle, compass, accessible, accessibilityLabel,
+ * onDidFinishLoadingMap, onLongPress, style, testID, children.
+ */
 export const Map = ({
   children,
+  testID,
+  style,
   ...props
 }: {
   children?: React.ReactNode;
+  testID?: string;
+  style?: ViewStyle;
+  /** MapLibre tile style URL. */
+  mapStyle?: string;
+  compass?: boolean;
+  accessible?: boolean;
+  accessibilityLabel?: string;
+  onDidFinishLoadingMap?: () => void;
+  onLongPress?: (event: unknown) => void;
   [key: string]: unknown;
 }) => (
-  <View testID="maplibre-map" {...(props as object)}>
+  <View testID={testID ?? 'map-view'} style={style} {...(props as object)}>
     {children}
   </View>
 );
@@ -26,13 +65,18 @@ export const MapView = React.forwardRef<
 
 MapView.displayName = 'MapView';
 
-export const Camera = ({
-  testID,
-  ...props
-}: {
-  testID?: string;
-  [key: string]: unknown;
-}) => <View testID={testID ?? 'maplibre-camera'} {...(props as object)} />;
+export const Camera = React.forwardRef<
+  CameraRef,
+  { initialViewState?: object; testID?: string; [key: string]: unknown }
+>((_props, ref) => {
+  React.useImperativeHandle(ref, () => ({
+    setStop: jest.fn().mockResolvedValue(undefined),
+    jumpTo: jest.fn(),
+    easeTo: jest.fn(),
+  }));
+  return null;
+});
+Camera.displayName = 'Camera';
 
 export const UserLocation = ({
   testID,
@@ -43,6 +87,27 @@ export const UserLocation = ({
 }) => (
   <View testID={testID ?? 'maplibre-user-location'} {...(props as object)} />
 );
+
+export const Marker = ({
+  children,
+  testID,
+}: {
+  id?: string;
+  lngLat: [number, number];
+  testID?: string;
+  children?: React.ReactNode;
+}) => <View testID={testID ?? 'map-marker'}>{children}</View>;
+
+export const GeoJSONSource = ({
+  children,
+}: {
+  id?: string;
+  data?: object | string;
+  children?: React.ReactNode;
+}) => <View>{children}</View>;
+
+export const Layer = (_props: { id?: string; type?: string; style?: object }) =>
+  null;
 
 export const ShapeSource = ({
   testID,
