@@ -56,9 +56,17 @@ export const Map = ({
   </View>
 );
 
+/** Legacy alias kept for tests that still reference MapView. */
+export const MapView = React.forwardRef<
+  unknown,
+  React.ComponentProps<typeof View>
+>((props, _ref) => <View testID="maplibre-map-view" {...props} />);
+
+MapView.displayName = 'MapView';
+
 export const Camera = React.forwardRef<
   CameraRef,
-  { initialViewState?: object; [key: string]: unknown }
+  { initialViewState?: object; testID?: string; [key: string]: unknown }
 >((_props, ref) => {
   React.useImperativeHandle(ref, () => ({
     setStop: jest.fn().mockResolvedValue(undefined),
@@ -68,6 +76,16 @@ export const Camera = React.forwardRef<
   return null;
 });
 Camera.displayName = 'Camera';
+
+export const UserLocation = ({
+  testID,
+  ...props
+}: {
+  testID?: string;
+  [key: string]: unknown;
+}) => (
+  <View testID={testID ?? 'maplibre-user-location'} {...(props as object)} />
+);
 
 export const Marker = ({
   children,
@@ -89,3 +107,67 @@ export const GeoJSONSource = ({
 
 export const Layer = (_props: { id?: string; type?: string; style?: object }) =>
   null;
+
+export const ShapeSource = ({
+  testID,
+  children,
+  ...props
+}: {
+  testID?: string;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <View testID={testID ?? 'maplibre-shape-source'} {...(props as object)}>
+    {children}
+  </View>
+);
+
+export const LineLayer = ({
+  testID,
+  ...props
+}: {
+  testID?: string;
+  [key: string]: unknown;
+}) => <View testID={testID ?? 'maplibre-line-layer'} {...(props as object)} />;
+
+export const FillLayer = ({
+  testID,
+  ...props
+}: {
+  testID?: string;
+  [key: string]: unknown;
+}) => <View testID={testID ?? 'maplibre-fill-layer'} {...(props as object)} />;
+
+export const SymbolLayer = ({
+  testID,
+  ...props
+}: {
+  testID?: string;
+  [key: string]: unknown;
+}) => (
+  <View testID={testID ?? 'maplibre-symbol-layer'} {...(props as object)} />
+);
+
+export const PointAnnotation = ({
+  testID,
+  children,
+  ...props
+}: {
+  testID?: string;
+  children?: React.ReactNode;
+  [key: string]: unknown;
+}) => (
+  <View testID={testID ?? 'maplibre-point-annotation'} {...(props as object)}>
+    {children}
+  </View>
+);
+
+export const TransformRequestManager = {
+  addHeader: jest.fn(),
+};
+
+export const MapLibreRN = {
+  setAccessToken: jest.fn(),
+};
+
+export default MapLibreRN;
