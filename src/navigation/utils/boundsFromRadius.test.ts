@@ -14,13 +14,14 @@ describe('boundsFromRadius', () => {
   });
 
   it('returns expected deltas around Las Vegas with longitude delta > latitude delta', () => {
+    const centerLng = -115.14;
     const [west, south, east, north] = boundsFromRadius(
-      { latitude: 36.17, longitude: -115.14 },
+      { latitude: 36.17, longitude: centerLng },
       50,
     );
 
     const latDelta = north - 36.17;
-    const lngDelta = east - -115.14;
+    const lngDelta = east - centerLng;
 
     expect(south).toBeCloseTo(36.17 - 0.7246, 3);
     expect(north).toBeCloseTo(36.17 + 0.7246, 3);

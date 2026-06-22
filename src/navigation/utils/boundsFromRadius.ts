@@ -1,5 +1,7 @@
+// Constant-latitude approximation (<0.5% variation), acceptable for tile bounds.
 const MILES_PER_DEGREE_LAT = 69.0;
-const POLE_GUARD_DEGREES = 89;
+// Within ~1° of the poles, cos(latitude) gets too small for stable deltaLng math.
+const HIGH_LATITUDE_THRESHOLD_DEGREES = 89;
 
 type Coordinate = {
   longitude: number;
@@ -44,18 +46,15 @@ export function boundsFromRadius(
   const deltaLat = radiusMiles / MILES_PER_DEGREE_LAT;
   const absLatitude = Math.abs(latitude);
 
-  const useFullLongitudeRange = absLatitude >= POLE_GUARD_DEGREES;
+  const useFullLongitudeRange = absLatitude >= HIGH_LATITUDE_THRESHOLD_DEGREES;
   let deltaLng = 180;
 
   if (!useFullLongitudeRange) {
     const cosLat = Math.cos((latitude * Math.PI) / 180);
 
+    // Avoid dividing by near-zero cos(latitude) values near the poles.
     if (Math.abs(cosLat) > Number.EPSILON) {
-      deltaLng = clamp(
-        radiusMiles / (MILES_PER_DEGREE_LAT * cosLat),
-        -180,
-        180,
-      );
+      deltaLng = clamp(radiusMiles / (MILES_PER_DEGREE_LAT * cosLat), 0, 180);
     }
   }
 
