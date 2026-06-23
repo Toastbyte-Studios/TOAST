@@ -48,7 +48,9 @@ export function boundsFromRadius(
   const { latitude, longitude } = center;
 
   if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
-    throw new RangeError('center.latitude must be a finite number in [-90, 90]');
+    throw new RangeError(
+      'center.latitude must be a finite number in [-90, 90]',
+    );
   }
 
   if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
