@@ -190,6 +190,31 @@ export const TransformRequestManager = {
 };
 
 /**
+ * OfflineManager mock — covers the v11 API surface used by OfflineMapService.
+ */
+export const OfflineManager = {
+  createPack: jest.fn().mockResolvedValue({
+    id: 'mock-pack-uuid',
+    metadata: {},
+    status: {
+      state: 0,
+      percentage: 0,
+      completedResourceCount: 0,
+      completedResourceSize: 0,
+      completedTileCount: 0,
+      completedTileSize: 0,
+      erroredResourceCount: 0,
+      requiredResourceCount: 0,
+    },
+  }),
+  getPacks: jest.fn().mockResolvedValue([]),
+  getPack: jest.fn().mockResolvedValue(undefined),
+  deletePack: jest.fn().mockResolvedValue(undefined),
+  addListener: jest.fn().mockResolvedValue(undefined),
+  removeListener: jest.fn(),
+};
+
+/**
  * LocationManager mock — provides unified permission request for iOS + Android.
  */
 export const LocationManager = {
