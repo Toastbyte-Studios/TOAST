@@ -215,7 +215,6 @@ export const useCurrentPosition = jest.fn(() => ({
   },
   timestamp: Date.now(),
 }));
-
 export const MapLibreRN = {
   setAccessToken: jest.fn(),
 };
