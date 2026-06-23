@@ -26,11 +26,14 @@ const clamp = (value: number, min: number, max: number): number =>
  * returns the full longitude span [-180, 180] because createPack expects a
  * single rectangular bounds and does not accept split antimeridian bounds.
  *
- * Polar behavior: when within ~1° of either pole, longitude becomes unstable
- * (cos(latitude) approaches 0), so this function returns the full longitude
- * span [-180, 180] and clamps latitude to the valid [-90, 90] range.
+ * Polar behavior: when within ~1° of either pole, or when the computed bounds
+ * touch either pole, longitude becomes effectively unconstrained, so this
+ * function returns the full longitude span [-180, 180] and clamps latitude to
+ * the valid [-90, 90] range.
  *
  * @throws {RangeError} When radiusMiles is zero, negative, or non-finite.
+ * @throws {RangeError} When center latitude is not in [-90, 90] or is non-finite.
+ * @throws {RangeError} When center longitude is not in [-180, 180] or is non-finite.
  */
 export function boundsFromRadius(
   center: Coordinate,
@@ -43,6 +46,17 @@ export function boundsFromRadius(
   }
 
   const { latitude, longitude } = center;
+
+  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
+    throw new RangeError('center.latitude must be a finite number in [-90, 90]');
+  }
+
+  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
+    throw new RangeError(
+      'center.longitude must be a finite number in [-180, 180]',
+    );
+  }
+
   const deltaLat = radiusMiles / MILES_PER_DEGREE_LAT;
   const absLatitude = Math.abs(latitude);
 
@@ -61,7 +75,8 @@ export function boundsFromRadius(
   const south = clamp(latitude - deltaLat, -90, 90);
   const north = clamp(latitude + deltaLat, -90, 90);
 
-  if (useFullLongitudeRange) {
+  // If bounds touch either pole the covered region wraps all longitudes.
+  if (useFullLongitudeRange || north >= 90 || south <= -90) {
     return [-180, south, 180, north];
   }
 

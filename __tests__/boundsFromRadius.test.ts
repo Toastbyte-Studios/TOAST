@@ -1,4 +1,4 @@
-import { boundsFromRadius } from './boundsFromRadius';
+import { boundsFromRadius } from '../src/navigation/utils/boundsFromRadius';
 
 describe('boundsFromRadius', () => {
   it('returns symmetric bounds at the equator for a 50 mile radius', () => {
@@ -68,6 +68,18 @@ describe('boundsFromRadius', () => {
     expect(north).toBeCloseTo(0.7246, 3);
   });
 
+  it('returns full longitude span when a large radius causes bounds to touch a pole', () => {
+    // Center at 88° with a 300-mile radius: north = 88 + 300/69 ≈ 92.3, clamped to 90.
+    const [west, south, east, north] = boundsFromRadius(
+      { latitude: 88, longitude: 0 },
+      300,
+    );
+
+    expect(west).toBe(-180);
+    expect(east).toBe(180);
+    expect(north).toBe(90);
+  });
+
   it('throws RangeError for zero radius', () => {
     expect(() => boundsFromRadius({ latitude: 0, longitude: 0 }, 0)).toThrow(
       RangeError,
@@ -78,5 +90,47 @@ describe('boundsFromRadius', () => {
     expect(() => boundsFromRadius({ latitude: 0, longitude: 0 }, -1)).toThrow(
       RangeError,
     );
+  });
+
+  it('throws RangeError for NaN radius', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 0, longitude: 0 }, NaN),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for Infinity radius', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 0, longitude: 0 }, Infinity),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for -Infinity radius', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 0, longitude: 0 }, -Infinity),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for non-finite center latitude', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: NaN, longitude: 0 }, 50),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for out-of-range center latitude', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 91, longitude: 0 }, 50),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for non-finite center longitude', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 0, longitude: NaN }, 50),
+    ).toThrow(RangeError);
+  });
+
+  it('throws RangeError for out-of-range center longitude', () => {
+    expect(() =>
+      boundsFromRadius({ latitude: 0, longitude: 181 }, 50),
+    ).toThrow(RangeError);
   });
 });
