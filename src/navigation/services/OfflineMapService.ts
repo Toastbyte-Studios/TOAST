@@ -1,8 +1,10 @@
 import {
   OfflineManager,
-  type OfflinePack,
-  type OfflinePackStatus,
   type OfflinePackError,
+  type OfflinePackErrorListener,
+  type OfflinePack,
+  type OfflinePackProgressListener,
+  type OfflinePackStatus,
 } from '@maplibre/maplibre-react-native';
 
 export type OfflineMapPackMetadata = {
@@ -100,8 +102,8 @@ export const OfflineMapService = {
         maxZoom: zoom.max,
         metadata: args.metadata,
       },
-      args.onProgress,
-      args.onError,
+      args.onProgress as unknown as OfflinePackProgressListener,
+      args.onError as unknown as OfflinePackErrorListener,
     );
 
     return pack;
