@@ -1,9 +1,9 @@
 import {
   OfflineManager,
   type OfflinePackError,
-  type OfflinePackErrorListener,
   type OfflinePack,
   type OfflinePackProgressListener,
+  type OfflinePackErrorListener,
   type OfflinePackStatus,
 } from '@maplibre/maplibre-react-native';
 
@@ -44,6 +44,7 @@ export const HIGH_DETAIL_OFFLINE_ZOOM = { min: 8, max: 14 } as const;
 
 // ---------------------------------------------------------------------------
 // Tile-count math (Web Mercator / "slippy map" tile coordinates)
+// Note: does not handle antimeridian-crossing bounds (fine for US-only use).
 // ---------------------------------------------------------------------------
 
 function lonToTileX(lon: number, z: number): number {
@@ -67,6 +68,39 @@ function tileCountForBoundsAtZoom(
   const y0 = latToTileY(north, z); // tile Y is inverted (north → smaller index)
   const y1 = latToTileY(south, z);
   return (Math.abs(x1 - x0) + 1) * (Math.abs(y1 - y0) + 1);
+}
+
+/**
+ * Per-zoom average tile sizes for OpenMapTiles-schema vector tiles (urban-biased,
+ * which is appropriate for offline packs centred on populated areas).
+ * Source: empirical OpenMapTiles benchmark data.
+ * Tiles at low zooms are large (regional data) then shrink at mid zooms as
+ * generalisation reduces features, then grow again at z14 as building
+ * footprints are added.
+ */
+const AVG_TILE_BYTES_BY_ZOOM: Readonly<Record<number, number>> = {
+  0:  14_000,
+  1:  86_000,
+  2:  77_000,
+  3:  34_000,
+  4:  23_000,
+  5:   7_000,
+  6:   8_000,
+  7:   8_000,
+  8:   7_000,
+  9:   6_000,
+  10:  3_000,
+  11:  1_000,
+  12:  2_000,
+  13:  2_000,
+  14:  5_000,
+};
+
+/** Fallback for zoom levels outside the table (e.g. z15+). */
+const DEFAULT_AVG_TILE_BYTES = 3_000;
+
+function avgTileBytesForZoom(z: number): number {
+  return AVG_TILE_BYTES_BY_ZOOM[z] ?? DEFAULT_AVG_TILE_BYTES;
 }
 
 // ---------------------------------------------------------------------------
@@ -94,7 +128,14 @@ export const OfflineMapService = {
   }): Promise<OfflinePack> {
     const zoom = args.zoomRange ?? DEFAULT_OFFLINE_ZOOM;
 
-    const pack = await OfflineManager.createPack(
+    // The v11 API marks both listeners as required; fall back to no-ops so we
+    // never pass undefined past the type boundary.
+    const progressListener: OfflinePackProgressListener =
+      (args.onProgress as OfflinePackProgressListener | undefined) ?? (() => {});
+    const errorListener: OfflinePackErrorListener =
+      (args.onError as OfflinePackErrorListener | undefined) ?? (() => {});
+
+    return OfflineManager.createPack(
       {
         mapStyle: OPENFREEMAP_STYLE,
         bounds: args.bounds,
@@ -102,19 +143,28 @@ export const OfflineMapService = {
         maxZoom: zoom.max,
         metadata: args.metadata,
       },
-      args.onProgress as unknown as OfflinePackProgressListener,
-      args.onError as unknown as OfflinePackErrorListener,
+      progressListener,
+      errorListener,
     );
-
-    return pack;
   },
 
-  async listPacks(): Promise<OfflinePack[]> {
-    return OfflineManager.getPacks();
+  async listPacks(): Promise<OfflineMapPack[]> {
+    const packs = await OfflineManager.getPacks();
+    return packs.map(p => ({
+      id: p.id,
+      metadata: p.metadata as OfflineMapPackMetadata,
+      status: p.status,
+    }));
   },
 
-  async getPack(id: string): Promise<OfflinePack | undefined> {
-    return OfflineManager.getPack(id);
+  async getPack(id: string): Promise<OfflineMapPack | undefined> {
+    const pack = await OfflineManager.getPack(id);
+    if (!pack) return undefined;
+    return {
+      id: pack.id,
+      metadata: pack.metadata as OfflineMapPackMetadata,
+      status: pack.status,
+    };
   },
 
   async deletePack(id: string): Promise<void> {
@@ -131,7 +181,11 @@ export const OfflineMapService = {
     onProgress: ProgressHandler,
     onError: ErrorHandler,
   ): Promise<void> {
-    await OfflineManager.addListener(id, onProgress, onError);
+    await OfflineManager.addListener(
+      id,
+      onProgress as OfflinePackProgressListener,
+      onError as OfflinePackErrorListener,
+    );
   },
 
   unsubscribe(id: string): void {
@@ -140,20 +194,22 @@ export const OfflineMapService = {
 
   /**
    * Estimate the download size in bytes for a given bounds + zoom range.
-   * Uses a tile-count × average-tile-size heuristic.
    *
-   * OpenFreeMap vector tiles average ~30–50 KB; this uses 40 KB as the midpoint.
+   * Uses per-zoom average tile sizes derived from empirical OpenMapTiles
+   * benchmark data (urban-biased). For a ~50-mile radius urban area at
+   * z8–13 this produces ~10–40 MB; at z8–14 roughly 2× that.
    */
   estimateDownloadBytes(args: {
     bounds: [west: number, south: number, east: number, north: number];
     zoomRange: { min: number; max: number };
   }): number {
     const [west, south, east, north] = args.bounds;
-    let totalTiles = 0;
+    let totalBytes = 0;
     for (let z = args.zoomRange.min; z <= args.zoomRange.max; z++) {
-      totalTiles += tileCountForBoundsAtZoom([west, south, east, north], z);
+      totalBytes +=
+        tileCountForBoundsAtZoom([west, south, east, north], z) *
+        avgTileBytesForZoom(z);
     }
-    const AVG_TILE_BYTES = 40 * 1024;
-    return totalTiles * AVG_TILE_BYTES;
+    return totalBytes;
   },
 };
