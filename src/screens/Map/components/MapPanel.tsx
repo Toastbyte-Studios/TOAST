@@ -20,9 +20,9 @@ import {
 } from 'react-native';
 import { useTheme } from '../../../hooks/useTheme';
 import { Waypoint } from '../../../stores/WaypointStore';
+import DownloadAreaButton from './offline/DownloadAreaButton';
 import { formatDistance } from './WaypointBottomSheet/waypointGeometry';
 import type { MeasurementSystem } from '../../../stores/SettingsStore';
-import DownloadAreaButton from './offline/DownloadAreaButton';
 
 export type LocationPermissionStatus = 'undetermined' | 'granted' | 'denied';
 

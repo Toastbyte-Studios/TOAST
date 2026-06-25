@@ -4,8 +4,15 @@ import {
   Layer,
   Map,
   useCurrentPosition,
+  type OfflinePack,
 } from '@maplibre/maplibre-react-native';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   ActivityIndicator,
   ScrollView,
@@ -17,14 +24,14 @@ import {
 } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import { useTheme } from '../../../../hooks/useTheme';
-import { boundsFromRadius } from '../../../../navigation/utils/boundsFromRadius';
-import { boundsToGeoJSON } from '../../../../navigation/utils/boundsToGeoJSON';
-import { formatBytes } from '../../../../navigation/utils/formatBytes';
 import {
   DEFAULT_OFFLINE_ZOOM,
   HIGH_DETAIL_OFFLINE_ZOOM,
   OfflineMapService,
 } from '../../../../navigation/services/OfflineMapService';
+import { boundsFromRadius } from '../../../../navigation/utils/boundsFromRadius';
+import { boundsToGeoJSON } from '../../../../navigation/utils/boundsToGeoJSON';
+import { formatBytes } from '../../../../navigation/utils/formatBytes';
 import { useOfflineDownloadStore } from '../../../../stores/StoreContext';
 import type { OfflineMapPackMetadata } from '../../../../stores/OfflineDownloadStore';
 
@@ -45,6 +52,14 @@ type Props = {
 export default function DownloadConfirmScreen({ onDismiss }: Props) {
   const COLORS = useTheme();
   const styles = useMemo(() => makeStyles(COLORS), [COLORS]);
+  const fillLayerStyle = useMemo(
+    () => ({ fillColor: COLORS.SECONDARY_ACCENT, fillOpacity: 0.2 }),
+    [COLORS.SECONDARY_ACCENT],
+  );
+  const lineLayerStyle = useMemo(
+    () => ({ lineColor: COLORS.SECONDARY_ACCENT, lineWidth: 2 }),
+    [COLORS.SECONDARY_ACCENT],
+  );
   const store = useOfflineDownloadStore();
 
   const mlPosition = useCurrentPosition();
@@ -53,7 +68,9 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [highDetail, setHighDetail] = useState(false);
-  const zoomRange = highDetail ? HIGH_DETAIL_OFFLINE_ZOOM : DEFAULT_OFFLINE_ZOOM;
+  const zoomRange = highDetail
+    ? HIGH_DETAIL_OFFLINE_ZOOM
+    : DEFAULT_OFFLINE_ZOOM;
 
   const [storagePressure, setStoragePressure] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -139,7 +156,7 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
       onDismiss();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to start download';
-      store.handleError({ id: '' } as any, { message: msg });
+      store.handleError({ id: '' } as unknown as OfflinePack, { message: msg });
       onDismiss();
     }
   }, [bounds, coords, zoomRange, store, starting, onDismiss]);
@@ -204,18 +221,12 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
                   <Layer
                     id="download-bounds-fill"
                     type="fill"
-                    style={{
-                      fillColor: COLORS.SECONDARY_ACCENT,
-                      fillOpacity: 0.2,
-                    }}
+                    style={fillLayerStyle}
                   />
                   <Layer
                     id="download-bounds-line"
                     type="line"
-                    style={{
-                      lineColor: COLORS.SECONDARY_ACCENT,
-                      lineWidth: 2,
-                    }}
+                    style={lineLayerStyle}
                   />
                 </GeoJSONSource>
               )}
@@ -227,7 +238,8 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
         {storagePressure && (
           <View style={styles.warningBanner}>
             <Text style={styles.warningText}>
-              ⚠️ Low storage — this download may not fit. Free up space before continuing.
+              ⚠️ Low storage — this download may not fit. Free up space before
+              continuing.
             </Text>
           </View>
         )}
@@ -236,7 +248,9 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
         <View style={styles.row}>
           <View style={styles.rowLabel}>
             <Text style={styles.label}>High detail (z8–14)</Text>
-            <Text style={styles.hint}>Includes building detail. ~2× storage.</Text>
+            <Text style={styles.hint}>
+              Includes building detail. ~2× storage.
+            </Text>
           </View>
           <Switch
             value={highDetail}
@@ -255,7 +269,8 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
         </View>
 
         <Text style={styles.radiusNote}>
-          Covers a ~{RADIUS_MILES}-mile radius around your current location · works in airplane mode
+          Covers a ~{RADIUS_MILES}-mile radius around your current location ·
+          works in airplane mode
         </Text>
 
         {/* Download button */}
@@ -273,7 +288,9 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
           {starting ? (
             <ActivityIndicator color={COLORS.PRIMARY_LIGHT} />
           ) : (
-            <Text style={[styles.downloadBtnText, { color: COLORS.PRIMARY_LIGHT }]}>
+            <Text
+              style={[styles.downloadBtnText, { color: COLORS.PRIMARY_LIGHT }]}
+            >
               Download
             </Text>
           )}

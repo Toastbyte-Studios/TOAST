@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../../../../hooks/useTheme';
 
 type Props = {
@@ -17,7 +12,10 @@ type Props = {
  * Rendered inside MapPanel alongside the existing waypoints/record/locate buttons.
  * Disabled (with tooltip) when location permission is not granted.
  */
-export default function DownloadAreaButton({ onPress, permissionGranted }: Props) {
+export default function DownloadAreaButton({
+  onPress,
+  permissionGranted,
+}: Props) {
   const COLORS = useTheme();
 
   if (!permissionGranted) {
@@ -25,7 +23,8 @@ export default function DownloadAreaButton({ onPress, permissionGranted }: Props
       <View
         style={[
           styles.button,
-          { backgroundColor: COLORS.SECONDARY_ACCENT, opacity: 0.4 },
+          styles.buttonDisabled,
+          { backgroundColor: COLORS.SECONDARY_ACCENT },
         ]}
         accessibilityLabel="Download your area — enable location to use this feature"
         accessibilityHint="Location permission is required to download an offline map"
@@ -64,6 +63,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+  buttonDisabled: {
+    opacity: 0.4,
   },
   icon: {
     fontSize: 22,

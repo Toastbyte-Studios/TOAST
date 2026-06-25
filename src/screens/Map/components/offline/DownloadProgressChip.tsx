@@ -90,9 +90,7 @@ const DownloadProgressChip = observer(function DownloadProgressChip({
     >
       <Text style={styles.chipText}>
         ⤓ Downloading map: {store.percentage}%
-        {store.completedResourceCount > 0
-          ? ` · ${store.completedMB} MB`
-          : ''}
+        {store.completedResourceCount > 0 ? ` · ${store.completedMB} MB` : ''}
       </Text>
     </View>
   );
@@ -104,7 +102,11 @@ export default DownloadProgressChip;
 
 function classifyError(message: string): string {
   const lower = message.toLowerCase();
-  if (lower.includes('disk') || lower.includes('storage') || lower.includes('space')) {
+  if (
+    lower.includes('disk') ||
+    lower.includes('storage') ||
+    lower.includes('space')
+  ) {
     return 'Not enough storage. Free up space and try again.';
   }
   if (
@@ -115,7 +117,11 @@ function classifyError(message: string): string {
   ) {
     return 'No network connection. Connect to Wi-Fi or cellular and retry.';
   }
-  if (lower.includes('tile') || lower.includes('server') || lower.includes('http')) {
+  if (
+    lower.includes('tile') ||
+    lower.includes('server') ||
+    lower.includes('http')
+  ) {
     return 'Tile server unreachable. Check your connection and retry.';
   }
   return message;
@@ -133,7 +139,10 @@ function DownloadErrorBanner({ message, onRetry, COLORS }: BannerProps) {
       style={[styles.errorBanner, { borderColor: COLORS.ERROR }]}
       accessibilityLiveRegion="assertive"
     >
-      <Text style={[styles.errorText, { color: COLORS.ERROR }]} numberOfLines={2}>
+      <Text
+        style={[styles.errorText, { color: COLORS.ERROR }]}
+        numberOfLines={2}
+      >
         ⚠️ {classifyError(message)}
       </Text>
       <TouchableOpacity

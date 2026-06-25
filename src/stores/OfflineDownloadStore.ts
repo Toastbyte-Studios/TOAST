@@ -4,7 +4,10 @@ import {
   OfflineMapService,
   type OfflineMapPackMetadata,
 } from '../navigation/services/OfflineMapService';
-import type { OfflinePack, OfflinePackStatus } from '@maplibre/maplibre-react-native';
+import type {
+  OfflinePack,
+  OfflinePackStatus,
+} from '@maplibre/maplibre-react-native';
 
 const STORAGE_KEY = '@offline/active_pack';
 
@@ -39,17 +42,18 @@ export class OfflineDownloadStore {
   handleProgress(_pack: OfflinePack, status: OfflinePackStatus): void {
     runInAction(() => {
       this.completedResourceCount = status.completedResourceCount;
-      this.totalResourceCount = status.countOfResourcesExpected;
+      this.totalResourceCount = status.requiredResourceCount;
       this.percentage =
-        status.countOfResourcesExpected > 0
+        status.requiredResourceCount > 0
           ? Math.round(
-              (status.completedResourceCount /
-                status.countOfResourcesExpected) *
+              (status.completedResourceCount / status.requiredResourceCount) *
                 100,
             )
           : 0;
-      if (status.completedResourceCount >= status.countOfResourcesExpected &&
-          status.countOfResourcesExpected > 0) {
+      if (
+        status.completedResourceCount >= status.requiredResourceCount &&
+        status.requiredResourceCount > 0
+      ) {
         this.state = 'complete';
         this._clearPersistedId();
       }

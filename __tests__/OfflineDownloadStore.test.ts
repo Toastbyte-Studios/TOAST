@@ -1,11 +1,15 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { OfflineDownloadStore } from '../src/stores/OfflineDownloadStore';
 import { OfflineMapService } from '../src/navigation/services/OfflineMapService';
+import { OfflineDownloadStore } from '../src/stores/OfflineDownloadStore';
+import type {
+  OfflinePack,
+  OfflinePackStatus,
+} from '@maplibre/maplibre-react-native';
 
 jest.mock('@react-native-async-storage/async-storage', () => ({
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
+  getItem: jest.fn().mockResolvedValue(null),
+  setItem: jest.fn().mockResolvedValue(undefined),
+  removeItem: jest.fn().mockResolvedValue(undefined),
 }));
 
 jest.mock('../src/navigation/services/OfflineMapService', () => ({
@@ -17,16 +21,20 @@ jest.mock('../src/navigation/services/OfflineMapService', () => ({
 }));
 
 const mockPack = (id = 'test-id') =>
-  ({ id, metadata: {}, status: { state: 'active' } } as any);
+  ({ id, metadata: {}, status: { state: 'active' } }) as unknown as OfflinePack;
 
-const mockStatus = (completed: number, total: number) =>
-  ({
-    completedResourceCount: completed,
-    countOfResourcesExpected: total,
-    state: completed >= total ? 'complete' : 'active',
-  } as any);
+const mockStatus = (completed: number, total: number): OfflinePackStatus => ({
+  id: 'test-id',
+  completedResourceCount: completed,
+  requiredResourceCount: total,
+  completedResourceSize: 0,
+  completedTileCount: 0,
+  completedTileSize: 0,
+  percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
+  state: total > 0 && completed >= total ? 'complete' : 'active',
+});
 
-const mockError = (message = 'Network error') => ({ message } as any);
+const mockError = (message = 'Network error') => ({ message });
 
 describe('OfflineDownloadStore', () => {
   let store: OfflineDownloadStore;
@@ -84,7 +92,9 @@ describe('OfflineDownloadStore', () => {
       store.start(mockPack());
       jest.clearAllMocks();
       store.handleProgress(mockPack(), mockStatus(100, 100));
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('@offline/active_pack');
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
+        '@offline/active_pack',
+      );
     });
 
     it('handles 0 expected resources without dividing by zero', () => {
@@ -106,7 +116,9 @@ describe('OfflineDownloadStore', () => {
       store.start(mockPack());
       jest.clearAllMocks();
       store.handleError(mockPack(), mockError());
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('@offline/active_pack');
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
+        '@offline/active_pack',
+      );
     });
   });
 
@@ -123,7 +135,9 @@ describe('OfflineDownloadStore', () => {
 
     it('removes persisted id from AsyncStorage', () => {
       store.clear();
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('@offline/active_pack');
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
+        '@offline/active_pack',
+      );
     });
   });
 
@@ -136,7 +150,9 @@ describe('OfflineDownloadStore', () => {
     });
 
     it('re-subscribes to an in-progress pack', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify('abc'));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify('abc'),
+      );
       (OfflineMapService.listPacks as jest.Mock).mockResolvedValue([
         { id: 'abc', status: { state: 'active' } },
       ]);
@@ -154,7 +170,9 @@ describe('OfflineDownloadStore', () => {
     });
 
     it('clears storage when pack is already complete', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify('abc'));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify('abc'),
+      );
       (OfflineMapService.listPacks as jest.Mock).mockResolvedValue([
         { id: 'abc', status: { state: 'complete' } },
       ]);
@@ -162,21 +180,29 @@ describe('OfflineDownloadStore', () => {
       await store.recover();
 
       expect(store.state).toBe('inactive');
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('@offline/active_pack');
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
+        '@offline/active_pack',
+      );
     });
 
     it('clears storage when pack is not found', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(JSON.stringify('gone'));
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify('gone'),
+      );
       (OfflineMapService.listPacks as jest.Mock).mockResolvedValue([]);
 
       await store.recover();
 
       expect(store.state).toBe('inactive');
-      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('@offline/active_pack');
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
+        '@offline/active_pack',
+      );
     });
 
     it('survives AsyncStorage failure without throwing', async () => {
-      (AsyncStorage.getItem as jest.Mock).mockRejectedValue(new Error('IO error'));
+      (AsyncStorage.getItem as jest.Mock).mockRejectedValue(
+        new Error('IO error'),
+      );
       await expect(store.recover()).resolves.not.toThrow();
     });
   });
