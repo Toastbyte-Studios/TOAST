@@ -8,6 +8,7 @@ import { InventoryStore } from './InventoryStore';
 import { NavigationStore } from './NavigationStore';
 import { NotesStore } from './NotesStore';
 import { NotificationsStore } from './NotificationsStore';
+import { OfflineDownloadStore } from './OfflineDownloadStore';
 import { PantryStore } from './PantryStore';
 import { ReferenceStore } from './ReferenceStore';
 import { RepeaterBookStore } from './RepeaterBookStore';
@@ -40,6 +41,7 @@ export class RootStore {
   waypointStore: WaypointStore;
   trackStore: TrackStore;
   astronomyEventStore: AstronomyEventStore;
+  offlineDownloadStore: OfflineDownloadStore;
 
   constructor() {
     makeAutoObservable(this);
@@ -62,6 +64,7 @@ export class RootStore {
     this.waypointStore = new WaypointStore();
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
+    this.offlineDownloadStore = new OfflineDownloadStore();
     this.startupPromise = this.initializeSettings();
   }
 
@@ -69,10 +72,12 @@ export class RootStore {
    * Initialize settings by loading them from the database
    */
   private async initializeSettings() {
-    // Load persisted notification hidden keys first — this is AsyncStorage-based
-    // and has no dependency on the SQLite database, so it can run immediately
-    // and avoids a brief window where dismissed notifications appear in the UI.
+    // Load persisted notification hidden keys first — AsyncStorage-based,
+    // no SQLite dependency, avoids a brief window where dismissed notifications reappear.
     await this.notificationsStore.loadHiddenKeys();
+    // Recover any in-progress offline download and re-attach listeners.
+    // AsyncStorage-based and safe to run before the SQLite DB is ready.
+    await this.offlineDownloadStore.recover();
     // Wait for NotesStore to initialize the database, then load categories and settings
     await this.notesStore.initNotesDb();
     if (this.notesStore.notesDb) {
@@ -121,6 +126,7 @@ export class RootStore {
     this.waypointStore.dispose();
     this.trackStore.dispose();
     this.astronomyEventStore.dispose();
+    this.offlineDownloadStore.dispose();
     this.coreStore = new CoreStore();
     this.notesStore = new NotesStore();
     this.checklistStore = new ChecklistStore();
@@ -140,6 +146,7 @@ export class RootStore {
     this.waypointStore = new WaypointStore();
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
+    this.offlineDownloadStore = new OfflineDownloadStore();
     this.isOfflineMode = true;
     // initializeSettings is intentionally not awaited - settings have sensible
     // defaults and components will re-render when settings finish loading from DB
