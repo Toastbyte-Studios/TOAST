@@ -36,10 +36,12 @@ import ScreenBody from '../../components/ScreenBody';
 import SectionHeader from '../../components/SectionHeader';
 import { useTheme } from '../../hooks/useTheme';
 import { useGestureNavigation } from '../../navigation/NavigationHistoryContext';
+import { navigationRef } from '../../navigation/navigationRef';
 import {
   useTrackStore,
   useWaypointStore,
   useSettingsStore,
+  useOfflineDownloadStore,
 } from '../../stores/StoreContext';
 import { Track, TrackPoint } from '../../stores/TrackStore';
 import { FOOTER_HEIGHT } from '../../theme';
@@ -51,6 +53,7 @@ import MapPanel, {
   RecordingState,
   zoomFromDelta,
 } from './components/MapPanel';
+import DownloadProgressChip from './components/offline/DownloadProgressChip';
 import WaypointBottomSheet from './components/WaypointBottomSheet';
 import { haversineMeters } from './components/WaypointBottomSheet/waypointGeometry';
 import { requestForegroundNotificationPermission } from './requestForegroundNotificationPermission';
@@ -289,6 +292,7 @@ export default observer(function MapScreen() {
   const waypointStore = useWaypointStore();
   const trackStore = useTrackStore();
   const settingsStore = useSettingsStore();
+  const offlineDownloadStore = useOfflineDownloadStore();
   const [permissionStatus, setPermissionStatus] =
     useState<LocationPermissionStatus>('undetermined');
   const [locationReady, setLocationReady] = useState(false);
@@ -309,7 +313,7 @@ export default observer(function MapScreen() {
   // Measured height of the map container — used to keep the sheet within map bounds.
   const [mapContainerHeight, setMapContainerHeight] = useState(0);
 
-  // ── Recording state ────────────────────────────────────────────────────────
+  // ── Recording state ──────────────────────────────────────────────────────────────
   /** Mutable ref so GPS callback closure always reads the latest value. */
   const recordingStateRef = useRef<RecordingState>('idle');
   const [recordingState, setRecordingState] = useState<RecordingState>('idle');
@@ -327,7 +331,7 @@ export default observer(function MapScreen() {
   const [viewedTrack, setViewedTrack] = useState<Track | null>(null);
   /** Mirrors permissionStatus state so AppState callback can read it without deps. */
   const permissionStatusRef = useRef<LocationPermissionStatus>('undetermined');
-  // ──────────────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────────────
 
   // Live GPS position from MapLibre LocationManager — drives coords display and locate-me.
   const mlPosition = useCurrentPosition();
@@ -525,7 +529,7 @@ export default observer(function MapScreen() {
     [waypointStore],
   );
 
-  // ── Recording handlers ────────────────────────────────────────────────────
+  // ── Recording handlers ─────────────────────────────────────────────────────────────────
 
   const handleRecordPress = useCallback(() => {
     if (recordingStateRef.current === 'idle') {
@@ -680,7 +684,11 @@ export default observer(function MapScreen() {
     [trackStore, viewedTrack],
   );
 
-  // ─────────────────────────────────────────────────────────────────────────
+  const handleDownloadAreaPress = useCallback(() => {
+    navigationRef.current?.navigate('DownloadArea' as never);
+  }, []);
+
+  // ────────────────────────────────────────────────────────────────────────
 
   // Ring rotates opposite to heading so the needle appears fixed pointing up
   const ringSpin = needleRotation.interpolate({
@@ -716,6 +724,7 @@ export default observer(function MapScreen() {
               cameraRef={cameraRef}
               onLocateMe={handleLocateMe}
               onWaypointsPress={() => setWaypointSheetOpen(true)}
+              onDownloadAreaPress={handleDownloadAreaPress}
               onLongPressMap={handleLongPressMap}
               waypoints={waypointStore.waypoints}
               activeWaypointId={waypointStore.activeWaypointId}
@@ -745,6 +754,8 @@ export default observer(function MapScreen() {
             onViewTrack={handleViewTrack}
             onDeleteTrack={handleDeleteTrack}
           />
+          {/* Download progress chip — non-blocking overlay, hidden when inactive */}
+          <DownloadProgressChip store={offlineDownloadStore} />
         </View>
 
         {/* Compass */}
