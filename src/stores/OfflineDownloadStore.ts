@@ -117,8 +117,7 @@ export class OfflineDownloadStore {
         this.percentage =
           status.requiredResourceCount > 0
             ? Math.round(
-                (status.completedResourceCount /
-                  status.requiredResourceCount) *
+                (status.completedResourceCount / status.requiredResourceCount) *
                   100,
               )
             : 0;
@@ -126,7 +125,7 @@ export class OfflineDownloadStore {
       // Re-attach listeners so progress continues after process kill
       await OfflineMapService.subscribe(
         id,
-        (pack, status) => this.handleProgress(pack, status),
+        (pack, packStatus) => this.handleProgress(pack, packStatus),
         (pack, error) => this.handleError(pack, error),
       );
     } catch {
