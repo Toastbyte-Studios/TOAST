@@ -129,9 +129,14 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
   // Storage pressure check whenever estimate changes
   useEffect(() => {
     if (estimatedBytes === 0) return;
+    let ignore = false;
     DeviceInfo.getFreeDiskStorage().then((freeBytes) => {
+      if (ignore) return;
       setStoragePressure(estimatedBytes > freeBytes - FREE_DISK_BUFFER_BYTES);
     });
+    return () => {
+      ignore = true;
+    };
   }, [estimatedBytes]);
 
   const handleDownload = useCallback(async () => {

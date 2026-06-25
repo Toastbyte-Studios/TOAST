@@ -26,6 +26,8 @@ export default function DownloadAreaButton({
           styles.buttonDisabled,
           { backgroundColor: COLORS.SECONDARY_ACCENT },
         ]}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: true }}
         accessibilityLabel="Download your area — enable location to use this feature"
         accessibilityHint="Location permission is required to download an offline map"
       >

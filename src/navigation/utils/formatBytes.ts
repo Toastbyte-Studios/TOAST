@@ -3,7 +3,7 @@
  * Uses binary (1024-based) units by default to match device storage conventions.
  *
  * @example
- * formatBytes(28_450_000) // '≈ 27 MB'
+ * formatBytes(28_450_000) // '≈ 27.1 MB'
  * formatBytes(1_500_000_000) // '≈ 1.4 GB'
  * formatBytes(512) // '≈ 512 B'
  */

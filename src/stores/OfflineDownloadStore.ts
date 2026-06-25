@@ -11,6 +11,13 @@ import type {
 
 const STORAGE_KEY = '@offline/active_pack';
 
+/**
+ * Fallback heuristic (bytes/tile) used only when the native status does not
+ * report a real `completedResourceSize`. Matches the low end of
+ * OfflineMapService's per-zoom table for the default z8–13 pack.
+ */
+const FALLBACK_BYTES_PER_RESOURCE = 3000;
+
 export type ActiveDownloadState = 'inactive' | 'active' | 'complete' | 'error';
 
 export class OfflineDownloadStore {
@@ -18,6 +25,7 @@ export class OfflineDownloadStore {
   percentage = 0;
   completedResourceCount = 0;
   totalResourceCount = 0;
+  completedResourceSize = 0;
   state: ActiveDownloadState = 'inactive';
   errorMessage: string | null = null;
 
@@ -33,6 +41,7 @@ export class OfflineDownloadStore {
       this.percentage = 0;
       this.completedResourceCount = 0;
       this.totalResourceCount = 0;
+      this.completedResourceSize = 0;
       this.state = 'active';
       this.errorMessage = null;
     });
@@ -43,6 +52,7 @@ export class OfflineDownloadStore {
     runInAction(() => {
       this.completedResourceCount = status.completedResourceCount;
       this.totalResourceCount = status.requiredResourceCount;
+      this.completedResourceSize = status.completedResourceSize ?? 0;
       this.percentage =
         status.requiredResourceCount > 0
           ? Math.round(
@@ -74,6 +84,7 @@ export class OfflineDownloadStore {
       this.percentage = 0;
       this.completedResourceCount = 0;
       this.totalResourceCount = 0;
+      this.completedResourceSize = 0;
       this.state = 'inactive';
       this.errorMessage = null;
     });
@@ -94,10 +105,23 @@ export class OfflineDownloadStore {
         this._clearPersistedId();
         return;
       }
+      const status = match.status;
       runInAction(() => {
         this.id = id;
         this.state = 'active';
-        this.percentage = 0;
+        // Seed from the last-known status so the chip shows real progress
+        // immediately rather than flashing 0% until the next native tick.
+        this.completedResourceCount = status.completedResourceCount;
+        this.totalResourceCount = status.requiredResourceCount;
+        this.completedResourceSize = status.completedResourceSize ?? 0;
+        this.percentage =
+          status.requiredResourceCount > 0
+            ? Math.round(
+                (status.completedResourceCount /
+                  status.requiredResourceCount) *
+                  100,
+              )
+            : 0;
       });
       // Re-attach listeners so progress continues after process kill
       await OfflineMapService.subscribe(
@@ -133,7 +157,13 @@ export class OfflineDownloadStore {
   }
 
   get completedMB(): string {
-    const mb = (this.completedResourceCount * 3000) / (1024 * 1024);
+    // Prefer the native-reported byte count; fall back to a per-resource
+    // heuristic only when the platform doesn't populate completedResourceSize.
+    const bytes =
+      this.completedResourceSize > 0
+        ? this.completedResourceSize
+        : this.completedResourceCount * FALLBACK_BYTES_PER_RESOURCE;
+    const mb = bytes / (1024 * 1024);
     return mb.toFixed(1);
   }
 }
