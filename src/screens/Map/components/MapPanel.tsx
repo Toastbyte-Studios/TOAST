@@ -22,6 +22,7 @@ import { useTheme } from '../../../hooks/useTheme';
 import { Waypoint } from '../../../stores/WaypointStore';
 import { formatDistance } from './WaypointBottomSheet/waypointGeometry';
 import type { MeasurementSystem } from '../../../stores/SettingsStore';
+import DownloadAreaButton from './offline/DownloadAreaButton';
 
 export type LocationPermissionStatus = 'undetermined' | 'granted' | 'denied';
 
@@ -48,6 +49,7 @@ type Props = {
   cameraRef: React.RefObject<CameraRef | null>;
   onLocateMe: () => void;
   onWaypointsPress: () => void;
+  onDownloadAreaPress: () => void;
   onLongPressMap?: (coordinate: {
     latitude: number;
     longitude: number;
@@ -82,6 +84,7 @@ export default function MapPanel({
   cameraRef,
   onLocateMe,
   onWaypointsPress,
+  onDownloadAreaPress,
   onLongPressMap,
   waypoints = [],
   activeWaypointId = null,
@@ -345,6 +348,13 @@ export default function MapPanel({
               </TouchableOpacity>
             </>
           )}
+
+          {/* Download area button — shown regardless of recording state;
+              disabled when permission is not granted */}
+          <DownloadAreaButton
+            onPress={onDownloadAreaPress}
+            permissionGranted={permissionStatus === 'granted'}
+          />
         </>
       )}
     </View>
