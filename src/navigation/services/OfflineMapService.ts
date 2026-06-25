@@ -79,21 +79,21 @@ function tileCountForBoundsAtZoom(
  * footprints are added.
  */
 const AVG_TILE_BYTES_BY_ZOOM: Readonly<Record<number, number>> = {
-  0:  14_000,
-  1:  86_000,
-  2:  77_000,
-  3:  34_000,
-  4:  23_000,
-  5:   7_000,
-  6:   8_000,
-  7:   8_000,
-  8:   7_000,
-  9:   6_000,
-  10:  3_000,
-  11:  1_000,
-  12:  2_000,
-  13:  2_000,
-  14:  5_000,
+  0: 14_000,
+  1: 86_000,
+  2: 77_000,
+  3: 34_000,
+  4: 23_000,
+  5: 7_000,
+  6: 8_000,
+  7: 8_000,
+  8: 7_000,
+  9: 6_000,
+  10: 3_000,
+  11: 1_000,
+  12: 2_000,
+  13: 2_000,
+  14: 5_000,
 };
 
 /** Fallback for zoom levels outside the table (e.g. z15+). */
@@ -131,7 +131,8 @@ export const OfflineMapService = {
     // The v11 API marks both listeners as required; fall back to no-ops so we
     // never pass undefined past the type boundary.
     const progressListener: OfflinePackProgressListener =
-      (args.onProgress as OfflinePackProgressListener | undefined) ?? (() => {});
+      (args.onProgress as OfflinePackProgressListener | undefined) ??
+      (() => {});
     const errorListener: OfflinePackErrorListener =
       (args.onError as OfflinePackErrorListener | undefined) ?? (() => {});
 
@@ -150,11 +151,13 @@ export const OfflineMapService = {
 
   async listPacks(): Promise<OfflineMapPack[]> {
     const packs = await OfflineManager.getPacks();
-    return packs.map(p => ({
-      id: p.id,
-      metadata: p.metadata as OfflineMapPackMetadata,
-      status: p.status,
-    }));
+    return Promise.all(
+      packs.map(async (p) => ({
+        id: p.id,
+        metadata: p.metadata as OfflineMapPackMetadata,
+        status: await p.status(),
+      })),
+    );
   },
 
   async getPack(id: string): Promise<OfflineMapPack | undefined> {
@@ -163,7 +166,7 @@ export const OfflineMapService = {
     return {
       id: pack.id,
       metadata: pack.metadata as OfflineMapPackMetadata,
-      status: pack.status,
+      status: await pack.status(),
     };
   },
 

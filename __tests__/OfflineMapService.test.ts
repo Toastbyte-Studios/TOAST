@@ -229,7 +229,8 @@ describe('OfflineMapService — OfflineManager delegation', () => {
       },
     });
 
-    const [, progressArg, errorArg] = (OfflineManager.createPack as jest.Mock).mock.calls[0];
+    const [, progressArg, errorArg] = (OfflineManager.createPack as jest.Mock)
+      .mock.calls[0];
     expect(typeof progressArg).toBe('function');
     expect(typeof errorArg).toBe('function');
   });
