@@ -23,11 +23,15 @@ jest.mock('../src/navigation/services/OfflineMapService', () => ({
 const mockPack = (id = 'test-id') =>
   ({ id, metadata: {}, status: { state: 'active' } }) as unknown as OfflinePack;
 
-const mockStatus = (completed: number, total: number): OfflinePackStatus => ({
+const mockStatus = (
+  completed: number,
+  total: number,
+  size = 0,
+): OfflinePackStatus => ({
   id: 'test-id',
   completedResourceCount: completed,
   requiredResourceCount: total,
-  completedResourceSize: 0,
+  completedResourceSize: size,
   completedTileCount: 0,
   completedTileSize: 0,
   percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
@@ -82,6 +86,12 @@ describe('OfflineDownloadStore', () => {
       expect(store.completedResourceCount).toBe(50);
     });
 
+    it('tracks completedResourceSize from status', () => {
+      store.start(mockPack());
+      store.handleProgress(mockPack(), mockStatus(50, 100, 5_242_880));
+      expect(store.completedResourceSize).toBe(5_242_880);
+    });
+
     it('transitions to complete when all resources downloaded', () => {
       store.start(mockPack());
       store.handleProgress(mockPack(), mockStatus(100, 100));
@@ -133,6 +143,13 @@ describe('OfflineDownloadStore', () => {
       expect(store.errorMessage).toBeNull();
     });
 
+    it('resets completedResourceSize', () => {
+      store.start(mockPack());
+      store.handleProgress(mockPack(), mockStatus(50, 100, 5_242_880));
+      store.clear();
+      expect(store.completedResourceSize).toBe(0);
+    });
+
     it('removes persisted id from AsyncStorage', () => {
       store.clear();
       expect(AsyncStorage.removeItem).toHaveBeenCalledWith(
@@ -167,6 +184,31 @@ describe('OfflineDownloadStore', () => {
         expect.any(Function),
         expect.any(Function),
       );
+    });
+
+    it('seeds progress from the last-known pack status', async () => {
+      (AsyncStorage.getItem as jest.Mock).mockResolvedValue(
+        JSON.stringify('abc'),
+      );
+      (OfflineMapService.listPacks as jest.Mock).mockResolvedValue([
+        {
+          id: 'abc',
+          status: {
+            state: 'active',
+            completedResourceCount: 30,
+            requiredResourceCount: 120,
+            completedResourceSize: 3_145_728,
+          },
+        },
+      ]);
+      (OfflineMapService.subscribe as jest.Mock).mockResolvedValue(undefined);
+
+      await store.recover();
+
+      expect(store.completedResourceCount).toBe(30);
+      expect(store.totalResourceCount).toBe(120);
+      expect(store.completedResourceSize).toBe(3_145_728);
+      expect(store.percentage).toBe(25);
     });
 
     it('clears storage when pack is already complete', async () => {
@@ -215,6 +257,28 @@ describe('OfflineDownloadStore', () => {
     it('is true when active', () => {
       store.start(mockPack());
       expect(store.isActive).toBe(true);
+    });
+  });
+
+  describe('computed: completedMB', () => {
+    it('uses the native byte count when reported', () => {
+      store.start(mockPack());
+      // 5 MiB reported directly
+      store.handleProgress(mockPack(), mockStatus(50, 100, 5 * 1024 * 1024));
+      expect(store.completedMB).toBe('5.0');
+    });
+
+    it('falls back to the per-resource heuristic when size is 0', () => {
+      store.start(mockPack());
+      // No native size → 1000 resources * 3000 bytes / 1 MiB ≈ 2.9
+      store.handleProgress(mockPack(), mockStatus(1000, 2000, 0));
+      expect(store.completedMB).toBe(
+        ((1000 * 3000) / (1024 * 1024)).toFixed(1),
+      );
+    });
+
+    it('is 0.0 before any progress', () => {
+      expect(store.completedMB).toBe('0.0');
     });
   });
 });
