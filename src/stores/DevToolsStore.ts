@@ -1,5 +1,5 @@
 import { NetworkManager } from '@maplibre/maplibre-react-native';
-import { makeAutoObservable, runInAction } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 
 /**
  * Dev-only store for QA tooling.
@@ -28,6 +28,12 @@ export class DevToolsStore {
   /**
    * Toggles simulated-offline mode.
    *
+   * The observable flag is only updated if the native call succeeds, so the
+   * UI/banner never claim a simulated-offline state we failed to actually
+   * enter. A QA banner that lies about the network is worse than a no-op
+   * toggle: the tester would believe they're exercising offline behavior while
+   * tiles keep loading.
+   *
    * @param next - True to simulate offline (block network), false to restore.
    */
   setSimulatedOffline(next: boolean) {
@@ -35,12 +41,33 @@ export class DevToolsStore {
     try {
       NetworkManager.setConnected(!next);
     } catch (error) {
-      // Non-fatal: keep the flag in sync with intent even if the native call
-      // fails, so the UI and banner stay consistent. Surfaced in dev logs only.
+      // Native call failed — leave the flag untouched so the UI reflects the
+      // actual (unchanged) network state rather than our intent. Dev logs only.
       console.warn('DevToolsStore: NetworkManager.setConnected failed', error);
+      return;
     }
-    runInAction(() => {
-      this.simulatedOffline = next;
-    });
+    this.simulatedOffline = next;
+  }
+
+  /**
+   * Restore the network connection before this store is torn down.
+   *
+   * Called from RootStore.reset() so a mid-session reset while offline is
+   * simulated doesn't leave MapLibre stuck in a disconnected state — the
+   * replacement store starts with simulatedOffline=false, so without this the
+   * native layer and the new flag would disagree.
+   */
+  dispose() {
+    if (!this.simulatedOffline) {
+      return;
+    }
+    try {
+      NetworkManager.setConnected(true);
+    } catch (error) {
+      console.warn(
+        'DevToolsStore: NetworkManager.setConnected(true) failed during dispose',
+        error,
+      );
+    }
   }
 }

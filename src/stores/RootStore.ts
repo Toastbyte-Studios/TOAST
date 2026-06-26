@@ -130,6 +130,10 @@ export class RootStore {
     this.trackStore.dispose();
     this.astronomyEventStore.dispose();
     this.offlineDownloadStore.dispose();
+    // Restore the network connection before discarding the dev store, so a
+    // reset while simulated-offline is active doesn't leave MapLibre stuck
+    // disconnected against the fresh (connected) store below.
+    this.devToolsStore.dispose();
     this.coreStore = new CoreStore();
     this.notesStore = new NotesStore();
     this.checklistStore = new ChecklistStore();
