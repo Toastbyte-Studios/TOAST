@@ -266,9 +266,7 @@ function DownloadConfirmScreen({ onDismiss }: Props) {
           </View>
           <Switch
             value={highDetail}
-            onValueChange={(value) =>
-              settingsStore.setHighDetailOffline(value)
-            }
+            onValueChange={(value) => settingsStore.setHighDetailOffline(value)}
             trackColor={{ true: COLORS.SECONDARY_ACCENT }}
             accessibilityLabel="Toggle high detail"
           />

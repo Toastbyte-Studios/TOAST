@@ -65,8 +65,7 @@ function describePackStatus(pack: OfflineMapPack): string {
     return 'Complete';
   }
   if (status.state === 'active') {
-    const pct =
-      required > 0 ? Math.round((completed / required) * 100) : 0;
+    const pct = required > 0 ? Math.round((completed / required) * 100) : 0;
     return `Downloading… ${pct}%`;
   }
   // 'inactive' or any partial state
@@ -325,10 +324,7 @@ export const ManageOfflineMapsModal = observer(
 
               {loading ? (
                 <View style={styles.loadingContainer}>
-                  <ActivityIndicator
-                    size="small"
-                    color={COLORS.PRIMARY_DARK}
-                  />
+                  <ActivityIndicator size="small" color={COLORS.PRIMARY_DARK} />
                 </View>
               ) : packs.length === 0 ? (
                 /* Empty state */
@@ -337,8 +333,8 @@ export const ManageOfflineMapsModal = observer(
                     No offline maps yet
                   </RNText>
                   <RNText style={[styles.emptyBody, t.primaryText]}>
-                    Download your area so the map keeps working without a
-                    signal — handy in the backcountry or during an outage.
+                    Download your area so the map keeps working without a signal
+                    — handy in the backcountry or during an outage.
                   </RNText>
                   {onDownloadArea && (
                     <TouchableOpacity
@@ -374,9 +370,7 @@ export const ManageOfflineMapsModal = observer(
                           {describePackStatus(pack)}
                         </RNText>
                         <RNText style={[styles.packSize, t.primaryText]}>
-                          {formatBytes(
-                            pack.status?.completedResourceSize ?? 0,
-                          )}
+                          {formatBytes(pack.status?.completedResourceSize ?? 0)}
                         </RNText>
                       </View>
 
