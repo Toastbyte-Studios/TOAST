@@ -70,3 +70,4 @@ export const useWeatherOutlookStore = () => useStores().weatherOutlookStore;
 export const useWaypointStore = () => useStores().waypointStore;
 export const useTrackStore = () => useStores().trackStore;
 export const useAstronomyEventStore = () => useStores().astronomyEventStore;
+export const useOfflineDownloadStore = () => useStores().offlineDownloadStore;
