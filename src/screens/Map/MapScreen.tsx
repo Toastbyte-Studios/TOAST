@@ -28,6 +28,8 @@ import {
   PermissionsAndroid,
   Platform,
   StyleSheet,
+  Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import CompassHeading from 'react-native-compass-heading';
@@ -42,6 +44,7 @@ import {
   useWaypointStore,
   useSettingsStore,
   useOfflineDownloadStore,
+  useDevToolsStore,
 } from '../../stores/StoreContext';
 import { Track, TrackPoint } from '../../stores/TrackStore';
 import { FOOTER_HEIGHT } from '../../theme';
@@ -293,6 +296,11 @@ export default observer(function MapScreen() {
   const trackStore = useTrackStore();
   const settingsStore = useSettingsStore();
   const offlineDownloadStore = useOfflineDownloadStore();
+  const devToolsStore = useDevToolsStore();
+  // Per-session dismissal of the simulated-offline banner. Intentionally not
+  // persisted — we want the banner to reappear each time the toggle is flipped
+  // back on so QA stays aware the map is in a simulated state.
+  const [offlineBannerDismissed, setOfflineBannerDismissed] = useState(false);
   const [permissionStatus, setPermissionStatus] =
     useState<LocationPermissionStatus>('undetermined');
   const [locationReady, setLocationReady] = useState(false);
@@ -341,6 +349,14 @@ export default observer(function MapScreen() {
     setDisableGestureNavigation(true);
     return () => setDisableGestureNavigation(false);
   }, [setDisableGestureNavigation]);
+
+  // Re-show the simulated-offline banner each time the toggle is enabled, so a
+  // prior dismissal doesn't hide it on the next activation.
+  useEffect(() => {
+    if (devToolsStore.simulatedOffline) {
+      setOfflineBannerDismissed(false);
+    }
+  }, [devToolsStore.simulatedOffline]);
 
   // Request location permission via LocationManager (unified iOS + Android)
   useEffect(() => {
@@ -756,6 +772,26 @@ export default observer(function MapScreen() {
           />
           {/* Download progress chip — non-blocking overlay, hidden when inactive */}
           <DownloadProgressChip store={offlineDownloadStore} />
+
+          {/* Dev-only simulated-offline banner. Dismissible per-session;
+              reappears whenever the toggle is re-enabled. */}
+          {__DEV__ &&
+            devToolsStore.simulatedOffline &&
+            !offlineBannerDismissed && (
+              <View style={styles.offlineBanner} pointerEvents="box-none">
+                <Text style={styles.offlineBannerText}>
+                  ⚠️ Simulated offline mode
+                </Text>
+                <TouchableOpacity
+                  onPress={() => setOfflineBannerDismissed(true)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  accessibilityLabel="Dismiss simulated offline banner"
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.offlineBannerDismiss}>✕</Text>
+                </TouchableOpacity>
+              </View>
+            )}
         </View>
 
         {/* Compass */}
@@ -793,6 +829,33 @@ function makeStyles(colors: ReturnType<typeof useTheme>) {
       borderWidth: 1,
       borderColor: colors.SECONDARY_ACCENT,
       overflow: 'hidden',
+    },
+    offlineBanner: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      right: 8,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: '#FFF3CD',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#FFCA2C',
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+    },
+    offlineBannerText: {
+      flex: 1,
+      fontSize: 13,
+      fontWeight: '700',
+      color: '#664D03',
+    },
+    offlineBannerDismiss: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: '#664D03',
+      paddingHorizontal: 4,
     },
     compassContainer: {
       width: '90%',
