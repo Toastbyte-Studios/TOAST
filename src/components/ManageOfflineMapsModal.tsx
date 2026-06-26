@@ -38,8 +38,8 @@ interface ManageOfflineMapsModalProps {
  * Modal for managing downloaded offline map packs.
  *
  * Lists every offline pack with its metadata, status, and on-disk size; shows
- * total storage used; and offers per-pack Refresh (delete + re-download) and
- * Delete actions, both confirmed. Shows an empty-state CTA when no packs exist.
+ * total storage used; and offers per-pack Refresh (re-download, then replace
+ * the old pack) and Delete actions, both confirmed. Shows an empty-state CTA when no packs exist.
  *
  * MVP limitations (see PR description):
  * - Refresh re-downloads using the current "High detail" setting rather than
@@ -223,7 +223,9 @@ export const ManageOfflineMapsModal = observer(
             ? HIGH_DETAIL_OFFLINE_ZOOM
             : DEFAULT_OFFLINE_ZOOM;
 
-          await OfflineMapService.deletePack(pack.id);
+          // Download the replacement pack BEFORE removing the existing one,
+          // so a failure (e.g. no signal — the exact case offline maps exist
+          // for) leaves the original pack intact rather than destroying it.
           await OfflineMapService.downloadRegion({
             bounds,
             metadata: {
@@ -232,12 +234,13 @@ export const ManageOfflineMapsModal = observer(
             },
             zoomRange,
           });
+          await OfflineMapService.deletePack(pack.id);
           await loadPacks();
         } catch (error) {
           console.error('Failed to refresh offline pack:', error);
           Alert.alert(
             'Refresh Failed',
-            'Could not refresh this map. Please try again.',
+            'Could not refresh this map. Your existing offline map was kept. Please try again.',
           );
         } finally {
           setBusyPackId(null);
@@ -250,7 +253,7 @@ export const ManageOfflineMapsModal = observer(
       (pack: OfflineMapPack) => {
         Alert.alert(
           'Refresh Offline Map',
-          `Refreshing "${pack.metadata.name}" deletes it and downloads it again with fresh tiles. This re-incurs the download size. Continue?`,
+          `Refreshing "${pack.metadata.name}" downloads it again with fresh tiles, then replaces the existing copy. This re-incurs the download size. Continue?`,
           [
             { text: 'Cancel', style: 'cancel' },
             {
@@ -351,6 +354,9 @@ export const ManageOfflineMapsModal = observer(
                 /* Pack list */
                 packs.map((pack) => {
                   const isBusy = busyPackId === pack.id;
+                  // Disable actions on every pack while any operation is in
+                  // flight, since only one download can run at a time.
+                  const isAnyBusy = busyPackId !== null;
                   return (
                     <View
                       key={pack.id}
@@ -378,7 +384,7 @@ export const ManageOfflineMapsModal = observer(
                         <TouchableOpacity
                           style={[styles.actionButton, t.buttonDefault]}
                           onPress={() => confirmRefresh(pack)}
-                          disabled={isBusy}
+                          disabled={isAnyBusy}
                           accessibilityLabel={`Refresh ${pack.metadata.name}`}
                           accessibilityRole="button"
                         >
@@ -405,7 +411,7 @@ export const ManageOfflineMapsModal = observer(
                         <TouchableOpacity
                           style={[styles.actionButton, t.buttonDefault]}
                           onPress={() => confirmDelete(pack)}
-                          disabled={isBusy}
+                          disabled={isAnyBusy}
                           accessibilityLabel={`Delete ${pack.metadata.name}`}
                           accessibilityRole="button"
                         >
