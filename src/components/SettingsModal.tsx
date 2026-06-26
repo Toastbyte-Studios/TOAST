@@ -16,6 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useTheme } from '../hooks/useTheme';
 import {
   useChecklistStore,
+  useDevToolsStore,
   useEmergencyPlanStore,
   useInventoryStore,
   useNotesStore,
@@ -108,6 +109,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
 export const SettingsModal = observer(
   ({ visible, onClose, onManageOfflineMaps }: SettingsModalProps) => {
     const settingsStore = useSettingsStore();
+    const devToolsStore = useDevToolsStore();
     const coreStore = useNotesStore();
     const checklistStore = useChecklistStore();
     const emergencyPlanStore = useEmergencyPlanStore();
@@ -738,6 +740,37 @@ export const SettingsModal = observer(
                   </View>
                 )}
               </View>
+
+              {/* Developer Section — dev builds only; tree-shaken out of
+                  release builds via the __DEV__ guard. */}
+              {__DEV__ && (
+                <View style={styles.section}>
+                  <RNText style={[styles.sectionTitle, t.primaryText]}>
+                    Developer
+                  </RNText>
+
+                  {/* Simulate offline toggle (QA tooling) */}
+                  <View style={styles.toggleRow}>
+                    <View style={styles.toggleLabel}>
+                      <RNText style={[styles.toggleTitle, t.primaryText]}>
+                        Simulate offline
+                      </RNText>
+                      <RNText style={[styles.toggleHint, t.primaryText]}>
+                        Blocks map tile requests to test offline behavior
+                        without toggling airplane mode. Resets on app launch.
+                      </RNText>
+                    </View>
+                    <Switch
+                      value={devToolsStore.simulatedOffline}
+                      onValueChange={(value) =>
+                        devToolsStore.setSimulatedOffline(value)
+                      }
+                      trackColor={{ true: COLORS.TOAST_BROWN }}
+                      accessibilityLabel="Simulate offline mode (dev only)"
+                    />
+                  </View>
+                </View>
+              )}
 
               {/* Attribution Section */}
               <View style={styles.section}>
