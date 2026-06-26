@@ -23,6 +23,12 @@ export class SettingsStore {
   noteSortOrder: NoteSortOrder = 'newest-oldest';
   measurementSystem: MeasurementSystem = 'imperial';
   lastBackupAt: number | null = null;
+  /**
+   * When true, new offline map downloads default to the high-detail zoom
+   * range (z8–14) instead of the standard range (z8–13). Read by the offline
+   * download flow when starting a new pack.
+   */
+  highDetailOffline: boolean = false;
   private settingsDb: SQLiteDatabase | null = null;
 
   constructor() {
@@ -69,6 +75,17 @@ export class SettingsStore {
   async setMeasurementSystem(system: MeasurementSystem) {
     runInAction(() => {
       this.measurementSystem = system;
+    });
+    await this.persistSettings();
+  }
+
+  /**
+   * Sets whether new offline map downloads should use the high-detail zoom range.
+   * @param enabled - True to default future downloads to z8–14, false for z8–13.
+   */
+  async setHighDetailOffline(enabled: boolean) {
+    runInAction(() => {
+      this.highDetailOffline = enabled;
     });
     await this.persistSettings();
   }
@@ -231,6 +248,17 @@ export class SettingsStore {
         }
       }
 
+      // Load high-detail offline preference
+      const highDetailOfflineRes = await this.settingsDb.executeSql(
+        "SELECT value FROM settings WHERE key = 'highDetailOffline'",
+      );
+      if (highDetailOfflineRes[0].rows.length > 0) {
+        const value = highDetailOfflineRes[0].rows.item(0).value;
+        runInAction(() => {
+          this.highDetailOffline = value === 'true';
+        });
+      }
+
       // Load last backup timestamp
       const lastBackupRes = await this.settingsDb.executeSql(
         "SELECT value FROM settings WHERE key = 'lastBackupAt'",
@@ -270,6 +298,10 @@ export class SettingsStore {
       await this.settingsDb.executeSql(
         "INSERT OR REPLACE INTO settings (key, value) VALUES ('measurementSystem', ?)",
         [this.measurementSystem],
+      );
+      await this.settingsDb.executeSql(
+        "INSERT OR REPLACE INTO settings (key, value) VALUES ('highDetailOffline', ?)",
+        [this.highDetailOffline ? 'true' : 'false'],
       );
       if (this.lastBackupAt !== null) {
         await this.settingsDb.executeSql(
