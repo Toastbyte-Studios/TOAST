@@ -6,6 +6,7 @@ import {
   useCurrentPosition,
   type OfflinePack,
 } from '@maplibre/maplibre-react-native';
+import { observer } from 'mobx-react-lite';
 import React, {
   useCallback,
   useEffect,
@@ -32,6 +33,7 @@ import {
 import { boundsFromRadius } from '../../../../navigation/utils/boundsFromRadius';
 import { boundsToGeoJSON } from '../../../../navigation/utils/boundsToGeoJSON';
 import { formatBytes } from '../../../../navigation/utils/formatBytes';
+import { useSettingsStore } from '../../../../stores';
 import { useOfflineDownloadStore } from '../../../../stores/StoreContext';
 import type { OfflineMapPackMetadata } from '../../../../stores/OfflineDownloadStore';
 
@@ -48,10 +50,15 @@ type Props = {
  * Modal sheet for confirming an offline map download.
  * Navigation: registered as a modal route on AppNavigator;
  * dismiss via onDismiss (which calls navigation.goBack()).
+ *
+ * The "High detail" toggle is backed by the persisted app setting
+ * (`SettingsStore.highDetailOffline`) so the choice carries across downloads
+ * and matches the toggle surfaced in Settings.
  */
-export default function DownloadConfirmScreen({ onDismiss }: Props) {
+function DownloadConfirmScreen({ onDismiss }: Props) {
   const COLORS = useTheme();
   const styles = useMemo(() => makeStyles(COLORS), [COLORS]);
+  const settingsStore = useSettingsStore();
   const fillLayerStyle = useMemo(
     () => ({ fillColor: COLORS.SECONDARY_ACCENT, fillOpacity: 0.2 }),
     [COLORS.SECONDARY_ACCENT],
@@ -67,7 +74,7 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
   const [gpsTimedOut, setGpsTimedOut] = useState(false);
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const [highDetail, setHighDetail] = useState(false);
+  const highDetail = settingsStore.highDetailOffline;
   const zoomRange = highDetail
     ? HIGH_DETAIL_OFFLINE_ZOOM
     : DEFAULT_OFFLINE_ZOOM;
@@ -259,7 +266,9 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
           </View>
           <Switch
             value={highDetail}
-            onValueChange={setHighDetail}
+            onValueChange={(value) =>
+              settingsStore.setHighDetailOffline(value)
+            }
             trackColor={{ true: COLORS.SECONDARY_ACCENT }}
             accessibilityLabel="Toggle high detail"
           />
@@ -304,6 +313,8 @@ export default function DownloadConfirmScreen({ onDismiss }: Props) {
     </View>
   );
 }
+
+export default observer(DownloadConfirmScreen);
 
 function makeStyles(colors: ReturnType<typeof useTheme>) {
   return StyleSheet.create({
