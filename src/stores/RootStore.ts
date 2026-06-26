@@ -3,6 +3,7 @@ import { AstronomyEventStore } from './AstronomyEventStore';
 import { BarometerStore } from './BarometerStore';
 import { ChecklistStore } from './ChecklistStore';
 import { CoreStore } from './CoreStore';
+import { DevToolsStore } from './DevToolsStore';
 import { EmergencyPlanStore } from './EmergencyPlanStore';
 import { InventoryStore } from './InventoryStore';
 import { NavigationStore } from './NavigationStore';
@@ -42,6 +43,7 @@ export class RootStore {
   trackStore: TrackStore;
   astronomyEventStore: AstronomyEventStore;
   offlineDownloadStore: OfflineDownloadStore;
+  devToolsStore: DevToolsStore;
 
   constructor() {
     makeAutoObservable(this);
@@ -65,6 +67,7 @@ export class RootStore {
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
     this.offlineDownloadStore = new OfflineDownloadStore();
+    this.devToolsStore = new DevToolsStore();
     this.startupPromise = this.initializeSettings();
   }
 
@@ -147,6 +150,7 @@ export class RootStore {
     this.trackStore = new TrackStore();
     this.astronomyEventStore = new AstronomyEventStore();
     this.offlineDownloadStore = new OfflineDownloadStore();
+    this.devToolsStore = new DevToolsStore();
     this.isOfflineMode = true;
     // initializeSettings is intentionally not awaited - settings have sensible
     // defaults and components will re-render when settings finish loading from DB
