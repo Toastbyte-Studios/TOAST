@@ -34,6 +34,7 @@ import Footer from './Footer/Footer';
 import { HelpModal } from './HelpModal';
 import { HorizontalRule } from './HorizontalRule';
 import LogoHeader from './LogoHeader';
+import { ManageOfflineMapsModal } from './ManageOfflineMapsModal';
 import ScreenContainer from './ScreenContainer';
 import { SettingsModal } from './SettingsModal';
 import TutorialModal from './TutorialModal';
@@ -47,6 +48,7 @@ type Props = PropsWithChildren;
 
 type AppShellNavigationProp = NativeStackNavigationProp<{
   Home: undefined;
+  DownloadArea: undefined;
 }>;
 
 const DATE_FORMAT = 'dddd, MMMM D, YYYY';
@@ -81,6 +83,7 @@ export default function AppShell({ children }: Props) {
   const { isKeyboardVisible, keyboardHeight } = useKeyboardStatus();
   const translateYRef = useRef(new Animated.Value(0)).current;
   const [isSettingsVisible, setIsSettingsVisible] = useState(false);
+  const [isManageOfflineVisible, setIsManageOfflineVisible] = useState(false);
   const [isHelpVisible, setIsHelpVisible] = useState(false);
   const [isTutorialVisible, setIsTutorialVisible] = useState(false);
   const [tutorialSpotlightTarget, setTutorialSpotlightTarget] = useState<
@@ -397,6 +400,13 @@ export default function AppShell({ children }: Props) {
       <SettingsModal
         visible={isSettingsVisible}
         onClose={() => setIsSettingsVisible(false)}
+        onManageOfflineMaps={() => setIsManageOfflineVisible(true)}
+      />
+
+      <ManageOfflineMapsModal
+        visible={isManageOfflineVisible}
+        onClose={() => setIsManageOfflineVisible(false)}
+        onDownloadArea={() => navigation.navigate('DownloadArea')}
       />
 
       <HelpModal
