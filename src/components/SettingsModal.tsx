@@ -6,6 +6,7 @@ import {
   Modal,
   Pressable,
   StyleSheet,
+  Switch,
   TouchableOpacity,
   View,
   ScrollView,
@@ -47,6 +48,11 @@ import {
 interface SettingsModalProps {
   visible: boolean;
   onClose: () => void;
+  /**
+   * Opens the "Manage offline maps" surface. Supplied by the host (AppShell),
+   * which owns that modal's visibility and navigation access.
+   */
+  onManageOfflineMaps?: () => void;
 }
 
 /**
@@ -100,7 +106,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
 }
 
 export const SettingsModal = observer(
-  ({ visible, onClose }: SettingsModalProps) => {
+  ({ visible, onClose, onManageOfflineMaps }: SettingsModalProps) => {
     const settingsStore = useSettingsStore();
     const coreStore = useNotesStore();
     const checklistStore = useChecklistStore();
@@ -348,6 +354,12 @@ export const SettingsModal = observer(
       [handleRestore],
     );
 
+    const handleManageOfflineMaps = useCallback(() => {
+      // Close settings first so the two modals don't stack on top of each other.
+      onClose();
+      onManageOfflineMaps?.();
+    }, [onClose, onManageOfflineMaps]);
+
     return (
       <Modal
         visible={visible}
@@ -487,6 +499,52 @@ export const SettingsModal = observer(
                     </TouchableOpacity>
                   ))}
                 </View>
+              </View>
+
+              {/* Offline Maps Section */}
+              <View style={styles.section}>
+                <RNText style={[styles.sectionTitle, t.primaryText]}>
+                  Offline Maps
+                </RNText>
+
+                {/* High-detail toggle */}
+                <View style={styles.toggleRow}>
+                  <View style={styles.toggleLabel}>
+                    <RNText style={[styles.toggleTitle, t.primaryText]}>
+                      High detail (z8–14)
+                    </RNText>
+                    <RNText style={[styles.toggleHint, t.primaryText]}>
+                      New downloads include building detail. Uses ~2× storage.
+                    </RNText>
+                  </View>
+                  <Switch
+                    value={settingsStore.highDetailOffline}
+                    onValueChange={(value) =>
+                      settingsStore.setHighDetailOffline(value)
+                    }
+                    trackColor={{ true: COLORS.TOAST_BROWN }}
+                    accessibilityLabel="Toggle high detail for new offline downloads"
+                  />
+                </View>
+
+                {/* Manage offline maps entry */}
+                <TouchableOpacity
+                  style={[styles.actionButton, t.buttonDefault]}
+                  onPress={handleManageOfflineMaps}
+                  accessibilityLabel="Manage offline maps"
+                  accessibilityRole="button"
+                >
+                  <View style={styles.actionButtonInner}>
+                    <Ionicons
+                      name="map-outline"
+                      size={20}
+                      color={COLORS.PRIMARY_DARK}
+                    />
+                    <RNText style={[styles.actionButtonText, t.primaryText]}>
+                      Manage offline maps
+                    </RNText>
+                  </View>
+                </TouchableOpacity>
               </View>
 
               {/* Data & Backup Section */}
@@ -761,6 +819,25 @@ const styles = StyleSheet.create({
   },
   optionTextSelected: {
     fontWeight: '800',
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  toggleLabel: {
+    flex: 1,
+    marginRight: 12,
+  },
+  toggleTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  toggleHint: {
+    fontSize: 12,
+    opacity: 0.7,
+    marginTop: 2,
   },
   backupStatus: {
     fontSize: 13,
