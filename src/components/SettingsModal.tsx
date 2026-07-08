@@ -741,8 +741,7 @@ export const SettingsModal = observer(
                 )}
               </View>
 
-              {/* Developer Section — dev builds only; tree-shaken out of
-                  release builds via the __DEV__ guard. */}
+              {/* Developer Section — shown only in dev builds via __DEV__. */}
               {__DEV__ && (
                 <View style={styles.section}>
                   <RNText style={[styles.sectionTitle, t.primaryText]}>

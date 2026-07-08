@@ -14,8 +14,8 @@ import { makeAutoObservable } from 'mobx';
  * fresh app launch (RootStore constructs a new instance at startup), so no one
  * is confused by a leftover simulated-offline state from a previous session.
  *
- * The toggle UI is gated behind `__DEV__` and tree-shaken out of release
- * builds; this store is inert there because nothing flips the flag.
+ * The toggle UI is gated behind `__DEV__`; in release builds the toggle is not
+ * rendered, so this store remains inert because nothing flips the flag.
  */
 export class DevToolsStore {
   /** When true, MapLibre network requests are blocked to simulate offline. */
