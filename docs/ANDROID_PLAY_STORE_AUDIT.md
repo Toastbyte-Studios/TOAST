@@ -284,20 +284,20 @@ These areas are already correctly set up for Android:
 
 ## 6. Code Changes in This PR
 
-| File                                       | Change                                                                                                         |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| File                                       | Change                                                                                                                              |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
 | `android/app/src/main/AndroidManifest.xml` | Added `POST_NOTIFICATIONS` permission for Android 13+; removed Google Maps API key placeholder (MapLibre + OpenFreeMap need no key) |
-| `android/app/proguard-rules.pro`           | Added keep rules for react-native-svg, react-native-sensors, and Hermes; removed react-native-maps section                        |
-| `docs/ANDROID_PLAY_STORE_AUDIT.md`         | This document                                                                                                  |
+| `android/app/proguard-rules.pro`           | Added keep rules for react-native-svg, react-native-sensors, and Hermes; removed react-native-maps section                          |
+| `docs/ANDROID_PLAY_STORE_AUDIT.md`         | This document                                                                                                                       |
 
 ---
 
 ## 7. Recommended Sequence
 
 1. **Rename applicationId** from `com.toast` to `studio.toastbyte.toast` (including Kotlin package move)
-3. **Run `npx react-native run-android`** on an emulator — fix any build errors
-4. **Test on a physical Android device** — verify maps, compass, torch, sounds, barometer, contacts
-5. **Generate adaptive icons** from your existing icon source
-6. **Set up release signing**
-7. **Create Play Store listing** (screenshots, description, privacy policy)
-8. **Build AAB and submit** to Play Console
+2. **Run `npx react-native run-android`** on an emulator — fix any build errors
+3. **Test on a physical Android device** — verify maps, compass, torch, sounds, barometer, contacts
+4. **Generate adaptive icons** from your existing icon source
+5. **Set up release signing**
+6. **Create Play Store listing** (screenshots, description, privacy policy)
+7. **Build AAB and submit** to Play Console
