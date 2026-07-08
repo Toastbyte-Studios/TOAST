@@ -48,6 +48,7 @@ export {
   type AstronomyEvent,
   type AstronomyEventType,
 } from './AstronomyEventStore';
+export { DevToolsStore } from './DevToolsStore';
 export {
   StoreProvider,
   useStores,
@@ -69,4 +70,5 @@ export {
   useWaypointStore,
   useTrackStore,
   useAstronomyEventStore,
+  useDevToolsStore,
 } from './StoreContext';
