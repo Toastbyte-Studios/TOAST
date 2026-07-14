@@ -32,7 +32,7 @@ export const DELTA = { latitudeDelta: 0.05, longitudeDelta: 0.05 };
 const MAP_STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 
 /**
- * Converts a react-native-maps-style latitudeDelta to a MapLibre zoom level.
+ * Converts a latitudeDelta (degrees of latitude visible) to a MapLibre zoom level.
  * Formula: zoom = log2(360 / latitudeDelta)
  */
 export function zoomFromDelta(latitudeDelta: number): number {

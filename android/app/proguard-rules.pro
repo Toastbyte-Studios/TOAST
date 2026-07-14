@@ -22,11 +22,6 @@
     @com.facebook.proguard.annotations.KeepGettersAndSetters *;
 }
 
-# ── react-native-maps (Google Maps) ──────────────────────────────────────────
-# Rely on Google Play Services / react-native-maps consumer ProGuard rules.
-# If a concrete R8/runtime issue appears, add a narrowly scoped keep rule for
-# the specific class accessed via reflection instead of keeping entire packages.
-
 # ── react-native-svg ─────────────────────────────────────────────────────────
 -keep public class com.horcrux.svg.** { *; }
 

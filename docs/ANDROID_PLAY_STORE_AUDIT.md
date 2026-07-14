@@ -9,35 +9,19 @@
 
 TOAST is a React Native 0.84 app built and tested exclusively on iOS. The good news: the Android scaffold already exists, native Kotlin modules are in place (foreground service for trail recording), splash screen assets are generated, sound files are in `res/raw/`, and most of the JS/TS code already handles `Platform.OS` branching where needed. The app is closer to building on Android than you might expect.
 
-The blockers are configuration issues (Google Maps API key, application ID, signing), not architectural ones. Below is everything that needs to happen, grouped by priority.
+The blockers are configuration issues (application ID, signing), not architectural ones. Below is everything that needs to happen, grouped by priority.
 
 ---
 
 ## 1. Blockers — Must Fix Before `npx react-native run-android` Works
 
-### 1.1 Google Maps API Key
+### 1.1 Map Tiles (OpenFreeMap via MapLibre)
 
-**Status:** Missing entirely.
+**Status:** No API key needed.
 
-`react-native-maps` uses `PROVIDER_DEFAULT` in `MapPanel.tsx`, which means Google Maps on Android. Google Maps requires an API key or the map will show a blank gray screen.
+The map screen uses `@maplibre/maplibre-react-native` with [OpenFreeMap](https://openfreemap.org/) Liberty tiles. Neither MapLibre nor OpenFreeMap requires an API key — the tile URL is open and free.
 
-**What to do:**
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials
-2. Create an API key and restrict it to:
-   - **Maps SDK for Android**
-   - Your app's SHA-1 fingerprint + package name
-3. Keep the `<meta-data>` entry in `AndroidManifest.xml` wired to the `${googleMapsApiKey}` Gradle placeholder instead of replacing it with a real key in the manifest.
-4. In `android/app/build.gradle`, provide that value via `manifestPlaceholders`, sourcing the key from an uncommitted local Gradle properties file for developer machines and from CI/CD secrets for release builds.
-5. For development, you can get your debug keystore SHA-1 with:
-
-   ```bash
-   keytool -list -v -keystore android/app/debug.keystore -alias androiddebugkey -storepass android -keypass android
-   ```
-
-6. Do not commit the real API key to the repository or replace the checked-in placeholder value directly in `AndroidManifest.xml`.
-
-**Cost:** Google Maps Platform gives you $200/month free credit. For an offline-first app that only loads tiles when the map screen is opened, you'll almost certainly stay within the free tier.
+No action is needed for the map to work on Android.
 
 ### 1.2 Application ID Conflict
 
@@ -300,21 +284,20 @@ These areas are already correctly set up for Android:
 
 ## 6. Code Changes in This PR
 
-| File                                       | Change                                                                                                         |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
-| `android/app/src/main/AndroidManifest.xml` | Added Google Maps API key placeholder `<meta-data>` tag; added `POST_NOTIFICATIONS` permission for Android 13+ |
-| `android/app/proguard-rules.pro`           | Added keep rules for react-native-maps, react-native-svg, react-native-sensors, and Hermes                     |
-| `docs/ANDROID_PLAY_STORE_AUDIT.md`         | This document                                                                                                  |
+| File                                       | Change                                                                                                                              |
+| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `android/app/src/main/AndroidManifest.xml` | Added `POST_NOTIFICATIONS` permission for Android 13+; removed Google Maps API key placeholder (MapLibre + OpenFreeMap need no key) |
+| `android/app/proguard-rules.pro`           | Added keep rules for react-native-svg, react-native-sensors, and Hermes; removed react-native-maps section                          |
+| `docs/ANDROID_PLAY_STORE_AUDIT.md`         | This document                                                                                                                       |
 
 ---
 
 ## 7. Recommended Sequence
 
-1. **Add your Google Maps API key** to `AndroidManifest.xml` (replace the placeholder)
-2. **Rename applicationId** from `com.toast` to `studio.toastbyte.toast` (including Kotlin package move)
-3. **Run `npx react-native run-android`** on an emulator — fix any build errors
-4. **Test on a physical Android device** — verify maps, compass, torch, sounds, barometer, contacts
-5. **Generate adaptive icons** from your existing icon source
-6. **Set up release signing**
-7. **Create Play Store listing** (screenshots, description, privacy policy)
-8. **Build AAB and submit** to Play Console
+1. **Rename applicationId** from `com.toast` to `studio.toastbyte.toast` (including Kotlin package move)
+2. **Run `npx react-native run-android`** on an emulator — fix any build errors
+3. **Test on a physical Android device** — verify maps, compass, torch, sounds, barometer, contacts
+4. **Generate adaptive icons** from your existing icon source
+5. **Set up release signing**
+6. **Create Play Store listing** (screenshots, description, privacy policy)
+7. **Build AAB and submit** to Play Console
