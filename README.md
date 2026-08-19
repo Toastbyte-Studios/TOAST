@@ -84,7 +84,7 @@ Throughout:
   Android builds expect a Google Maps API key. To build without one:
 
   ```sh
-  cd android && ./gradlew assembleDebug -PgoogleMapsApiKey=MAPS_API_KEY_NOT_SET
+  cd android && ./gradlew assembleDebug -PGOOGLE_MAPS_API_KEY=MAPS_API_KEY_NOT_SET
   ```
 
 ### Scripts
