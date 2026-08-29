@@ -4,8 +4,11 @@
 
 import 'react-native-get-random-values';
 import { Alert, AppRegistry } from 'react-native';
+import { enableScreens } from 'react-native-screens';
 import App from './App';
 import { name as appName } from './app.json';
+
+enableScreens();
 
 // Capture unhandled JS exceptions so they surface as visible alerts instead of
 // silently closing the app in release builds. In debug builds the RN red-screen
