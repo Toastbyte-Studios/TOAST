@@ -3,14 +3,10 @@ import ReactTestRenderer from 'react-test-renderer';
 import { HelpModal } from '../src/components/HelpModal';
 import TutorialModal from '../src/components/TutorialModal';
 
+// Resolve the real light-mode tokens rather than restating them here, so the
+// mock cannot drift out of the palette again the way the warm hexes did.
 jest.mock('../src/hooks/useTheme', () => ({
-  useTheme: jest.fn(() => ({
-    BRAND: '#C09A6B',
-    PRIMARY_DARK: '#1F1F1F',
-    PRIMARY_LIGHT: '#F2EDE4',
-    SECONDARY_ACCENT: '#8DAA9D',
-    BACKGROUND: '#D9C8B0',
-  })),
+  useTheme: jest.fn(() => require('../src/theme/colors').LIGHT_COLORS),
 }));
 
 jest.mock('react-native-vector-icons/Ionicons', () => 'Ionicons');
