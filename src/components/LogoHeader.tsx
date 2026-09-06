@@ -9,12 +9,11 @@ import {
 } from 'react-native';
 import { useIsDarkMode } from '../hooks/useIsDarkMode';
 import { useTheme } from '../hooks/useTheme';
-
 // Static requires: Metro resolves these at build time, so the paths cannot be
 // interpolated. Both variants are bundled and the correct one is chosen at
 // render time.
-const LOGO_LIGHT = require('../../assets/coldboot-assets/png/light/icon-512.png');
 const LOGO_DARK = require('../../assets/coldboot-assets/png/dark/icon-512.png');
+const LOGO_LIGHT = require('../../assets/coldboot-assets/png/light/icon-512.png');
 
 type Props = {
   size?: number;
@@ -27,7 +26,7 @@ type Props = {
  *
  * The mark ships in a light and a dark variant; the active theme decides which
  * is shown. Each tile carries its own ground, so the circle is filled by the
- * artwork rather than by a themed background colour.
+ * artwork rather than by a themed background color.
  *
  * @param size - The diameter of the logo in pixels. Defaults to 120.
  * @param style - Optional additional styles to apply to the logo image.
