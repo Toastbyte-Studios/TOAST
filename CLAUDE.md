@@ -1,6 +1,6 @@
-# TOAST — Claude Code Instructions
+# ColdBoot — Claude Code Instructions
 
-TOAST (Trusted Outdoor And Survival Toolkit) is a fully **offline-first** React Native app for iOS and Android.
+ColdBoot is a fully **offline-first** React Native app for iOS and Android.
 
 ---
 

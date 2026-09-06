@@ -15,7 +15,7 @@ import ToolList from '../../components/ToolList';
 export default function HomeScreen() {
   return (
     <ScreenBody>
-      <SectionHeader>TOAST</SectionHeader>
+      <SectionHeader>ColdBoot</SectionHeader>
       <ToolList tools={MODULES} />
     </ScreenBody>
   );

@@ -68,12 +68,14 @@ for (const { pkgName, androidDir } of packages) {
   const buildLink = path.join(androidDir, 'build');
   const apfsTarget = path.join(apfsBase, pkgName);
 
-  // If it's already a correct symlink, skip.
+  // If it's already a correct symlink, make sure its target still exists
+  // (~/Library/Caches can be purged by macOS, leaving a dangling link) and skip.
   try {
     if (
       fs.lstatSync(buildLink).isSymbolicLink() &&
       fs.readlinkSync(buildLink) === apfsTarget
     ) {
+      fs.mkdirSync(apfsTarget, { recursive: true });
       continue;
     }
   } catch {

@@ -29,9 +29,7 @@ export default function VoiceLogCard({
     <View style={[styles.container, isPlaying && styles.containerPlaying]}>
       <LinearGradient
         colors={
-          isPlaying
-            ? [COLORS.ACCENT, COLORS.ACCENT]
-            : COLORS.TOAST_BROWN_GRADIENT
+          isPlaying ? [COLORS.ACCENT, COLORS.ACCENT] : COLORS.BRAND_GRADIENT
         }
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}

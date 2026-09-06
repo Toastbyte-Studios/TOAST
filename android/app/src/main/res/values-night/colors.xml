@@ -1,0 +1,6 @@
+<resources>
+    <!-- Dark-mode splash. Without this the launcher shows the light
+         bootsplash_background before the JS theme resolves, flashing bright
+         ahead of a dark-mode launch. Matches DARK_COLORS.BACKGROUND. -->
+    <color name="bootsplash_background">#101B24</color>
+</resources>

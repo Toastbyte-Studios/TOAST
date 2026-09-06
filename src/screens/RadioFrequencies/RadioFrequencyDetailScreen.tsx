@@ -134,7 +134,7 @@ export default function RadioFrequencyDetailScreen(): JSX.Element {
               styles.card,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
           >
@@ -152,7 +152,7 @@ export default function RadioFrequencyDetailScreen(): JSX.Element {
               styles.card,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
           >
@@ -162,10 +162,7 @@ export default function RadioFrequencyDetailScreen(): JSX.Element {
 
             {/* Table Header */}
             <View
-              style={[
-                styles.tableHeader,
-                { borderBottomColor: COLORS.TOAST_BROWN },
-              ]}
+              style={[styles.tableHeader, { borderBottomColor: COLORS.BRAND }]}
             >
               <View style={styles.tableCell}>
                 <Text
@@ -262,7 +259,7 @@ export default function RadioFrequencyDetailScreen(): JSX.Element {
               styles.modalSheet,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
           >

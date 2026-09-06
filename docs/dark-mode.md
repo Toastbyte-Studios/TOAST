@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TOAST app now supports dark mode with three theme options that can be configured in the Settings modal.
+The ColdBoot app now supports dark mode with three theme options that can be configured in the Settings modal.
 
 ## Theme Options
 
@@ -15,8 +15,8 @@ The TOAST app now supports dark mode with three theme options that can be config
 
 ### 2. Light Mode
 
-- Classic light theme with warm, natural colors
-- Uses the original color palette
+- Cool, high-contrast theme tuned for outdoor glare
+- Uses the ColdBoot "glacier" palette
 - Best for daytime use and well-lit environments
 
 ### 3. Dark Mode
@@ -58,15 +58,19 @@ The TOAST app now supports dark mode with three theme options that can be config
 
 ### Light Mode
 
-- Background: Warm beige/tan tones
-- Text: Dark brown/charcoal
-- Accents: Orange and sage green
+- Background: Pale ice blue (`#DCECF7`)
+- Text: Near-black ink (`#1D1F20`)
+- Brand: Steel blue (`#2F5875`)
+- Accents: Signal amber (`#B45309`) and cold teal (`#2F6F7A`)
 
 ### Dark Mode
 
-- Background: Dark brown/charcoal tones
-- Text: Light cream/off-white
-- Accents: Orange and muted green (adjusted for dark backgrounds)
+- Background: Deep slate (`#101B24`)
+- Text: Pale ice (`#DCECF7`)
+- Brand: Pale steel (`#8FB6CE`)
+- Accents: Signal amber (`#FFB020`) and cold teal (`#5E9BA8`), both lifted for dark backgrounds
+
+Dark mode is the hero scheme. Tokens are defined in `src/theme/colors.ts`.
 
 ## Accessibility
 

@@ -132,7 +132,7 @@ function SunTimeScreen() {
   const renderCard = (label: string, value: string) => (
     <View style={styles.card} key={label}>
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}

@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   displayBox: {
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 8,
     padding: 10,
     minHeight: 50,
@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
   primaryButton: {
     backgroundColor: COLORS.ACCENT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
   },
   primaryButtonText: {
     fontSize: 24,
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
   secondaryButton: {
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
   },
   secondaryButtonText: {
     fontSize: 20,
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   clearButton: {
-    backgroundColor: COLORS.TOAST_BROWN,
+    backgroundColor: COLORS.BRAND,
   },
   clearButtonText: {
     fontSize: 13,

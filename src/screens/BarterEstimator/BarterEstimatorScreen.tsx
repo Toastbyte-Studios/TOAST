@@ -52,7 +52,7 @@ function CategoryRow({
       ? COLORS.SUCCESS
       : item.status === 'scarce'
         ? COLORS.ERROR
-        : COLORS.TOAST_BROWN;
+        : COLORS.BRAND;
 
   return (
     <View style={styles.row}>
@@ -122,7 +122,7 @@ export default observer(function BarterEstimatorScreen(): JSX.Element {
               <Ionicons
                 name="cube-outline"
                 size={36}
-                color={COLORS.TOAST_BROWN}
+                color={COLORS.BRAND}
                 style={styles.emptyIcon}
               />
               <Text style={styles.emptyText}>
@@ -252,7 +252,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
       backgroundColor: COLORS.PRIMARY_LIGHT,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: COLORS.TOAST_BROWN + '40',
+      borderColor: COLORS.BRAND + '40',
     },
     emptyIcon: { marginBottom: 8 },
     emptyText: {
@@ -268,7 +268,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
       padding: 16,
       gap: 8,
       borderWidth: 1,
-      borderColor: COLORS.TOAST_BROWN + '40',
+      borderColor: COLORS.BRAND + '40',
     },
     cardHeaderRow: {
       flexDirection: 'row',
@@ -329,7 +329,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
       alignItems: 'center',
       paddingVertical: 10,
       borderBottomWidth: 1,
-      borderBottomColor: COLORS.TOAST_BROWN + '25',
+      borderBottomColor: COLORS.BRAND + '25',
     },
     rowIcon: { marginRight: 10 },
     rowMain: { flex: 1 },

@@ -1,19 +1,19 @@
-# TOAST
+# ColdBoot
 
-Trusted Outdoor And Survival Toolkit (TOAST) is a React Native app providing essential offline utilities and reference modules for survival, navigation, and more.
+ColdBoot is a React Native app providing essential offline utilities and reference modules for survival, navigation, and more.
 
 Built by [Toastbyte Studios](https://toastbyte.studio/).
 
 ## Features
 
-TOAST is organized into six modules:
+ColdBoot is organized into six modules:
 
-- **Core** — flashlight, notepad, checklists, device status, unit conversion
-- **Navigation** — offline maps, grid reference, compass, star map
-- **Communications** — Morse code, digital whistle, signal mirror, radio frequencies, repeater lookup, voice log
-- **Earth** — sun times, lunar cycles, sky events, barometric pressure, seasonal outlook
-- **Prepper** — inventory, pantry, depletion calculator, barter estimator, emergency plan, scenario cards
-- **Reference** — offline reference material
+-- **Core** — flashlight, notepad, checklists, device status, unit conversion
+-- **Navigation** — offline maps, grid reference, compass, star map
+-- **Communications** — Morse code, digital whistle, signal mirror, radio frequencies, repeater lookup, voice log
+-- **Earth** — sun times, lunar cycles, sky events, barometric pressure, seasonal outlook
+-- **Prepper** — inventory, pantry, depletion calculator, barter estimator, emergency plan, scenario cards
+-- **Reference** — offline reference material
 
 Throughout:
 

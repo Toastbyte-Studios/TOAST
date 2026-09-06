@@ -109,7 +109,7 @@ const FlashlightScreenImpl = () => {
                   true: COLORS.ACCENT,
                 }}
                 thumbColor={
-                  core.sosWithTone ? COLORS.PRIMARY_LIGHT : COLORS.TOAST_BROWN
+                  core.sosWithTone ? COLORS.PRIMARY_LIGHT : COLORS.BRAND
                 }
                 style={styles.switchContainer}
               />

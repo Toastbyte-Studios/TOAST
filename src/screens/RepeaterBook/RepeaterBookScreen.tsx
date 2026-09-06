@@ -119,7 +119,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
               styles.dropdown,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
             onPress={() => setModePickerVisible(true)}
@@ -149,7 +149,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
                 value={store.onAirOnly}
                 onValueChange={(v) => store.setOnAirOnly(v)}
                 trackColor={{
-                  false: COLORS.TOAST_BROWN,
+                  false: COLORS.BRAND,
                   true: COLORS.SUCCESS,
                 }}
                 thumbColor={COLORS.PRIMARY_LIGHT}
@@ -167,7 +167,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
                 value={store.emergencyOnly}
                 onValueChange={(v) => store.setEmergencyOnly(v)}
                 trackColor={{
-                  false: COLORS.TOAST_BROWN,
+                  false: COLORS.BRAND,
                   true: COLORS.ERROR,
                 }}
                 thumbColor={COLORS.PRIMARY_LIGHT}
@@ -263,7 +263,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
                 styles.row,
                 {
                   backgroundColor: COLORS.PRIMARY_LIGHT,
-                  borderColor: COLORS.TOAST_BROWN,
+                  borderColor: COLORS.BRAND,
                 },
               ]}
             >
@@ -275,7 +275,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
                     backgroundColor:
                       repeater.operationalStatus === 'On-air'
                         ? COLORS.SUCCESS
-                        : COLORS.TOAST_BROWN,
+                        : COLORS.BRAND,
                   },
                 ]}
               />
@@ -426,7 +426,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
                   styles.modalSheet,
                   {
                     backgroundColor: COLORS.PRIMARY_LIGHT,
-                    borderColor: COLORS.TOAST_BROWN,
+                    borderColor: COLORS.BRAND,
                   },
                 ]}
               >
@@ -487,7 +487,7 @@ const RepeaterBookScreen = observer((): JSX.Element => {
               styles.modalSheet,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
           >

@@ -115,18 +115,14 @@ export default observer(function DepletionCalculatorScreen(): JSX.Element {
               <Ionicons
                 name="nutrition-outline"
                 size={18}
-                color={COLORS.TOAST_BROWN}
+                color={COLORS.BRAND}
               />
               <Text style={styles.statLabel}>
                 Pantry items: {pantryStore.items.length}
               </Text>
             </View>
             <View style={styles.statRow}>
-              <Ionicons
-                name="cube-outline"
-                size={18}
-                color={COLORS.TOAST_BROWN}
-              />
+              <Ionicons name="cube-outline" size={18} color={COLORS.BRAND} />
               <Text style={styles.statLabel}>
                 Inventory items: {inventoryStore.items.length}
               </Text>
@@ -216,7 +212,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
       padding: 16,
       gap: 8,
       borderWidth: 1,
-      borderColor: COLORS.TOAST_BROWN + '40',
+      borderColor: COLORS.BRAND + '40',
     },
     cardTitle: {
       fontSize: 16,
@@ -272,7 +268,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
       padding: 16,
       gap: 10,
       borderWidth: 1,
-      borderColor: COLORS.TOAST_BROWN + '40',
+      borderColor: COLORS.BRAND + '40',
     },
     resultsTitle: {
       fontSize: 16,
@@ -291,7 +287,7 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
     },
     divider: {
       height: 1,
-      backgroundColor: COLORS.TOAST_BROWN + '30',
+      backgroundColor: COLORS.BRAND + '30',
     },
     resultRow: {
       flexDirection: 'row',
