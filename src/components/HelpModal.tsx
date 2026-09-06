@@ -124,30 +124,33 @@ export const HelpModal = ({
     });
   };
 
+  // NOTE: Placeholder rebrand copy. Awaiting final wording from creative.
+  // The privacy and terms URLs point at /coldboot/ paths that do not exist
+  // yet — they must be live before release or these links will 404.
   const helpSections: AccordionItem[] = [
     {
       id: 'what',
-      title: 'What is TOAST',
+      title: 'What is ColdBoot',
       content:
-        'TOAST (Trusted Outdoor And Survival Toolkit) is a comprehensive mobile application designed to assist users in various tactical and survival situations. It provides essential tools, references, and utilities in one convenient package.',
+        'ColdBoot is an offline-first toolkit for preparedness. A cold boot starts from nothing — no network, no account, no prior state — which is exactly how this app is built to work. Every tool, reference and calculator runs entirely on your device.',
     },
     {
       id: 'how',
       title: 'How to use',
       content:
-        'Navigate through TOAST using the intuitive menu system. Access different tools and features from the home screen. Swipe left or right to navigate between screens. Tap on any tool to open it. Use the settings button (top right) to customize your experience.',
+        'Navigate through ColdBoot using the intuitive menu system. Access different tools and features from the home screen. Swipe left or right to navigate between screens. Tap on any tool to open it. Use the settings button (top right) to customize your experience.',
     },
     {
       id: 'privacy',
       title: 'Privacy Policy',
       content:
-        "Your privacy is important to us. TOAST operates primarily offline and does not collect or transmit personal data without your explicit consent...which we don't ask for because we don't need it. Any data stored is kept locally on your device. For more details, please contact us at info@toastbyte.studio or visit our website: https://toastbyte.studio/toast/privacy.",
+        "Your privacy is important to us. ColdBoot operates primarily offline and does not collect or transmit personal data without your explicit consent...which we don't ask for because we don't need it. Any data stored is kept locally on your device. For more details, please contact us at info@toastbyte.studio or visit our website: https://toastbyte.studio/coldboot/privacy.",
     },
     {
       id: 'terms',
       title: 'Terms of Use',
       content:
-        'By using TOAST, you agree to use this application responsibly and in accordance with all applicable laws. This application is provided "as-is" without warranties of any kind. The developers are not liable for any decisions made based on information provided by this app. For complete terms, visit our website: https://toastbyte.studio/toast/terms.',
+        'By using ColdBoot, you agree to use this application responsibly and in accordance with all applicable laws. This application is provided "as-is" without warranties of any kind. The developers are not liable for any decisions made based on information provided by this app. For complete terms, visit our website: https://toastbyte.studio/coldboot/terms.',
     },
     {
       id: 'contact',
