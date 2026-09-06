@@ -1,34 +1,34 @@
 :root {
-  --cb-ice: #DCECF7;
-  --cb-ice-deep: #A9C5DA;
-  --cb-ink: #1D1F20;
-  --cb-steel: #2F5875;
-  --cb-steel-pale: #8FB6CE;
+  --cb-ice: #dcecf7;
+  --cb-ice-deep: #a9c5da;
+  --cb-ink: #1d1f20;
+  --cb-steel: #2f5875;
+  --cb-steel-pale: #8fb6ce;
 
-  --cb-brand: #2F5875;
-  --cb-bg: #DCECF7;
-  --cb-surface: #F7FAFC;
-  --cb-text: #1D1F20;
-  --cb-border: #A9C5DA;
+  --cb-brand: #2f5875;
+  --cb-bg: #dcecf7;
+  --cb-surface: #f7fafc;
+  --cb-text: #1d1f20;
+  --cb-border: #a9c5da;
   --cb-muted: #557286;
-  --cb-accent: #B45309;
-  --cb-secondary-accent: #2F6F7A;
-  --cb-error: #C62828;
-  --cb-success: #227A66;
+  --cb-accent: #b45309;
+  --cb-secondary-accent: #2f6f7a;
+  --cb-error: #c62828;
+  --cb-success: #227a66;
 
-  --cb-tile-light: linear-gradient(150deg, #DCECF7 0%, #A9C5DA 100%);
-  --cb-tile-dark: linear-gradient(150deg, #2F4F6B 0%, #1B2F42 100%);
+  --cb-tile-light: linear-gradient(150deg, #dcecf7 0%, #a9c5da 100%);
+  --cb-tile-dark: linear-gradient(150deg, #2f4f6b 0%, #1b2f42 100%);
 }
 
 [data-theme='dark'] {
-  --cb-brand: #8FB6CE;
-  --cb-bg: #101B24;
-  --cb-surface: #17232E;
-  --cb-text: #DCECF7;
-  --cb-border: #2C4256;
-  --cb-muted: #8CA3B4;
-  --cb-accent: #FFB020;
-  --cb-secondary-accent: #5E9BA8;
-  --cb-error: #EF5350;
-  --cb-success: #4CA891;
+  --cb-brand: #8fb6ce;
+  --cb-bg: #101b24;
+  --cb-surface: #17232e;
+  --cb-text: #dcecf7;
+  --cb-border: #2c4256;
+  --cb-muted: #8ca3b4;
+  --cb-accent: #ffb020;
+  --cb-secondary-accent: #5e9ba8;
+  --cb-error: #ef5350;
+  --cb-success: #4ca891;
 }

@@ -6,16 +6,16 @@ generated from one 120×120 path set, so the vectors are the source of truth.
 
 ## Palette
 
-| Role | Light | Dark |
-| --- | --- | --- |
-| Brand | `#2F5875` | `#8FB6CE` |
-| Background | `#DCECF7` | `#101B24` |
-| Surface | `#F7FAFC` | `#17232E` |
-| Text | `#1D1F20` | `#DCECF7` |
-| Border | `#A9C5DA` | `#2C4256` |
-| Muted | `#557286` | `#8CA3B4` |
+| Role            | Light     | Dark      |
+| --------------- | --------- | --------- |
+| Brand           | `#2F5875` | `#8FB6CE` |
+| Background      | `#DCECF7` | `#101B24` |
+| Surface         | `#F7FAFC` | `#17232E` |
+| Text            | `#1D1F20` | `#DCECF7` |
+| Border          | `#A9C5DA` | `#2C4256` |
+| Muted           | `#557286` | `#8CA3B4` |
 | Signal (accent) | `#B45309` | `#FFB020` |
-| Confirmed | `#2F6F7A` | `#5E9BA8` |
+| Confirmed       | `#2F6F7A` | `#5E9BA8` |
 
 Icon tile gradients: light `150deg #DCECF7 → #A9C5DA`, dark `150deg #2F4F6B → #1B2F42`.
 
