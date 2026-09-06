@@ -14,9 +14,9 @@ export default function App() {
       // infrastructure.  Runs once at mount rather than in the Map component
       // so it applies globally regardless of which screen is active.
       TransformRequestManager.addHeader({
-        id: 'toast-app-id',
+        id: 'coldboot-app-id',
         name: 'X-App-ID',
-        value: 'toast-app',
+        value: 'coldboot-app',
       });
     }
   }, []);
