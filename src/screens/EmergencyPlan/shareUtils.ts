@@ -1,6 +1,11 @@
 import { Share } from 'react-native';
 import { RallyPoint, CommunicationPlan } from '../../stores';
 
+// Wire-format identifiers, not display copy. These values are written into
+// shared payloads and validated on import (see parseShared* below), so
+// renaming them would cause any payload produced by an older build to be
+// rejected. Deliberately left on the legacy prefix during the rebrand; change
+// them only alongside a VERSION bump and a migration path.
 const RALLY_POINTS_TYPE = 'toast-rally-points';
 const COMM_PLAN_TYPE = 'toast-comm-plan';
 const VERSION = 1;
@@ -39,7 +44,7 @@ export async function shareRallyPoints(
     })),
   };
   const text = JSON.stringify(payload);
-  await Share.share({ message: text, title: 'TOAST Rally Points' });
+  await Share.share({ message: text, title: 'ColdBoot Rally Points' });
 }
 
 /**
@@ -60,7 +65,7 @@ export async function shareCommunicationPlan(
     },
   };
   const text = JSON.stringify(payload);
-  await Share.share({ message: text, title: 'TOAST Communication Plan' });
+  await Share.share({ message: text, title: 'ColdBoot Communication Plan' });
 }
 
 /** Maximum allowed character length for any string field in a shared payload. */

@@ -28,7 +28,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     icon: 'sparkles-outline',
     title: 'Welcome',
-    description: "Welcome to TOAST. Here's a quick tour.",
+    description: "Welcome to ColdBoot. Here's a quick tour.",
   },
   {
     icon: 'swap-horizontal-outline',
@@ -38,7 +38,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     icon: 'home-outline',
     title: 'Tap the Logo',
-    description: 'Tap the TOAST logo any time to return to the home screen.',
+    description: 'Tap the ColdBoot logo any time to return to the home screen.',
     spotlightTarget: 'logo',
   },
   {
@@ -58,7 +58,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     icon: 'layers-outline',
     title: 'Modules Overview',
     description:
-      'TOAST is organized into modules like Reference, Tools, and Prepper.',
+      'ColdBoot is organized into modules like Reference, Tools, and Prepper.',
   },
   {
     icon: 'checkmark-circle-outline',
