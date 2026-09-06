@@ -70,7 +70,7 @@ interface SearchMessage {
 const WELCOME_MESSAGE: SearchMessage = {
   id: 'welcome',
   role: 'assistant',
-  text: 'Search TOAST or ask a question — I\'ll find relevant content.\n\nTry: "fire starting", "signal aircraft", or "72-hour kit".',
+  text: 'Search ColdBoot or ask a question — I\'ll find relevant content.\n\nTry: "fire starting", "signal aircraft", or "72-hour kit".',
 };
 
 /**
