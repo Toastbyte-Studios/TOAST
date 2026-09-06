@@ -126,7 +126,7 @@ export default function KnotStepCarousel({
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     paddingVertical: 12,
     marginBottom: 12,
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: COLORS.TOAST_BROWN,
+    backgroundColor: COLORS.BRAND,
     opacity: 0.35,
   },
   dotActive: {

@@ -61,7 +61,7 @@ export default function SectionHeader({
         {
           color: LIGHT_COLORS.PRIMARY_DARK,
           backgroundColor: COLORS.SECONDARY_ACCENT,
-          borderColor: COLORS.TOAST_BROWN,
+          borderColor: COLORS.BRAND,
         },
         style,
       ]}

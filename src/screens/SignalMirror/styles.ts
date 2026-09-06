@@ -67,7 +67,7 @@ export const createStyles = (COLORS: ColorScheme) =>
     },
     separator: {
       height: 1,
-      backgroundColor: COLORS.TOAST_BROWN,
+      backgroundColor: COLORS.BRAND,
       marginVertical: 16,
       opacity: 0.2,
     },

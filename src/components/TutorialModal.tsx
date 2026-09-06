@@ -102,14 +102,12 @@ export default function TutorialModal({
             index === currentStep ? styles.activeDot : styles.inactiveDot,
             {
               backgroundColor:
-                index === currentStep
-                  ? COLORS.SECONDARY_ACCENT
-                  : COLORS.TOAST_BROWN,
+                index === currentStep ? COLORS.SECONDARY_ACCENT : COLORS.BRAND,
             },
           ]}
         />
       )),
-    [COLORS.SECONDARY_ACCENT, COLORS.TOAST_BROWN, currentStep],
+    [COLORS.SECONDARY_ACCENT, COLORS.BRAND, currentStep],
   );
   if (!visible) {
     return null;
@@ -123,7 +121,7 @@ export default function TutorialModal({
             styles.card,
             {
               backgroundColor: COLORS.PRIMARY_LIGHT,
-              borderColor: COLORS.TOAST_BROWN,
+              borderColor: COLORS.BRAND,
             },
           ]}
         >

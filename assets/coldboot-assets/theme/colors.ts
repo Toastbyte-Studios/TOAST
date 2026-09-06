@@ -2,8 +2,8 @@
  * ColdBoot theme tokens.
  *
  * Palette concept — "glacier": the logo's pale-ice ground and graphite
- * bootprint, with steel blue as the brand colour. Amber is retained as the
- * single signal colour (alerts, active tools) because no blue can carry that
+ * bootprint, with steel blue as the brand color. Amber is retained as the
+ * single signal color (alerts, active tools) because no blue can carry that
  * role in a survival app; everything structural is cold.
  *
  * Both schemes are drawn from the mark itself:
@@ -16,12 +16,12 @@
  */
 
 const LIGHT_COLORS = {
-  /** Primary brand colour — replaces TOAST_BROWN. */
+  /** Primary brand color — replaces TOAST_BROWN. */
   BRAND: '#2F5875',
   BRAND_GRADIENT: ['#5980A6', '#2F5875'],
 
   /** Foreground / body text. Named DARK for historical reasons: it is the
-   *  high-contrast colour against BACKGROUND, and inverts in dark mode. */
+   *  high-contrast color against BACKGROUND, and inverts in dark mode. */
   PRIMARY_DARK: '#1D1F20',
   /** Raised surfaces and inverted text. */
   PRIMARY_LIGHT: '#F7FAFC',

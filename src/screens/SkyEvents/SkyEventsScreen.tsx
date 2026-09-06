@@ -82,7 +82,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <View style={[styles.eventCard, cardBorderStyle]}>
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}
@@ -147,7 +147,7 @@ function SkyEventsScreen() {
           {!hasLocation && (
             <View style={styles.locationBanner}>
               <LinearGradient
-                colors={COLORS.TOAST_BROWN_GRADIENT}
+                colors={COLORS.BRAND_GRADIENT}
                 start={{ x: 0, y: 1 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.cardBackground}

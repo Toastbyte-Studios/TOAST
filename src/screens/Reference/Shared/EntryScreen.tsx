@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   },
   actionBtn: {
     borderWidth: 1,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   },
   imageCard: {
     borderWidth: 1,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     padding: 12,
     marginBottom: 12,

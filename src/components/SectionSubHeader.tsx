@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY_DARK,
     backgroundColor: COLORS.SECONDARY_ACCENT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,

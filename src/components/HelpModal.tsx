@@ -184,7 +184,7 @@ export const HelpModal = ({
                 styles.modalContainer,
                 {
                   backgroundColor: COLORS.PRIMARY_LIGHT,
-                  borderColor: COLORS.TOAST_BROWN,
+                  borderColor: COLORS.BRAND,
                 },
               ]}
             >
@@ -193,7 +193,7 @@ export const HelpModal = ({
                   styles.header,
                   {
                     backgroundColor: COLORS.SECONDARY_ACCENT,
-                    borderBottomColor: COLORS.TOAST_BROWN,
+                    borderBottomColor: COLORS.BRAND,
                   },
                 ]}
               >
@@ -227,11 +227,11 @@ export const HelpModal = ({
                         style={[
                           styles.accordionHeader,
                           {
-                            borderColor: COLORS.TOAST_BROWN,
+                            borderColor: COLORS.BRAND,
                             backgroundColor: COLORS.BACKGROUND,
                           },
                           expandedSection === section.id && {
-                            backgroundColor: COLORS.TOAST_BROWN,
+                            backgroundColor: COLORS.BRAND,
                             borderColor: COLORS.PRIMARY_DARK,
                           },
                         ]}
@@ -270,7 +270,7 @@ export const HelpModal = ({
                             styles.accordionContent,
                             {
                               backgroundColor: COLORS.PRIMARY_LIGHT,
-                              borderColor: COLORS.TOAST_BROWN,
+                              borderColor: COLORS.BRAND,
                             },
                           ]}
                         >

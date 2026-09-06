@@ -89,30 +89,30 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
     primaryText: { color: COLORS.PRIMARY_DARK },
     modalContainerThemed: {
       backgroundColor: COLORS.PRIMARY_LIGHT,
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
     },
     headerThemed: {
       backgroundColor: COLORS.SECONDARY_ACCENT,
-      borderBottomColor: COLORS.TOAST_BROWN,
+      borderBottomColor: COLORS.BRAND,
     },
     totalCardThemed: {
       backgroundColor: COLORS.SECONDARY_ACCENT,
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
     },
     packCardThemed: {
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.BACKGROUND,
     },
     buttonDefault: {
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.BACKGROUND,
     },
     emptyCardThemed: {
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.SECONDARY_ACCENT,
     },
     ctaThemed: {
-      backgroundColor: COLORS.TOAST_BROWN,
+      backgroundColor: COLORS.BRAND,
       borderColor: COLORS.PRIMARY_DARK,
     },
   });

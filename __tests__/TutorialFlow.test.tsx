@@ -5,7 +5,7 @@ import TutorialModal from '../src/components/TutorialModal';
 
 jest.mock('../src/hooks/useTheme', () => ({
   useTheme: jest.fn(() => ({
-    TOAST_BROWN: '#C09A6B',
+    BRAND: '#C09A6B',
     PRIMARY_DARK: '#1F1F1F',
     PRIMARY_LIGHT: '#F2EDE4',
     SECONDARY_ACCENT: '#8DAA9D',

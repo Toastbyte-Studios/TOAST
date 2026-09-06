@@ -79,30 +79,30 @@ function makeStyles(COLORS: ReturnType<typeof useTheme>) {
     primaryText: { color: COLORS.PRIMARY_DARK },
     modalContainerThemed: {
       backgroundColor: COLORS.PRIMARY_LIGHT,
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
     },
     headerThemed: {
       backgroundColor: COLORS.SECONDARY_ACCENT,
-      borderBottomColor: COLORS.TOAST_BROWN,
+      borderBottomColor: COLORS.BRAND,
     },
     buttonDefault: {
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.BACKGROUND,
     },
     buttonSelected: {
-      backgroundColor: COLORS.TOAST_BROWN,
+      backgroundColor: COLORS.BRAND,
       borderColor: COLORS.PRIMARY_DARK,
     },
     temperatureButtonDefault: {
       flex: 1,
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.BACKGROUND,
     },
     restorePanelThemed: {
-      borderColor: COLORS.TOAST_BROWN,
+      borderColor: COLORS.BRAND,
       backgroundColor: COLORS.SECONDARY_ACCENT,
     },
-    fileItemSelected: { backgroundColor: COLORS.TOAST_BROWN },
+    fileItemSelected: { backgroundColor: COLORS.BRAND },
   });
 }
 
@@ -524,7 +524,7 @@ export const SettingsModal = observer(
                     onValueChange={(value) =>
                       settingsStore.setHighDetailOffline(value)
                     }
-                    trackColor={{ true: COLORS.TOAST_BROWN }}
+                    trackColor={{ true: COLORS.BRAND }}
                     accessibilityLabel="Toggle high detail for new offline downloads"
                   />
                 </View>
@@ -764,7 +764,7 @@ export const SettingsModal = observer(
                       onValueChange={(value) =>
                         devToolsStore.setSimulatedOffline(value)
                       }
-                      trackColor={{ true: COLORS.TOAST_BROWN }}
+                      trackColor={{ true: COLORS.BRAND }}
                       accessibilityLabel="Simulate offline mode (dev only)"
                     />
                   </View>

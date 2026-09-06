@@ -39,7 +39,7 @@ export function useSunShadow(): SunShadowStyle {
   const isDarkMode =
     settingsStore.themeMode === 'dark' ||
     (settingsStore.themeMode === 'system' && systemColorScheme === 'dark');
-  const shadowColor = isDarkMode ? theme.TOAST_BROWN : theme.PRIMARY_DARK;
+  const shadowColor = isDarkMode ? theme.BRAND : theme.PRIMARY_DARK;
 
   const [shadowStyle, setShadowStyle] = useState<SunShadowStyle>({
     shadowColor: shadowColor,

@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   card: {
     flex: 1 - FOOTER_HEIGHT,
     width: '100%',
-    backgroundColor: COLORS.TOAST_BROWN,
+    backgroundColor: COLORS.BRAND,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: COLORS.SECONDARY_ACCENT,

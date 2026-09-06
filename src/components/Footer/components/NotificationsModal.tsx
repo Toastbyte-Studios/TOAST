@@ -53,7 +53,7 @@ const NotificationsModal = observer(
                   styles.modalContainer,
                   {
                     backgroundColor: COLORS.PRIMARY_LIGHT,
-                    borderColor: COLORS.TOAST_BROWN,
+                    borderColor: COLORS.BRAND,
                   },
                 ]}
               >
@@ -63,7 +63,7 @@ const NotificationsModal = observer(
                     styles.header,
                     {
                       backgroundColor: COLORS.SECONDARY_ACCENT,
-                      borderBottomColor: COLORS.TOAST_BROWN,
+                      borderBottomColor: COLORS.BRAND,
                     },
                   ]}
                 >
@@ -114,7 +114,7 @@ const NotificationsModal = observer(
                         style={[
                           styles.notificationRow,
                           {
-                            borderColor: COLORS.TOAST_BROWN,
+                            borderColor: COLORS.BRAND,
                             backgroundColor: notification.highlightColor
                               ? notification.highlightColor
                               : COLORS.BACKGROUND,

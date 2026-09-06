@@ -177,7 +177,7 @@ function LunarCyclesScreen() {
       key={label}
     >
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}
@@ -211,7 +211,7 @@ function LunarCyclesScreen() {
       key={index}
     >
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}
@@ -259,7 +259,7 @@ function LunarCyclesScreen() {
                 ]}
               >
                 <LinearGradient
-                  colors={COLORS.TOAST_BROWN_GRADIENT}
+                  colors={COLORS.BRAND_GRADIENT}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.cardBackground}

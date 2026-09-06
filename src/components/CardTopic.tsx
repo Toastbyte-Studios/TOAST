@@ -90,7 +90,7 @@ export default function CardTopic({
         >
           <View style={[styles.card, { borderColor: COLORS.SECONDARY_ACCENT }]}>
             <LinearGradient
-              colors={COLORS.TOAST_BROWN_GRADIENT}
+              colors={COLORS.BRAND_GRADIENT}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
               style={styles.background}

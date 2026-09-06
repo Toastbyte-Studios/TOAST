@@ -169,7 +169,7 @@ function BarometricPressureScreen() {
                 style={[styles.card, { borderColor: COLORS.SECONDARY_ACCENT }]}
               >
                 <LinearGradient
-                  colors={COLORS.TOAST_BROWN_GRADIENT}
+                  colors={COLORS.BRAND_GRADIENT}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.cardBackground}
@@ -224,7 +224,7 @@ function BarometricPressureScreen() {
                 style={[styles.card, { borderColor: COLORS.SECONDARY_ACCENT }]}
               >
                 <LinearGradient
-                  colors={COLORS.TOAST_BROWN_GRADIENT}
+                  colors={COLORS.BRAND_GRADIENT}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.cardBackground}

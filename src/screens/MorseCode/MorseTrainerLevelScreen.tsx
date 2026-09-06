@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   scoreContainer: {
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 8,
     padding: 12,
     marginBottom: 16,
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
   answerInput: {
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 8,
     padding: 12,
     fontSize: 16,

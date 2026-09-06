@@ -51,7 +51,7 @@ describe('useSunShadow', () => {
     // Mock the theme for light mode (default)
     (UseTheme.useTheme as jest.Mock).mockReturnValue({
       PRIMARY_DARK: '#1D1F20', // Light mode: dark color for shadows
-      TOAST_BROWN: '#2F5875',
+      BRAND: '#2F5875',
     });
 
     // Mock the settings store with default light mode
@@ -188,7 +188,7 @@ describe('useSunShadow', () => {
       // Mock dark mode theme
       (UseTheme.useTheme as jest.Mock).mockReturnValue({
         PRIMARY_DARK: '#DCECF7', // Dark mode: light color
-        TOAST_BROWN: '#8FB6CE',
+        BRAND: '#8FB6CE',
       });
 
       // Mock settings store for dark mode
@@ -207,7 +207,7 @@ describe('useSunShadow', () => {
         ReactTestRenderer.create(React.createElement(TestHook));
       });
 
-      // Dark mode should use the brand colour for shadow visibility
+      // Dark mode should use the brand color for shadow visibility
       expect(shadowResult.shadowColor).toBe('#8FB6CE');
     });
 
@@ -215,7 +215,7 @@ describe('useSunShadow', () => {
       // Mock light mode theme (already set in beforeEach, but being explicit)
       (UseTheme.useTheme as jest.Mock).mockReturnValue({
         PRIMARY_DARK: '#1D1F20', // Light mode: dark color
-        TOAST_BROWN: '#2F5875',
+        BRAND: '#2F5875',
       });
 
       // Mock settings store for light mode
@@ -487,7 +487,7 @@ describe('useSunShadow', () => {
       expect(lightModeShadowColor).toBe('#1D1F20');
 
       // Dark mode color
-      const darkModeShadowColor = '#8FB6CE'; // Brand colour in dark mode
+      const darkModeShadowColor = '#8FB6CE'; // Brand color in dark mode
       expect(darkModeShadowColor).toBe('#8FB6CE');
     });
 

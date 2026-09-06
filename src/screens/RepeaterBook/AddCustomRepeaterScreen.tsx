@@ -220,7 +220,7 @@ const AddCustomRepeaterScreen = observer((): JSX.Element => {
                   setIsEmcomm(v);
                   if (!v) setEmcomm('');
                 }}
-                trackColor={{ false: COLORS.TOAST_BROWN, true: COLORS.ERROR }}
+                trackColor={{ false: COLORS.BRAND, true: COLORS.ERROR }}
                 thumbColor={COLORS.PRIMARY_LIGHT}
                 accessibilityLabel="Mark as emergency communications repeater"
                 accessibilityRole="switch"
@@ -298,7 +298,7 @@ const AddCustomRepeaterScreen = observer((): JSX.Element => {
                   styles.modalSheet,
                   {
                     backgroundColor: COLORS.PRIMARY_LIGHT,
-                    borderColor: COLORS.TOAST_BROWN,
+                    borderColor: COLORS.BRAND,
                   },
                 ]}
               >
@@ -359,7 +359,7 @@ const AddCustomRepeaterScreen = observer((): JSX.Element => {
                   styles.modalSheet,
                   {
                     backgroundColor: COLORS.PRIMARY_LIGHT,
-                    borderColor: COLORS.TOAST_BROWN,
+                    borderColor: COLORS.BRAND,
                   },
                 ]}
               >

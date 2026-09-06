@@ -99,7 +99,7 @@ export default function RepeaterDetailScreen(): JSX.Element {
                 backgroundColor: isOnAir
                   ? COLORS.SUCCESS_LIGHT
                   : COLORS.BACKGROUND,
-                borderColor: isOnAir ? COLORS.SUCCESS : COLORS.TOAST_BROWN,
+                borderColor: isOnAir ? COLORS.SUCCESS : COLORS.BRAND,
               },
             ]}
           >
@@ -107,9 +107,7 @@ export default function RepeaterDetailScreen(): JSX.Element {
               style={[
                 styles.statusDot,
                 {
-                  backgroundColor: isOnAir
-                    ? COLORS.SUCCESS
-                    : COLORS.TOAST_BROWN,
+                  backgroundColor: isOnAir ? COLORS.SUCCESS : COLORS.BRAND,
                 },
               ]}
             />
@@ -124,7 +122,7 @@ export default function RepeaterDetailScreen(): JSX.Element {
               styles.card,
               {
                 backgroundColor: COLORS.PRIMARY_LIGHT,
-                borderColor: COLORS.TOAST_BROWN,
+                borderColor: COLORS.BRAND,
               },
             ]}
           >
@@ -157,7 +155,7 @@ export default function RepeaterDetailScreen(): JSX.Element {
                 styles.card,
                 {
                   backgroundColor: COLORS.PRIMARY_LIGHT,
-                  borderColor: COLORS.TOAST_BROWN,
+                  borderColor: COLORS.BRAND,
                 },
               ]}
             >

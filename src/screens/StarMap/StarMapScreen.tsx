@@ -65,7 +65,7 @@ function StarMapScreen() {
       style={[styles.stepCard, { borderColor: COLORS.SECONDARY_ACCENT }]}
     >
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}
@@ -82,7 +82,7 @@ function StarMapScreen() {
       style={[styles.starCard, { borderColor: COLORS.SECONDARY_ACCENT }]}
     >
       <LinearGradient
-        colors={COLORS.TOAST_BROWN_GRADIENT}
+        colors={COLORS.BRAND_GRADIENT}
         start={{ x: 0, y: 1 }}
         end={{ x: 1, y: 0 }}
         style={styles.cardBackground}
@@ -120,7 +120,7 @@ function StarMapScreen() {
         ]}
       >
         <LinearGradient
-          colors={COLORS.TOAST_BROWN_GRADIENT}
+          colors={COLORS.BRAND_GRADIENT}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.cardBackground}
@@ -168,7 +168,7 @@ function StarMapScreen() {
             ]}
           >
             <LinearGradient
-              colors={COLORS.TOAST_BROWN_GRADIENT}
+              colors={COLORS.BRAND_GRADIENT}
               start={{ x: 0, y: 1 }}
               end={{ x: 1, y: 0 }}
               style={styles.cardBackground}

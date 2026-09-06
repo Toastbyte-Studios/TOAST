@@ -24,15 +24,15 @@ function resolveIsDarkMode(
 /**
  * Hook that reports whether dark mode is currently active.
  *
- * `useTheme` already resolves this internally to pick a colour scheme, but it
- * only returns the colours. Components that need to branch on the mode itself
+ * `useTheme` already resolves this internally to pick a color scheme, but it
+ * only returns the colors. Components that need to branch on the mode itself
  * — swapping an image asset, for example — need the boolean, which is what
  * this hook exposes.
  *
  * Uses the same MobX reaction pattern as `useTheme` so it stays correct in
  * components that are not wrapped in `observer`.
  *
- * @returns `true` when the dark colour scheme is active.
+ * @returns `true` when the dark color scheme is active.
  */
 export function useIsDarkMode(): boolean {
   const settingsStore = useSettingsStore();
@@ -52,7 +52,7 @@ export function useIsDarkMode(): boolean {
       },
     );
 
-    // Also update when the system colour scheme changes.
+    // Also update when the system color scheme changes.
     setIsDarkMode(
       resolveIsDarkMode(settingsStore.themeMode, systemColorScheme),
     );

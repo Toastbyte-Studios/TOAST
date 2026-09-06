@@ -290,7 +290,7 @@ export default observer(function SearchScreen(): JSX.Element {
           styles.resultCard,
           {
             backgroundColor: COLORS.SECONDARY_ACCENT + '33',
-            borderColor: COLORS.TOAST_BROWN,
+            borderColor: COLORS.BRAND,
           },
         ]}
       >
@@ -310,7 +310,7 @@ export default observer(function SearchScreen(): JSX.Element {
           {result.excerpt}
         </Text>
         <TouchableOpacity
-          style={[styles.jumpButton, { backgroundColor: COLORS.TOAST_BROWN }]}
+          style={[styles.jumpButton, { backgroundColor: COLORS.BRAND }]}
           onPress={() => handleJumpToEntry(result.entry)}
           accessibilityLabel={`Jump to full section: ${result.entry.title}`}
           accessibilityRole="button"
@@ -339,7 +339,7 @@ export default observer(function SearchScreen(): JSX.Element {
           styles.userDataItem,
           {
             backgroundColor: COLORS.SECONDARY_ACCENT + '22',
-            borderColor: COLORS.TOAST_BROWN + '88',
+            borderColor: COLORS.BRAND + '88',
           },
         ]}
         onPress={() => handleItemPress(item)}
@@ -385,10 +385,7 @@ export default observer(function SearchScreen(): JSX.Element {
         >
           {!isUser && (
             <View
-              style={[
-                styles.avatarBubble,
-                { backgroundColor: COLORS.TOAST_BROWN },
-              ]}
+              style={[styles.avatarBubble, { backgroundColor: COLORS.BRAND }]}
             >
               <Ionicons
                 name="search-outline"
@@ -402,12 +399,12 @@ export default observer(function SearchScreen(): JSX.Element {
               style={[
                 styles.messageBubble,
                 isUser
-                  ? [styles.userBubble, { backgroundColor: COLORS.TOAST_BROWN }]
+                  ? [styles.userBubble, { backgroundColor: COLORS.BRAND }]
                   : [
                       styles.assistantBubble,
                       {
                         backgroundColor: COLORS.SECONDARY_ACCENT + '55',
-                        borderColor: COLORS.TOAST_BROWN + '88',
+                        borderColor: COLORS.BRAND + '88',
                       },
                     ],
               ]}
@@ -440,7 +437,7 @@ export default observer(function SearchScreen(): JSX.Element {
                   style={[
                     styles.userDataList,
                     {
-                      borderColor: COLORS.TOAST_BROWN + '55',
+                      borderColor: COLORS.BRAND + '55',
                     },
                   ]}
                 >
@@ -470,7 +467,7 @@ export default observer(function SearchScreen(): JSX.Element {
                 styles.inputRow,
                 {
                   backgroundColor: COLORS.SECONDARY_ACCENT,
-                  borderColor: COLORS.TOAST_BROWN,
+                  borderColor: COLORS.BRAND,
                 },
               ]}
             >
@@ -489,10 +486,7 @@ export default observer(function SearchScreen(): JSX.Element {
               />
               {hasQuery && (
                 <TouchableOpacity
-                  style={[
-                    styles.sendButton,
-                    { backgroundColor: COLORS.TOAST_BROWN },
-                  ]}
+                  style={[styles.sendButton, { backgroundColor: COLORS.BRAND }]}
                   onPress={handleSend}
                   disabled={isSearching}
                   accessibilityLabel="Send"
@@ -527,7 +521,7 @@ export default observer(function SearchScreen(): JSX.Element {
                 <View
                   style={[
                     styles.avatarBubble,
-                    { backgroundColor: COLORS.TOAST_BROWN },
+                    { backgroundColor: COLORS.BRAND },
                   ]}
                 >
                   <Ionicons
@@ -542,7 +536,7 @@ export default observer(function SearchScreen(): JSX.Element {
                     styles.assistantBubble,
                     {
                       backgroundColor: COLORS.SECONDARY_ACCENT + '55',
-                      borderColor: COLORS.TOAST_BROWN + '88',
+                      borderColor: COLORS.BRAND + '88',
                     },
                   ]}
                 >

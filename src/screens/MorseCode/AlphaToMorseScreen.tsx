@@ -80,9 +80,7 @@ const AlphaToMorseScreenImpl = () => {
                 false: COLORS.SECONDARY_ACCENT,
                 true: COLORS.ACCENT,
               }}
-              thumbColor={
-                morseWithTone ? COLORS.PRIMARY_LIGHT : COLORS.TOAST_BROWN
-              }
+              thumbColor={morseWithTone ? COLORS.PRIMARY_LIGHT : COLORS.BRAND}
               disabled={isTransmitting}
             />
           </View>
@@ -131,7 +129,7 @@ const styles = StyleSheet.create({
   textInput: {
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
@@ -155,7 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: COLORS.PRIMARY_LIGHT,
     borderWidth: 2,
-    borderColor: COLORS.TOAST_BROWN,
+    borderColor: COLORS.BRAND,
     borderRadius: 12,
     padding: 16,
   },
@@ -182,7 +180,7 @@ const styles = StyleSheet.create({
     color: COLORS.PRIMARY_LIGHT,
   },
   stopButton: {
-    backgroundColor: COLORS.TOAST_BROWN,
+    backgroundColor: COLORS.BRAND,
     paddingVertical: 16,
     paddingHorizontal: 32,
     borderRadius: 12,

@@ -149,7 +149,7 @@ export default function ConversionCategoryScreen() {
   const getKeypadButtonStyle = () => [
     styles.keypadButton,
     {
-      backgroundColor: COLORS.TOAST_BROWN,
+      backgroundColor: COLORS.BRAND,
       borderColor: COLORS.SECONDARY_ACCENT,
     },
   ];
@@ -179,7 +179,7 @@ export default function ConversionCategoryScreen() {
                     backgroundColor:
                       selectedUnitIndex === index
                         ? COLORS.ACCENT
-                        : COLORS.TOAST_BROWN,
+                        : COLORS.BRAND,
                     borderColor: COLORS.SECONDARY_ACCENT,
                   },
                 ]}
