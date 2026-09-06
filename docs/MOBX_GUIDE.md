@@ -2,7 +2,7 @@
 
 ## Overview
 
-TOAST uses MobX for reactive state management across the application. The store architecture is organized by domain with a central RootStore.
+ColdBoot uses MobX for reactive state management across the application. The store architecture is organized by domain with a central RootStore.
 
 ## Store Structure
 

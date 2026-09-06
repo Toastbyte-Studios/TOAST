@@ -2,7 +2,7 @@
 
 ## Overview
 
-The TOAST app now supports dark mode with three theme options that can be configured in the Settings modal.
+The ColdBoot app now supports dark mode with three theme options that can be configured in the Settings modal.
 
 ## Theme Options
 
